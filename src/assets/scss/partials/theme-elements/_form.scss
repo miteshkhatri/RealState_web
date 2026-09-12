@@ -1,0 +1,975 @@
+/* Addproject.css - Using your existing theme variables */
+
+/* ============================================
+   CARD WRAPPER
+   ============================================ */
+
+   
+.add-project-card .card {
+  border: 1px solid var(--border) !important;
+  border-radius: var(--r-xl) !important;
+  background: var(--bg-card) !important;
+  box-shadow: var(--shadow-card) !important;
+  overflow: visible;
+  font-family: var(--font);
+  margin-bottom: 20px;
+}
+
+/* ============================================
+   CARD HEADER - Uses your project-header
+   ============================================ */
+.add-project-card .card-header.project-header {
+  background: var(--bg-header) !important;
+  padding: 16px 22px !important;
+  border-bottom: none !important;
+  border-radius: var(--r-xl) var(--r-xl) 0 0 !important;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  position: relative;
+}
+
+/* Subtle shimmer line at bottom */
+.add-project-card .card-header.project-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+}
+
+.add-project-card .card-header .project-title {
+  margin: 0 !important;
+  font-family: var(--font) !important;
+  font-weight: 800 !important;
+  font-size: 18px !important;
+  color: #ffffff !important;
+  letter-spacing: -0.03em !important;
+}
+
+/* Language Select in Header */
+
+.add-project-card .form-group .row {
+  margin-bottom: 16px;
+}
+.add-project-card .card-header .custom-select {
+  background: rgba(255,255,255,0.15) !important;
+  border: 1px solid rgba(255,255,255,0.28) !important;
+  color: #ffffff !important;
+  backdrop-filter: blur(8px);
+  border-radius: var(--r-sm) !important;
+  padding: 6px 32px 6px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 120px;
+  appearance: none;
+background-image: url("/assets/images/logoAuth_1.png") !important;
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+}
+
+.add-project-card .card-header .custom-select:hover {
+  background: rgba(255,255,255,0.25) !important;
+}
+
+.add-project-card .card-header .custom-select:focus {
+  background: rgba(255,255,255,0.25) !important;
+  border-color: rgba(255,255,255,0.5) !important;
+  box-shadow: none !important;
+  outline: none;
+}
+
+.add-project-card .card-header .custom-select option {
+  background: var(--bg-card);
+  color: var(--text-primary);
+}
+
+/* ============================================
+   CARD BODY
+   ============================================ */
+.add-project-card .card-body {
+  padding: 24px;
+  background: var(--bg-card) !important;
+}
+
+/* ============================================
+   ROW SPACING
+   ============================================ */
+.add-project-card .row {
+  margin-left: -10px !important;
+  margin-right: -10px !important;
+}
+
+.add-project-card .row > [class*="col-"] {
+  padding-left: 10px !important;
+  padding-right: 10px !important;
+}
+
+.add-project-card .row.mt-3 {
+  margin-top: 16px !important;
+}
+
+/* ============================================
+   FORM GROUPS - Proper spacing
+   ============================================ */
+.add-project-card .form-group {
+  margin-bottom: 16px;
+}
+
+.add-project-card .form-group.mb-3 {
+  margin-bottom: 16px !important;
+}
+
+.add-project-card .form-group.mb-1 {
+  margin-bottom: 8px !important;
+}
+
+/* ============================================
+   FORM LABELS - Using theme variables
+   ============================================ */
+.add-project-card .form-label {
+  font-family: var(--font);
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+  display: block;
+}
+
+/* ============================================
+   LABEL & BADGE STYLES
+   ============================================ */
+.add-project-card .label {
+  padding: 4px 10px;
+  min-height: auto;
+  position: relative;
+  margin-right: 5px;
+  margin-bottom: 5px;
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 4px;
+  font-family: var(--font);
+}
+
+.add-project-card .label-primary { background: var(--accent); color: #ffffff; }
+.add-project-card .label-success { background: var(--green); color: #ffffff; }
+.add-project-card .label-danger { background: var(--red); color: #ffffff; }
+.add-project-card .label-warning { background: var(--orange); color: #ffffff; }
+.add-project-card .label-info { background: var(--blue); color: #ffffff; }
+.add-project-card .label-secondary { background: var(--text-secondary); color: #ffffff; }
+.add-project-card .label-light { background: var(--bg-card-hover); color: var(--text-primary); border: 1px solid var(--border); }
+.add-project-card .label-dark { background: var(--text-primary); color: var(--bg-card); }
+.add-project-card .label-sm { padding: 2px 8px; font-size: 10px; }
+.add-project-card .label-lg { padding: 6px 14px; font-size: 14px; }
+.add-project-card .label-rounded { border-radius: 20px; }
+
+/* ============================================
+   FORM CONTROLS - Using theme variables
+   ============================================ */
+.add-project-card .custom-select,
+.add-project-card .form-control {
+  background: var(--bg-card) !important;
+  padding: 10px 16px;
+  font-size: 14px;
+  height: auto;
+  min-height: 42px;
+  border: 1.5px solid var(--border) !important;
+  border-radius: var(--r-sm) !important;
+  transition: all 0.2s;
+  color: var(--text-primary) !important;
+  width: 100%;
+  font-family: var(--font);
+  line-height: 1.5;
+}
+
+.add-project-card .custom-select:disabled,
+.add-project-card .form-control:disabled,
+.add-project-card .custom-select.disabled-custom,
+.add-project-card .form-control.disabled-custom {
+  background: var(--bg-card-hover) !important;
+  opacity: 0.6;
+  cursor: not-allowed !important;
+  color: var(--text-muted) !important;
+}
+
+.add-project-card .custom-select:focus,
+.add-project-card .form-control:focus {
+  background: var(--bg-card) !important;
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 3px var(--accent-soft) !important;
+  outline: none;
+}
+
+.add-project-card .custom-select::placeholder,
+.add-project-card .form-control::placeholder {
+  color: var(--text-muted);
+  opacity: 1;
+}
+
+// .add-project-card .form-control.kruti-dev {
+//   font-family: 'Kruti Dev', 'Mangal', 'Noto Sans Devanagari', sans-serif;
+// }
+
+/* ============================================
+   FILE INPUT - Premium Design
+   ============================================ */
+.add-project-card input[type="file"] {
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 13px;
+  background: var(--bg-card) !important;
+  color: var(--text-primary);
+  border: 2px dashed var(--border) !important;
+  border-radius: var(--r-sm) !important;
+  width: 100%;
+  font-family: var(--font);
+  min-height: 48px;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+}
+
+.add-project-card input[type="file"]:hover {
+  border-color: var(--accent);
+  background: var(--bg-card-hover) !important;
+}
+
+.add-project-card input[type="file"]::file-selector-button {
+  background: #C9A84C;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 18px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #ffffff !important;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-right: 12px;
+  box-shadow: 0 2px 8px rgba(201, 168, 76, 0.25);
+}
+
+.add-project-card input[type="file"]::file-selector-button:hover {
+  background: #B8963A;
+  transform: scale(1.02);
+  box-shadow: 0 4px 12px rgba(201, 168, 76, 0.35);
+}
+
+/* ============================================
+   FILE INPUT WITH PREVIEW - Flex alignment
+   ============================================ */
+.add-project-card .file-input-wrapper {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.add-project-card .file-input-wrapper .file-input-content {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ============================================
+   IMAGE PREVIEW BOX - Better alignment
+   ============================================ */
+.add-project-card .image-preview-box {
+  width: 64px;
+  height: 64px;
+  min-width: 64px;
+  border-radius: var(--r-sm);
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--bg-card-hover);
+  border: 2px solid var(--border);
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+  margin-top: 2px;
+}
+
+.add-project-card .image-preview-box:hover {
+  border-color: var(--accent);
+  transform: scale(1.02);
+}
+
+.add-project-card .image-preview-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 4px;
+}
+
+/* ============================================
+   RADIO BUTTONS - Premium Design
+   ============================================ */
+.add-project-card .radio-group {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding-top: 4px;
+  flex-wrap: wrap;
+}
+
+.add-project-card .custom-radio {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 0;
+  cursor: pointer;
+  padding: 4px 12px 4px 8px;
+  border-radius: var(--r-sm);
+  transition: all 0.2s ease;
+}
+
+.add-project-card .custom-radio:hover {
+  background: var(--bg-card-hover);
+}
+
+.add-project-card .custom-radio .form-check-input {
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--border) !important;
+  border-radius: 50%;
+  margin-top: 0;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  background: var(--bg-card) !important;
+  flex-shrink: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  position: relative;
+}
+
+.add-project-card .custom-radio .form-check-input:checked {
+  background: #C9A84C !important;
+  border-color: #C9A84C !important;
+  box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.15);
+}
+
+.add-project-card .custom-radio .form-check-input:checked::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ffffff !important;
+}
+
+.add-project-card .custom-radio .form-check-input:focus {
+  box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.15) !important;
+  border-color: #C9A84C !important;
+  outline: none;
+}
+
+.add-project-card .custom-radio .form-check-label {
+  font-size: 13px;
+  color: var(--text-primary);
+  font-weight: 500;
+  cursor: pointer;
+  font-family: var(--font);
+  user-select: none;
+}
+
+/* ============================================
+   SECTOR FIELDS - Using theme variables
+   ============================================ */
+.add-project-card .sector-field-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.add-project-card .sector-field-row .form-group {
+  margin-bottom: 0;
+  flex: 1;
+}
+
+.add-project-card .sector-field-row .form-label {
+  margin-bottom: 4px;
+  font-size: 12px;
+}
+
+.add-project-card .sector-field-row .btn {
+  height: 40px;
+  min-width: 40px;
+  width: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: var(--r-sm);
+  padding: 0;
+  flex-shrink: 0;
+  border: none;
+  transition: all 0.3s ease;
+  color: #ffffff !important;
+  margin-bottom: 0;
+}
+
+.add-project-card .sector-field-row .btn-add-field {
+  background: #C9A84C;
+  box-shadow: 0 2px 8px rgba(201, 168, 76, 0.30);
+}
+
+.add-project-card .sector-field-row .btn-add-field:hover {
+  background: #B8963A;
+  transform: scale(1.05);
+  box-shadow: 0 4px 16px rgba(201, 168, 76, 0.40);
+}
+
+.add-project-card .sector-field-row .btn-delete-field {
+  background: var(--red);
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+}
+
+.add-project-card .sector-field-row .btn-delete-field:hover {
+  background: #dc2626;
+  transform: scale(1.05);
+  box-shadow: 0 4px 16px rgba(239, 68, 68, 0.4);
+}
+
+.add-project-card .sector-field-row .btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.add-project-card .sector-field-row .btn-wrapper {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  padding-bottom: 0;
+}
+
+/* ============================================
+   DROPDOWN (Broker Search) - Using theme variables
+   ============================================ */
+.add-project-card .broker-dropdown {
+  position: absolute;
+  width: 100%;
+  max-height: 220px;
+  overflow-y: auto;
+  z-index: 999;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--r-md) !important;
+  box-shadow: var(--shadow-card) !important;
+  background: var(--bg-card) !important;
+  padding: 0;
+  margin-top: 2px;
+}
+
+.add-project-card .broker-dropdown .dropdown-item {
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: background 0.15s;
+  font-size: 13px;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font);
+}
+
+.add-project-card .broker-dropdown .dropdown-item:last-child {
+  border-bottom: none;
+}
+
+.add-project-card .broker-dropdown .dropdown-item:hover {
+  background: var(--bg-card-hover);
+}
+
+// .add-project-card .broker-dropdown .dropdown-item.kruti-dev {
+//   font-family: 'Kruti Dev', 'Mangal', 'Noto Sans Devanagari', sans-serif;
+// }
+
+/* ============================================
+   SUBMIT BUTTON - Gold Theme (Text White)
+   ============================================ */
+.add-project-card .submit-btn {
+  background: linear-gradient(135deg, #C9A84C 0%, #B8963A 50%, #A68530 100%) !important;
+  border: none !important;
+  border-radius: var(--r-sm) !important;
+  padding: 12px 40px !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  color: #ffffff !important;
+  font-family: var(--font) !important;
+  transition: all 0.3s ease !important;
+  cursor: pointer !important;
+  box-shadow: 0 4px 16px rgba(201, 168, 76, 0.35) !important;
+  min-height: 48px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  letter-spacing: 0.03em !important;
+  text-transform: uppercase !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.add-project-card .submit-btn::before {
+  content: '' !important;
+  position: absolute !important;
+  top: -50% !important;
+  left: -50% !important;
+  width: 200% !important;
+  height: 200% !important;
+  background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 60%) !important;
+  opacity: 0 !important;
+  transition: opacity 0.4s ease !important;
+  pointer-events: none !important;
+}
+
+.add-project-card .submit-btn:hover::before {
+  opacity: 1 !important;
+}
+
+.add-project-card .submit-btn:hover {
+  transform: translateY(-3px) !important;
+  box-shadow: 0 8px 30px rgba(201, 168, 76, 0.45) !important;
+  background: linear-gradient(135deg, #B8963A 0%, #A68530 50%, #8F7528 100%) !important;
+}
+
+.add-project-card .submit-btn:active {
+  transform: translateY(0) !important;
+  box-shadow: 0 2px 8px rgba(201, 168, 76, 0.30) !important;
+}
+
+/* ============================================
+   FORM TEXT / ERROR MESSAGES
+   ============================================ */
+.add-project-card .form-text {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 4px;
+  font-family: var(--font);
+  display: block;
+}
+
+.add-project-card .error-text {
+  color: var(--red) !important;
+  margin: 4px 0 0 0;
+  font-size: 12px;
+  display: block;
+}
+
+/* ============================================
+   FORM VALIDATION
+   ============================================ */
+.add-project-card .form-control.is-invalid,
+.add-project-card .was-validated .form-control:invalid,
+.add-project-card .was-validated .form-control:valid,
+.add-project-card .form-control.is-valid {
+  background-position: calc(100% - 10px) calc(0.375em + 0.4875rem);
+}
+
+.add-project-card .was-validated .form-control:invalid ~ .invalid-feedback {
+  background: var(--bg-card);
+  margin-top: 0;
+  padding-top: 0.25em;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+/* Tablet */
+@media (max-width: 991px) {
+  .add-project-card .card-header.project-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .add-project-card .card-header .custom-select {
+    width: 100% !important;
+    min-width: unset;
+  }
+
+  .add-project-card .sector-field-row {
+    flex-wrap: wrap;
+  }
+
+  .add-project-card .sector-field-row .btn {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+  }
+
+  .add-project-card .file-input-wrapper {
+    flex-direction: column;
+  }
+
+  .add-project-card .radio-group {
+    gap: 12px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 767px) {
+  .add-project-card .card-header.project-header {
+    padding: 12px 16px !important;
+  }
+
+  .add-project-card .card-header .project-title {
+    font-size: 16px !important;
+  }
+
+  .add-project-card .card-body {
+    padding: 16px;
+  }
+
+  .add-project-card .row {
+    margin-left: -6px !important;
+    margin-right: -6px !important;
+  }
+
+  .add-project-card .row > [class*="col-"] {
+    padding-left: 6px !important;
+    padding-right: 6px !important;
+  }
+
+  .add-project-card .custom-select,
+  .add-project-card .form-control {
+    font-size: 13px;
+    padding: 8px 12px;
+    min-height: 38px;
+  }
+
+  .add-project-card .form-label {
+    font-size: 12px;
+  }
+
+  .add-project-card .sector-field-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+  }
+
+  .add-project-card .sector-field-row .btn {
+    width: 100%;
+    height: 36px;
+    min-width: unset;
+  }
+
+  .add-project-card .sector-field-row .btn-wrapper {
+    flex-direction: row;
+    justify-content: flex-end;
+    margin-top: 4px;
+  }
+
+  .add-project-card .image-preview-box {
+    width: 50px;
+    height: 50px;
+    min-width: 50px;
+  }
+
+  .add-project-card .submit-btn {
+    width: 100%;
+    padding: 12px 20px !important;
+    font-size: 14px !important;
+    min-height: 42px !important;
+  }
+
+  .add-project-card .broker-dropdown {
+    max-height: 180px;
+  }
+
+  .add-project-card .broker-dropdown .dropdown-item {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  .add-project-card .radio-group {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .add-project-card .file-input-wrapper {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .add-project-card .file-input-wrapper .image-preview-box {
+    align-self: flex-start;
+  }
+
+  .add-project-card input[type="file"] {
+    min-height: 40px;
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+
+  .add-project-card input[type="file"]::file-selector-button {
+    padding: 4px 12px;
+    font-size: 11px;
+  }
+
+  .add-project-card .custom-radio {
+    padding: 2px 8px 2px 6px;
+  }
+
+  .add-project-card .custom-radio .form-check-input {
+    width: 16px;
+    height: 16px;
+  }
+
+  .add-project-card .custom-radio .form-check-label {
+    font-size: 12px;
+  }
+}
+
+/* Small Mobile */
+@media (max-width: 480px) {
+  .add-project-card .card-header .project-title {
+    font-size: 14px !important;
+  }
+
+  .add-project-card .card-body {
+    padding: 12px;
+  }
+
+  .add-project-card .row {
+    margin-left: -4px !important;
+    margin-right: -4px !important;
+  }
+
+  .add-project-card .row > [class*="col-"] {
+    padding-left: 4px !important;
+    padding-right: 4px !important;
+  }
+
+  .add-project-card .custom-select,
+  .add-project-card .form-control {
+    font-size: 12px;
+    padding: 6px 10px;
+    min-height: 34px;
+  }
+
+  .add-project-card .form-label {
+    font-size: 11px;
+  }
+
+  .add-project-card .form-group {
+    margin-bottom: 10px;
+  }
+
+  .add-project-card .submit-btn {
+    font-size: 13px !important;
+    min-height: 38px !important;
+    padding: 10px 16px !important;
+  }
+
+  .add-project-card .image-preview-box {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* ============================================
+   DARK MODE OVERRIDES
+   ============================================ */
+body.dark-theme .add-project-card .label-light {
+  background: var(--bg-card-hover);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+}
+
+body.dark-theme .add-project-card .label-dark {
+  background: var(--text-primary);
+  color: var(--bg-card);
+}
+
+body.dark-theme .add-project-card .submit-btn {
+  background: linear-gradient(135deg, #C9A84C 0%, #B8963A 50%, #A68530 100%) !important;
+  box-shadow: 0 4px 16px rgba(201, 168, 76, 0.25) !important;
+  color: #ffffff !important;
+}
+
+body.dark-theme .add-project-card .submit-btn:hover {
+  box-shadow: 0 8px 30px rgba(201, 168, 76, 0.4) !important;
+}
+
+body.dark-theme .add-project-card input[type="file"] {
+  border-color: var(--border) !important;
+}
+
+body.dark-theme .add-project-card input[type="file"]:hover {
+  border-color: var(--accent) !important;
+}
+
+body.dark-theme .add-project-card .custom-radio .form-check-input {
+  background: var(--bg-card) !important;
+}
+
+body.dark-theme .add-project-card .custom-radio .form-check-input:checked {
+  background: #C9A84C !important;
+}
+
+body.dark-theme .add-project-card .custom-select:disabled,
+body.dark-theme .add-project-card .form-control:disabled,
+body.dark-theme .add-project-card .custom-select.disabled-custom,
+body.dark-theme .add-project-card .form-control.disabled-custom {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  color: rgba(255, 255, 255, 0.4) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* ============================================
+   ALIGNMENT HELPERS
+   ============================================ */
+.add-project-card .d-flex-align-center {
+  display: flex;
+  align-items: center;
+}
+
+/* ============================================
+   ADD CUSTOMER BUTTON - Gold Theme (Text White)
+   ============================================ */
+.add-project-card .btn-add-customer {
+  background: #C9A84C !important;
+  border: none !important;
+  border-radius: var(--r-sm) !important;
+  padding: 8px 20px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: #ffffff !important;
+  font-family: var(--font) !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 2px 8px rgba(201, 168, 76, 0.25) !important;
+}
+
+.add-project-card .btn-add-customer:hover {
+  background: #B8963A !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 12px rgba(201, 168, 76, 0.35) !important;
+}
+
+.add-project-card .btn-add-customer:disabled {
+  background: var(--text-muted) !important;
+  cursor: not-allowed !important;
+  opacity: 0.6 !important;
+  transform: none !important;
+  box-shadow: none !important;
+  color: #ffffff !important;
+}
+
+/* ============================================
+   REMOVE CUSTOMER BUTTON (X)
+   ============================================ */
+.add-project-card .btn-remove-customer {
+  background: var(--red) !important;
+  border: none !important;
+  border-radius: var(--r-sm) !important;
+  padding: 6px 12px !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  color: #ffffff !important;
+  font-family: var(--font) !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.25) !important;
+  min-width: 36px !important;
+  height: 36px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.add-project-card .btn-remove-customer:hover {
+  background: #dc2626 !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.35) !important;
+}
+
+/* ============================================
+   DARK MODE OVERRIDES FOR BUTTONS
+   ============================================ */
+body.dark-theme .add-project-card .btn-add-customer {
+  background: #C9A84C !important;
+  box-shadow: 0 2px 8px rgba(201, 168, 76, 0.2) !important;
+  color: #ffffff !important;
+}
+
+body.dark-theme .add-project-card .btn-add-customer:hover {
+  box-shadow: 0 4px 12px rgba(201, 168, 76, 0.3) !important;
+}
+
+body.dark-theme .add-project-card .btn-remove-customer {
+  background: var(--red) !important;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.2) !important;
+}
+
+body.dark-theme .add-project-card .btn-remove-customer:hover {
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3) !important;
+}
+
+/* ============================================
+   BACK BUTTON - Gold Theme (Text White)
+   ============================================ */
+.add-project-card .btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-card-hover);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-sm);
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #000000 !important;
+  font-family: var(--font);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  min-height: 44px;
+}
+
+.add-project-card .btn-back:hover {
+  background: var(--bg-card);
+  border-color: #C9A84C;
+  color: #000000 !important;
+  transform: translateX(-3px);
+  box-shadow: 0 2px 8px rgba(201, 168, 76, 0.10);
+}
+
+.add-project-card .btn-back:active {
+  transform: translateX(0);
+}
+
+.add-project-card .btn-back .feather {
+  font-size: 16px;
+  transition: transform 0.3s ease;
+}
+
+.add-project-card .btn-back:hover .feather {
+  transform: translateX(-2px);
+}
+
+/* ============================================
+   DARK MODE - BACK BUTTON
+   ============================================ */
+body.dark-theme .add-project-card .btn-back {
+  background: var(--bg-card-hover);
+  border-color: var(--border);
+  color: #ffffff !important;
+}
+
+body.dark-theme .add-project-card .btn-back:hover {
+  background: rgba(201, 168, 76, 0.10);
+  border-color: #C9A84C;
+  color: #ffffff !important;
+  box-shadow: 0 2px 12px rgba(201, 168, 76, 0.20);
+}
+
+.add-project-card .gap-2 { gap: 8px; }
+.add-project-card .gap-3 { gap: 12px; }
+.add-project-card .mt-2 { margin-top: 8px; }
+.add-project-card .mt-3 { margin-top: 16px; }
+.add-project-card .mb-2 { margin-bottom: 8px; }
+.add-project-card .mb-3 { margin-bottom: 16px; }

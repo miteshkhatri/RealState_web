@@ -1,0 +1,12 @@
+.table-responsive{
+ overflow-x: visible;
+}
+
+@font-face {
+  font-family: 'Kruti Dev 010';
+  src: url('../../assets/fonts/krutidev-010-hindi-font-download.ttf') format('truetype');
+}
+
+.kruti-dev {
+  font-family: 'Kruti Dev 010', sans-serif !important;
+}

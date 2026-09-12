@@ -1,0 +1,50 @@
+@font-face {
+    font-family: 'Kruti Dev 010';
+    src: url('../../assets//fonts/krutidev-010-hindi-font-download.ttf') format('truetype'); 
+  }
+  
+  .ql-editor {
+    font-family: 'Kruti Dev 010', sans-serif; 
+ 
+  }
+
+ p {
+    font-size: 16px;
+}
+.center-rtl {
+  text-align: center;   /* center horizontally */
+  direction: rtl;       /* right-to-left */
+  unicode-bidi: embed;  /* ensures proper RTL rendering */
+  font-weight: bold;    /* optional */
+  font-size: 18px;      /* optional */
+}
+
+  .ql-editor table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+  }
+  
+  .ql-editor th, .ql-editor td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: left;
+  }
+  
+  .ql-editor th {
+    background-color: #f4f4f4;
+  }
+  
+  
+  /* Add this CSS rule to style the specific text */
+.normal-font {
+  font-weight: normal;
+  font-style: normal;
+  font-family: Arial, sans-serif;  
+  font-size: 16px;
+  text-align: center;
+   
+}
+
+
+  

@@ -1,0 +1,4 @@
+
+export const BOOKINGS = 'BOOKINGS';
+export const SET_BOOKINGS_FETCHED = 'SET_BOOKINGS_FETCHED';
+ 

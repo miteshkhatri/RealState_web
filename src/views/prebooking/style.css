@@ -1,0 +1,32 @@
+@font-face {
+    font-family: 'Kruti Dev 010';
+    src: url('../../assets/fonts/krutidev-010-hindi-font-download.ttf') format('truetype');
+  }
+  
+  .kruti-dev {
+    font-family: 'Kruti Dev 010', sans-serif important;
+     
+  }
+  .dropdown-menu::before {
+    display: none !important;
+  }
+
+  .toolbar-row .btn,
+.toolbar-row .form-select,
+.toolbar-row .form-control {
+  height: 38px;        /* Bootstrap default */
+  padding-top: 6px;
+  padding-bottom: 6px;
+  display: flex;
+  align-items: center;
+}
+ 
+
+.form-control:disabled,
+.form-control[readonly],
+.form-select:disabled {
+  background-color: #f0f0f0 !important;
+  color: #999999 !important;
+  cursor: not-allowed !important;
+  opacity: 1 !important;
+}

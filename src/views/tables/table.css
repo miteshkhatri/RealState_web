@@ -1,0 +1,37 @@
+@font-face {
+    font-family: 'Kruti Dev 010';
+    src: url('../../assets/fonts/krutidev-010-hindi-font-download.ttf') format('truetype');
+  }
+  
+  .kruti-dev {
+    font-family: 'Kruti Dev 010', sans-serif;
+  }
+  
+.drp-user .dropdown-toggle::after {
+    display: none !important; 
+    content: '' !important;    
+  }
+  input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* Force custom styles on disabled select */
+.custom-select:disabled,
+.custom-select[disabled] {
+  background-color: #e9ecef !important;
+  opacity: 0.7 !important;
+  cursor: not-allowed !important;
+}
+
+/* If you want a specific color like the one you tried */
+.custom-select.disabled-custom:disabled,
+.custom-select.disabled-custom[disabled] {
+  background-color: #f0f0f0 !important;
+  opacity: 0.9 !important;
+}

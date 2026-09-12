@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rameshwarm Market – Naal Badi, Bikaner</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Hindi&family=Playfair+Display:wght@700&family=DM+Sans:wght@400;500;600&display=swap');
+
+  :root {
+    --sand: #f5e6c8;
+    --deep: #1a120b;
+    --brick: #c0392b;
+    --gold: #d4a017;
+    --green: #2e7d32;
+    --blue: #1565c0;
+    --available: rgba(46,125,50,0.22);
+    --booked: rgba(192,57,43,0.30);
+    --hover: rgba(212,160,23,0.45);
+    --road: #e8d5a3;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #1a120b;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--deep);
+    min-height: 100vh;
+  }
+
+  /* ── TOP HEADER ── */
+  .site-header {
+    background: linear-gradient(135deg, #1a120b 0%, #2d1f0e 100%);
+    border-bottom: 3px solid var(--gold);
+    padding: 14px 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .site-header h1 {
+    font-family: 'Playfair Display', serif;
+    color: var(--gold);
+    font-size: 22px;
+    letter-spacing: 1px;
+  }
+  .site-header p {
+    color: #c9a96e;
+    font-size: 12px;
+    margin-top: 2px;
+  }
+  .legend {
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    color: #e8d5a3;
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .legend-box {
+    width: 18px; height: 18px;
+    border-radius: 3px;
+    border: 2px solid rgba(255,255,255,0.3);
+  }
+
+  /* ── STATS BAR ── */
+  .stats-bar {
+    background: #2d1f0e;
+    border-bottom: 1px solid #4a3520;
+    padding: 8px 30px;
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+  }
+  .stat {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #c9a96e;
+    font-size: 13px;
+  }
+  .stat span {
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--gold);
+  }
+
+  /* ── MAIN LAYOUT ── */
+  .main {
+    display: flex;
+    height: calc(100vh - 100px);
+  }
+
+  /* ── MAP AREA ── */
+  .map-area {
+    flex: 1;
+    overflow: auto;
+    background: #f0e6d0;
+    position: relative;
+  }
+
+  .map-wrapper {
+    position: relative;
+    display: inline-block;
+    min-width: 100%;
+  }
+
+  .map-wrapper img {
+    display: block;
+    width: 100%;
+    max-width: 1100px;
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+
+  /* SVG overlay */
+  .plot-svg {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+
+  /* ── PLOT CELLS ── */
+  .plot-cell {
+    pointer-events: all;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .plot-cell:hover rect,
+  .plot-cell:hover polygon {
+    fill: var(--hover) !important;
+    stroke-width: 2.5 !important;
+  }
+  .plot-cell.available rect,
+  .plot-cell.available polygon { fill: var(--available); stroke: #2e7d32; stroke-width: 1.2; }
+  .plot-cell.booked rect,
+  .plot-cell.booked polygon   { fill: var(--booked);    stroke: #c0392b; stroke-width: 1.2; }
+
+  /* ── ZOOM TOOLBAR ── */
+  .zoom-bar {
+    position: fixed;
+    right: 22px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .zoom-bar button {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    border: none;
+    background: #fff;
+    font-size: 18px;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+    transition: transform 0.1s;
+  }
+  .zoom-bar button:active { transform: scale(0.92); }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: 300px;
+    background: #fff;
+    border-left: 3px solid var(--gold);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    transition: transform 0.3s;
+  }
+  .sidebar-header {
+    background: linear-gradient(135deg, #1a120b, #2d1f0e);
+    padding: 20px;
+    color: var(--gold);
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    border-bottom: 2px solid var(--gold);
+    flex-shrink: 0;
+  }
+  .sidebar-header p { color: #c9a96e; font-size: 12px; margin-top: 4px; font-family: 'DM Sans', sans-serif; font-weight: 400; }
+
+  .sidebar-body {
+    padding: 20px;
+    flex: 1;
+  }
+
+  .no-selection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    color: #94a3b8;
+    text-align: center;
+    gap: 12px;
+  }
+  .no-selection .icon { font-size: 48px; opacity: 0.4; }
+  .no-selection p { font-size: 14px; line-height: 1.6; }
+
+  /* Plot detail card */
+  .plot-detail { display: none; }
+  .plot-detail.active { display: block; }
+
+  .plot-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 16px;
+    border-radius: 30px;
+    font-weight: 700;
+    font-size: 13px;
+    margin-bottom: 16px;
+  }
+  .plot-badge.available { background: #dcfce7; color: #166534; }
+  .plot-badge.booked    { background: #fee2e2; color: #991b1b; }
+
+  .plot-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    color: var(--deep);
+    margin-bottom: 4px;
+  }
+  .plot-block-label {
+    font-size: 13px;
+    color: #64748b;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .info-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 12px;
+  }
+  .info-card .label {
+    font-size: 11px;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+  }
+  .info-card .value {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--deep);
+  }
+
+  .divider {
+    height: 1px;
+    background: #e2e8f0;
+    margin: 16px 0;
+  }
+
+  .owner-box {
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    border-radius: 10px;
+    padding: 14px;
+    margin-bottom: 16px;
+  }
+  .owner-box .title {
+    font-size: 11px;
+    font-weight: 700;
+    color: #ea580c;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+  }
+  .owner-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    color: #374151;
+    margin-bottom: 6px;
+  }
+  .owner-row b { color: var(--deep); }
+
+  .btn-book {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 4px;
+    letter-spacing: 0.5px;
+  }
+  .btn-book.available {
+    background: linear-gradient(135deg, #166534, #15803d);
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(22,101,52,0.3);
+  }
+  .btn-book.available:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(22,101,52,0.4);
+  }
+  .btn-book.booked {
+    background: #f1f5f9;
+    color: #94a3b8;
+    cursor: not-allowed;
+  }
+
+  /* Block summary tabs */
+  .block-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 14px 20px;
+    border-top: 1px solid #e2e8f0;
+    background: #fafafa;
+  }
+  .block-tab {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1.5px solid #d1d5db;
+    background: #fff;
+    color: #374151;
+    transition: all 0.15s;
+  }
+  .block-tab:hover, .block-tab.active {
+    background: var(--deep);
+    color: var(--gold);
+    border-color: var(--deep);
+  }
+
+  /* ── POPUP (mobile) ── */
+  .popup-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 1000;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .popup-overlay.show { display: flex; }
+  .popup-sheet {
+    background: #fff;
+    border-radius: 20px 20px 0 0;
+    padding: 24px;
+    width: 100%;
+    max-width: 480px;
+    animation: slideUp 0.3s ease;
+  }
+  @keyframes slideUp {
+    from { transform: translateY(100%); }
+    to   { transform: translateY(0); }
+  }
+
+  @media (max-width: 700px) {
+    .sidebar { display: none; }
+    .main { height: calc(100vh - 90px); }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<div class="site-header">
+  <div>
+    <h1>🏪 Rameshwarm Market</h1>
+    <p>Khasra No. 2494/2345 | Village Naal-Badi, Bikaner | Thar Surveyor & Infrastructure</p>
+  </div>
+  <div class="legend">
+    <div class="legend-item">
+      <div class="legend-box" style="background:rgba(46,125,50,0.3);border-color:#2e7d32"></div> Available
+    </div>
+    <div class="legend-item">
+      <div class="legend-box" style="background:rgba(192,57,43,0.3);border-color:#c0392b"></div> Booked
+    </div>
+    <div class="legend-item">
+      <div class="legend-box" style="background:rgba(212,160,23,0.45);border-color:#d4a017"></div> Selected
+    </div>
+  </div>
+</div>
+
+<!-- ── STATS BAR ── -->
+<div class="stats-bar">
+  <div class="stat">Total Plots: <span id="stat-total">346</span></div>
+  <div class="stat">Commercial: <span>12</span> (12'×30')</div>
+  <div class="stat">Standard: <span>262</span> (10'×25')</div>
+  <div class="stat">Variable: <span>72</span></div>
+  <div class="stat">Informal Shops: <span>7</span></div>
+  <div class="stat">Total Area: <span>232202</span> sq.ft</div>
+</div>
+
+<!-- ── MAIN ── -->
+<div class="main">
+
+  <!-- MAP -->
+  <div class="map-area" id="mapArea">
+    <div class="map-wrapper" id="mapWrapper">
+      <svg id="baseSvg" viewBox="0 0 1060 1060" xmlns="http://www.w3.org/2000/svg"
+           style="width:100%;max-width:1100px;display:block;background:#f0e6d0;">
+
+        <!-- Background / ground -->
+        <rect width="1060" height="1060" fill="#e8d5a3"/>
+
+        <!-- Masterplan Road 200' Wide (top) -->
+        <rect x="0" y="60" width="1060" height="55" fill="#c8b88a" stroke="#8a7a5a" stroke-width="1"/>
+        <text x="530" y="92" text-anchor="middle" fill="#5a4a2a" font-size="13" font-weight="bold">MASTERPLAN ROAD 200' WIDE</text>
+
+        <!-- Boundary outline of scheme -->
+        <rect x="60" y="130" width="680" height="860" rx="4"
+              fill="none" stroke="#c0392b" stroke-width="3" stroke-dasharray="10,4"/>
+
+        <!-- ═══ BLOCK A (top-left, 12 plots, 10x25) ═══ -->
+        <g id="blockA">
+          <rect x="80" y="140" width="120" height="200" fill="#d4e8d4" stroke="#2e7d32" stroke-width="1.5"/>
+          <text x="140" y="195" text-anchor="middle" fill="#1a5c1a" font-size="11" font-weight="bold">BLOCK A</text>
+          <!-- A plots: 2 cols x 6 rows -->
+          <g id="block-a-plots"></g>
+        </g>
+
+        <!-- ═══ ROAD 40' between A and B ═══ -->
+        <rect x="200" y="140" width="40" height="200" fill="#c8b88a"/>
+        <text x="220" y="245" text-anchor="middle" fill="#5a4a2a" font-size="9" transform="rotate(-90,220,245)">ROAD 40'</text>
+
+        <!-- ═══ BLOCK B (10x25, 61 plots total) ═══ -->
+        <!-- Row 1: B-1 to B-31 -->
+        <g id="block-b-row1"></g>
+        <!-- Row 2: B-32 to B-61 -->
+        <g id="block-b-row2"></g>
+
+        <!-- ═══ ROAD 40' ═══ -->
+        <rect x="80" y="340" width="660" height="35" fill="#c8b88a"/>
+        <text x="400" y="362" text-anchor="middle" fill="#5a4a2a" font-size="10" font-weight="bold">ROAD 40' WIDE</text>
+
+        <!-- ═══ BLOCK C (large block, 72 plots) ═══ -->
+        <g id="block-c"></g>
+
+        <!-- ═══ ROAD 40' ═══ -->
+        <rect x="80" y="540" width="660" height="35" fill="#c8b88a"/>
+        <text x="400" y="562" text-anchor="middle" fill="#5a4a2a" font-size="10" font-weight="bold">ROAD 40' WIDE</text>
+
+        <!-- ═══ BLOCK D (66 plots) ═══ -->
+        <g id="block-d"></g>
+
+        <!-- ═══ ROAD 40' ═══ -->
+        <rect x="80" y="720" width="660" height="35" fill="#c8b88a"/>
+        <text x="400" y="742" text-anchor="middle" fill="#5a4a2a" font-size="10" font-weight="bold">ROAD 40' WIDE</text>
+
+        <!-- ═══ BLOCK E (70 plots) ═══ -->
+        <g id="block-e"></g>
+
+        <!-- ═══ BLOCK F right side (65 plots) ═══ -->
+        <g id="block-f"></g>
+
+        <!-- Park area -->
+        <rect x="62" y="900" width="100" height="80" fill="#b8e0b8" stroke="#2e7d32" stroke-width="1.5"/>
+        <text x="112" y="945" text-anchor="middle" fill="#1a5c1a" font-size="11" font-weight="bold">PARK</text>
+
+        <!-- Facility -->
+        <rect x="640" y="160" width="90" height="150" fill="#b8d4e8" stroke="#1565c0" stroke-width="1.5"/>
+        <text x="685" y="240" text-anchor="middle" fill="#0d3a6b" font-size="11" font-weight="bold">FACILITY</text>
+
+        <!-- Title box -->
+        <rect x="760" y="300" width="280" height="200" fill="white" stroke="#1a120b" stroke-width="2" rx="4"/>
+        <text x="900" y="325" text-anchor="middle" fill="#c0392b" font-size="13" font-weight="bold">RAMESHWARM MARKET</text>
+        <line x1="770" y1="375" x2="1030" y2="375" stroke="#ddd" stroke-width="1"/>
+        <text x="900" y="395" text-anchor="middle" fill="#1a120b" font-size="10" font-weight="bold">TOTAL PLOTS: 346</text>
+        <text x="900" y="415" text-anchor="middle" fill="#1a120b" font-size="10">Commercial (12'×30'): 12</text>
+        <text x="900" y="432" text-anchor="middle" fill="#1a120b" font-size="10">Standard (10'×25'): 262</text>
+        <text x="900" y="449" text-anchor="middle" fill="#1a120b" font-size="10">Variable Length: 72</text>
+
+        <!-- Clickable plots SVG group (populated by JS) -->
+        <g id="plotLayer"></g>
+
+      </svg>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-header">
+      Plot Details
+      <p>Kisi bhi plot par click karein</p>
+    </div>
+
+    <div class="sidebar-body">
+      <!-- No selection -->
+      <div class="no-selection" id="noSelection">
+        <div class="icon">🗺️</div>
+        <p>Map par kisi plot par<br>click karein details dekhne ke liye</p>
+      </div>
+
+      <!-- Plot detail -->
+      <div class="plot-detail" id="plotDetail">
+        <div id="detailBadge" class="plot-badge available">● Available</div>
+        <div class="plot-number" id="detailPlotNo">A-1</div>
+        <div class="plot-block-label" id="detailBlock">Block A</div>
+
+        <div class="info-grid">
+          <div class="info-card">
+            <div class="label">Plot Size</div>
+            <div class="value" id="detailSize">10'×25'</div>
+          </div>
+          <div class="info-card">
+            <div class="label">Area</div>
+            <div class="value" id="detailArea">250 sq.ft</div>
+          </div>
+          <div class="info-card">
+            <div class="label">Type</div>
+            <div class="value" id="detailType">Commercial</div>
+          </div>
+          <div class="info-card">
+            <div class="label">Road</div>
+            <div class="value" id="detailRoad">40' Wide</div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div id="ownerBox" class="owner-box" style="display:none">
+          <div class="title">🔒 Booking Details</div>
+          <div class="owner-row"><span>Owner:</span> <b id="ownerName">—</b></div>
+          <div class="owner-row"><span>Mobile:</span> <b id="ownerMobile">—</b></div>
+          <div class="owner-row"><span>Booking Ref:</span> <b id="ownerDate">—</b></div>
+        </div>
+
+        <button class="btn-book available" id="bookBtn" onclick="handleBook()">
+          ✅ Book This Plot
+        </button>
+      </div>
+    </div>
+
+    <!-- Block quick-filter tabs -->
+    <div class="block-tabs">
+      <div class="block-tab active" onclick="filterBlock('all',this)">All</div>
+      <div class="block-tab" onclick="filterBlock('A',this)">A</div>
+      <div class="block-tab" onclick="filterBlock('B',this)">B</div>
+      <div class="block-tab" onclick="filterBlock('C',this)">C</div>
+      <div class="block-tab" onclick="filterBlock('D',this)">D</div>
+      <div class="block-tab" onclick="filterBlock('E',this)">E</div>
+      <div class="block-tab" onclick="filterBlock('F',this)">F</div>
+    </div>
+  </div>
+</div>
+
+<!-- MOBILE POPUP -->
+<div class="popup-overlay" id="mobilePopup" onclick="closeMobilePopup(event)">
+  <div class="popup-sheet">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <div id="mPopupBadge" class="plot-badge available">● Available</div>
+      <button onclick="document.getElementById('mobilePopup').classList.remove('show')"
+              style="background:none;border:none;font-size:22px;cursor:pointer;color:#64748b">✕</button>
+    </div>
+    <div style="font-family:'Playfair Display',serif;font-size:28px;color:#1a120b;margin-bottom:4px" id="mPopupNo">A-1</div>
+    <div style="font-size:12px;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:16px" id="mPopupBlock">Block A</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
+      <div class="info-card"><div class="label">Size</div><div class="value" id="mPopupSize">10'×25'</div></div>
+      <div class="info-card"><div class="label">Area</div><div class="value" id="mPopupArea">250 sq.ft</div></div>
+    </div>
+    <div id="mPopupOwnerBox" style="display:none; background:#fff7ed; padding:10px; border-radius:8px; margin-bottom:10px; font-size:13px;">
+       <div><b>Owner:</b> <span id="mOwnerName"></span></div>
+       <div><b>Mobile:</b> <span id="mOwnerMobile"></span></div>
+    </div>
+    <button class="btn-book available" id="mBookBtn" onclick="handleBook()">✅ Book This Plot</button>
+  </div>
+</div>
+
+<!-- ZOOM BAR -->
+<div class="zoom-bar">
+  <button onclick="changeZoom(0.2)" title="Zoom In">➕</button>
+  <button onclick="changeZoom(-0.2)" title="Zoom Out">➖</button>
+  <button onclick="resetZoom()" title="Reset">🔄</button>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  STATIC BASELINE CONFIGURATION
+// ═══════════════════════════════════════════════════════
+
+const BLOCKS = {
+  A: { count: 12, size: "10'×25'", area: "250", road: "40' Wide", type: "Standard" },
+  B: { count: 61, size: "10'×25'", area: "250", road: "40' Wide", type: "Standard" },
+  C: { count: 72, size: "10'×25'", area: "250", road: "40' Wide", type: "Standard" },
+  D: { count: 66, size: "10'×25'", area: "250", road: "40' Wide", type: "Standard" },
+  E: { count: 70, size: "10'×25'", area: "250", road: "40' Wide", type: "Standard" },
+  F: { count: 65, size: "10'×25'", area: "250", road: "40' Wide", type: "Standard" },
+};
+
+const plots = {};
+let selectedId = null; // सिलेक्टेड आईडी को ग्लोबल रखा है
+
+// साफ़ सुथरा बेसलाइन स्ट्रक्चर
+Object.entries(BLOCKS).forEach(([block, info]) => {
+  for (let i = 1; i <= info.count; i++) {
+    const id = `${block}-${i}`;
+    plots[id] = {
+      id, block,
+      plot_no: i.toString(),
+      size: info.size,
+      area: info.area,
+      road: info.road,
+      type: info.type,
+      booked: false, 
+      owner:  '',
+      mobile: '',
+      date:   '',
+    };
+  }
+});
+
+// ═══════════════════════════════════════════════════════
+//  LIVE API OVERRIDE SYNC Engine
+// ═══════════════════════════════════════════════════════
+
+function syncWithLiveAPIData() {
+  const apiPlots = window.projectPlots;
+
+  if (!apiPlots || apiPlots.length === 0) {
+    setTimeout(syncWithLiveAPIData, 200);
+    return;
+  }
+
+  console.log("Injecting purely Live API Plots onto Map:", apiPlots);
+
+  apiPlots.forEach(plot => {
+     const blockName = plot.sector_name.trim().toUpperCase(); // "C"
+     const id = `${blockName}-${plot.plot_no}`; 
+
+     if (plots[id]) {
+        const isBooked = plot.is_booked === 1 || plot.status === "Booked";
+        
+        plots[id].booked = isBooked;
+        plots[id].size = `${plot.plot_width}'×${plot.plot_height}'`;
+        plots[id].area = plot.square_feet;
+        plots[id].type = "Commercial (Live)";
+        
+        if (isBooked) {
+          plots[id].owner = plot.booking?.customer_name || '—';
+          plots[id].mobile = plot.booking?.mobile_no || '—';
+          plots[id].date = plot.booking?.booking_id ? `Booking ID: ${plot.booking.booking_id}` : 'Live Booked';
+        }
+     }
+  });
+
+  // लाइव डेटा सिंक होने के बाद मैप दोबारा फ्रेश ड्रा करें
+  drawAllPlots();
+}
+
+// ═══════════════════════════════════════════════════════
+//  SVG GENERATION UTILS
+// ═══════════════════════════════════════════════════════
+
+function makePlotRect(id, x, y, w, h) {
+  const p = plots[id];
+  const status = p.booked ? 'booked' : 'available';
+  const fill   = p.booked ? 'rgba(192,57,43,0.32)' : 'rgba(46,125,50,0.2)';
+  const stroke = p.booked ? '#c0392b' : '#2e7d32';
+
+  const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+  g.setAttribute('class', `plot-cell ${status}`);
+  g.setAttribute('data-id', id);
+  g.setAttribute('data-block', p.block);
+  g.style.cursor = 'pointer';
+
+  const rect = document.createElementNS('http://www.w3.org/2000/svg','rect');
+  rect.setAttribute('x', x); rect.setAttribute('y', y);
+  rect.setAttribute('width', w); rect.setAttribute('height', h);
+  rect.setAttribute('fill', selectedId === id ? 'rgba(212,160,23,0.6)' : fill); // सिलेक्शन बरकरार रखने के लिए
+  rect.setAttribute('stroke', selectedId === id ? '#d4a017' : stroke);
+  rect.setAttribute('stroke-width', selectedId === id ? '2.5' : '1');
+  rect.setAttribute('rx', '1');
+
+  const txt = document.createElementNS('http://www.w3.org/2000/svg','text');
+  txt.setAttribute('x', x + w/2); txt.setAttribute('y', y + h/2 + 1);
+  txt.setAttribute('text-anchor','middle');
+  txt.setAttribute('dominant-baseline','middle');
+  txt.setAttribute('fill', p.booked ? '#7f1d1d' : '#14532d');
+  txt.setAttribute('font-size', Math.min(w, h) > 25 ? '8' : '6');
+  txt.setAttribute('font-weight','bold');
+  txt.setAttribute('pointer-events','none');
+  txt.textContent = id;
+
+  g.appendChild(rect); g.appendChild(txt);
+  
+  // यहाँ क्लिक इवेंट बिल्कुल सही तरीके से लगाया गया है
+  g.addEventListener('click', function(e) {
+     e.preventDefault();
+     selectPlot(id);
+  });
+
+  g.addEventListener('mouseenter', () => {
+    if (selectedId !== id) {
+      rect.setAttribute('fill', 'rgba(212,160,23,0.5)');
+      rect.setAttribute('stroke', '#d4a017');
+      rect.setAttribute('stroke-width','2');
+    }
+  });
+
+  g.addEventListener('mouseleave', () => {
+    if (selectedId !== id) {
+      rect.setAttribute('fill', fill);
+      rect.setAttribute('stroke', stroke);
+      rect.setAttribute('stroke-width','1');
+    }
+  });
+
+  return g;
+}
+
+function drawAllPlots() {
+  const layer = document.getElementById('plotLayer');
+  layer.innerHTML = '';
+
+  // ── BLOCK A ──
+  const aX=80, aY=150, aw=28, ah=27;
+  let an=1;
+  for(let r=0;r<6;r++) for(let c=0;c<2;c++) {
+    if(an>12) break;
+    layer.appendChild(makePlotRect(`A-${an}`, aX+c*(aw+2), aY+r*(ah+2), aw, ah));
+    an++;
+  }
+
+  // ── BLOCK B ──
+  const bX=80, bY=220, bw=18, bh=24;
+  for(let i=1;i<=31;i++) layer.appendChild(makePlotRect(`B-${i}`, bX+(i-1)*(bw+1.5), bY, bw, bh));
+  for(let i=32;i<=61;i++) layer.appendChild(makePlotRect(`B-${i}`, bX+(i-32)*(bw+1.5), bY+bh+2, bw, bh));
+
+  // ── BLOCK C ──
+  const cX=80, cY=380, cw=17, ch=22;
+  for(let i=1;i<=27;i++) layer.appendChild(makePlotRect(`C-${i}`, cX+(i-1)*(cw+1.5), cY, cw, ch));
+  for(let i=28;i<=55;i++) layer.appendChild(makePlotRect(`C-${i}`, cX+(i-28)*(cw+1.5), cY+ch+2, cw, ch));
+  for(let i=56;i<=72;i++) layer.appendChild(makePlotRect(`C-${i}`, cX+(i-56)*(cw+1.5), cY+2*(ch+2), cw, ch));
+
+  // ── BLOCK D ──
+  const dX=80, dY=580, dw=18, dh=22;
+  for(let i=1;i<=33;i++) layer.appendChild(makePlotRect(`D-${i}`, dX+(i-1)*(dw+1.5), dY, dw, dh));
+  for(let i=34;i<=66;i++) layer.appendChild(makePlotRect(`D-${i}`, dX+(i-34)*(dw+1.5), dY+dh+2, dw, dh));
+
+  // ── BLOCK E ──
+  const eX=80, eY=760, ew=17, eh=22;
+  for(let i=1;i<=35;i++) layer.appendChild(makePlotRect(`E-${i}`, eX+(i-1)*(ew+1.5), eY, ew, eh));
+  for(let i=36;i<=70;i++) layer.appendChild(makePlotRect(`E-${i}`, eX+(i-36)*(ew+1.5), eY+eh+2, ew, eh));
+
+  // ── BLOCK F ──
+  const fX=80, fY=830, fw=17, fh=22;
+  for(let i=1;i<=33;i++) layer.appendChild(makePlotRect(`F-${i}`, fX+(i-1)*(fw+1.5), fY, fw, fh));
+  for(let i=34;i<=65;i++) layer.appendChild(makePlotRect(`F-${i}`, fX+(i-34)*(fw+1.5), fY+fh+2, fw, fh));
+}
+
+// ═══════════════════════════════════════════════════════
+//  INTERACTIVE ACTIONS (DETAILS LOADER)
+// ═══════════════════════════════════════════════════════
+
+function selectPlot(id) {
+  const p = plots[id];
+  if (!p) return;
+
+  // पुराने सिलेक्टेड प्लॉट का बॉर्डर नॉर्मल करें
+  if (selectedId) {
+    const prev = document.querySelector(`[data-id="${selectedId}"] rect`);
+    if (prev) {
+      const pp = plots[selectedId];
+      prev.setAttribute('fill', pp.booked ? 'rgba(192,57,43,0.32)' : 'rgba(46,125,50,0.2)');
+      prev.setAttribute('stroke', pp.booked ? '#c0392b' : '#2e7d32');
+      prev.setAttribute('stroke-width','1');
+    }
+  }
+
+  selectedId = id;
+
+  // वर्तमान सिलेक्टेड प्लॉट को गोल्डन कलर में हाइलाइट करें
+  const el = document.querySelector(`[data-id="${id}"] rect`);
+  if (el) {
+    el.setAttribute('fill','rgba(212,160,23,0.6)');
+    el.setAttribute('stroke','#d4a017');
+    el.setAttribute('stroke-width','2.5');
+  }
+
+  // साइडबार के डोम (DOM) एलिमेंट्स को लाइव डेटा से भरें
+  document.getElementById('noSelection').style.display = 'none';
+  document.getElementById('plotDetail').classList.add('active');
+
+  const badge = document.getElementById('detailBadge');
+  badge.textContent = p.booked ? '🔒 Booked' : '✅ Available';
+  badge.className = `plot-badge ${p.booked ? 'booked' : 'available'}`;
+
+  document.getElementById('detailPlotNo').textContent = id;
+  document.getElementById('detailBlock').textContent = `Block ${p.block}`;
+  document.getElementById('detailSize').textContent = p.size;
+  document.getElementById('detailArea').textContent = p.area + (typeof p.area === 'number' ? " sq.ft" : "");
+  document.getElementById('detailType').textContent = p.type;
+  document.getElementById('detailRoad').textContent = p.road;
+
+  // बुकिंग ओनर डिटेल्स बॉक्स हैंडलर
+  const ownerBox = document.getElementById('ownerBox');
+  if (p.booked) {
+    ownerBox.style.display = 'block';
+    document.getElementById('ownerName').textContent   = p.owner  || '—';
+    document.getElementById('ownerMobile').textContent = p.mobile || '—';
+    document.getElementById('ownerDate').textContent   = p.date   || '—';
+  } else {
+    ownerBox.style.display = 'none';
+  }
+
+  const btn = document.getElementById('bookBtn');
+  btn.textContent = p.booked ? '🔒 Already Booked' : '✅ Book This Plot';
+  btn.className   = `btn-book ${p.booked ? 'booked' : 'available'}`;
+  btn.disabled    = p.booked;
+
+  // मोबाइल पॉपअप सिंक
+  if (window.innerWidth <= 700) {
+    const mp = document.getElementById('mobilePopup');
+    document.getElementById('mPopupBadge').textContent = p.booked ? '🔒 Booked' : '✅ Available';
+    document.getElementById('mPopupBadge').className = `plot-badge ${p.booked?'booked':'available'}`;
+    document.getElementById('mPopupNo').textContent = id;
+    document.getElementById('mPopupBlock').textContent = `Block ${p.block}`;
+    document.getElementById('mPopupSize').textContent = p.size;
+    document.getElementById('mPopupArea').textContent = p.area + " sq.ft";
+    
+    const mOwnerBox = document.getElementById('mPopupOwnerBox');
+    if(p.booked) {
+       mOwnerBox.style.display = "block";
+       document.getElementById('mOwnerName').textContent = p.owner || '—';
+       document.getElementById('mOwnerMobile').textContent = p.mobile || '—';
+    } else {
+       mOwnerBox.style.display = "none";
+    }
+    
+    const mb = document.getElementById('mBookBtn');
+    mb.textContent = p.booked ? '🔒 Already Booked' : '✅ Book This Plot';
+    mb.className = `btn-book ${p.booked?'booked':'available'}`;
+    mb.disabled = p.booked;
+    mp.classList.add('show');
+  }
+}
+
+function handleBook() {
+  if (!selectedId) return;
+  const p = plots[selectedId];
+  if (p.booked) return;
+  const name = prompt(`Plot ${selectedId} को बुक करने के लिए मालिक का नाम दर्ज करें:`);
+  if (!name) return;
+  const mobile = prompt("मोबाइल नंबर दर्ज करें:");
+  if (!mobile) return;
+  p.booked = true;
+  p.owner  = name;
+  p.mobile = mobile;
+  p.date   = new Date().toLocaleDateString('en-IN', {day:'numeric',month:'short',year:'numeric'});
+  drawAllPlots();
+  selectPlot(selectedId);
+}
+
+function closeMobilePopup(e) {
+  if (e.target === document.getElementById('mobilePopup'))
+    document.getElementById('mobilePopup').classList.remove('show');
+}
+
+// ── ZOOM CONTROLS ──
+let currentZoom = 1;
+function changeZoom(delta) {
+  currentZoom = Math.min(3, Math.max(0.5, currentZoom + delta));
+  document.getElementById('baseSvg').style.transform = `scale(${currentZoom})`;
+  document.getElementById('baseSvg').style.transformOrigin = '0 0';
+}
+function resetZoom() {
+  currentZoom = 1;
+  document.getElementById('baseSvg').style.transform = 'scale(1)';
+}
+
+// ── FILTER BLOCKS ──
+function filterBlock(block, el) {
+  document.querySelectorAll('.block-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.plot-cell').forEach(g => {
+    if (block === 'all' || g.getAttribute('data-block') === block) {
+      g.style.display = '';
+    } else {
+      g.style.display = 'none';
+    }
+  });
+}
+
+// ── START ENGINE ──
+drawAllPlots();
+syncWithLiveAPIData(); 
+</script>
+</body>
+</html>

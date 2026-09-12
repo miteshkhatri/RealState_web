@@ -1,0 +1,269 @@
+/* Remove the number input spinner */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* ============================================
+   BACK BUTTON - Premium Design
+   ============================================ */
+.btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-card-hover, #f3f4f6);
+  border: 1.5px solid var(--border, #d1d5db);
+  border-radius: var(--r-sm, 8px);
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary, #374151);
+  font-family: var(--font, 'Inter', sans-serif);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  min-height: 44px;
+}
+
+.btn-back:hover {
+  background: var(--bg-card, #ffffff);
+  border-color: #C9A84C;
+  color: #C9A84C;
+  transform: translateX(-3px);
+  box-shadow: 0 2px 8px rgba(201, 168, 76, 0.15);
+}
+
+.btn-back:active {
+  transform: translateX(0);
+}
+
+.btn-back .feather {
+  font-size: 16px;
+  transition: transform 0.3s ease;
+}
+
+.btn-back:hover .feather {
+  transform: translateX(-2px);
+}
+
+/* ============================================
+   DARK MODE - BACK BUTTON
+   ============================================ */
+body.dark-theme .btn-back {
+  background: var(--bg-card-hover, #374151);
+  border-color: var(--border, #4b5563);
+  color: var(--text-primary, #e5e7eb);
+}
+
+body.dark-theme .btn-back:hover {
+  background: rgba(201, 168, 76, 0.10);
+  border-color: #C9A84C;
+  color: #C9A84C;
+  box-shadow: 0 2px 12px rgba(201, 168, 76, 0.20);
+}
+
+/* ============================================
+   MODERN PAGINATION - PREMIUM DESIGN
+   ============================================ */
+
+.pagination-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px 0;
+  font-family: var(--font, 'Inter', sans-serif);
+}
+
+/* ── Desktop Pagination ── */
+.pagination-desktop {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--bg-card, #ffffff);
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: var(--r-xl, 12px);
+  padding: 6px 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+/* ── Page Button ── */
+.page-btn {
+  min-width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-primary, #374151);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: var(--font, 'Inter', sans-serif);
+  border-radius: var(--r-sm, 8px);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+  padding: 0 8px;
+}
+
+.page-btn:hover:not(:disabled):not(.active) {
+  background: var(--bg-card-hover, #f3f4f6);
+  border-color: var(--border, #d1d5db);
+  color: #C9A84C;
+  transform: translateY(-1px);
+}
+
+.page-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.page-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ── Active Page ── */
+.page-btn.active {
+  background: linear-gradient(135deg, #C9A84C 0%, #b8943d 50%, #a07c2e 100%);
+  color: #ffffff;
+  border-color: transparent;
+  box-shadow: 0 2px 8px rgba(201, 168, 76, 0.35);
+  font-weight: 700;
+  transform: translateY(-1px);
+}
+
+.page-btn.active:hover {
+  background: linear-gradient(135deg, #b8943d 0%, #a07c2e 50%, #8a6820 100%);
+  box-shadow: 0 4px 12px rgba(201, 168, 76, 0.45);
+}
+
+/* ── Ellipsis ── */
+.ellipsis {
+  min-width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted, #9ca3af);
+  font-size: 14px;
+  font-weight: 500;
+  user-select: none;
+  letter-spacing: 2px;
+}
+
+/* ── Mobile Pagination ── */
+.pagination-mobile {
+  display: none;
+  align-items: center;
+  gap: 12px;
+  background: var(--bg-card, #ffffff);
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: var(--r-xl, 12px);
+  padding: 8px 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.pagination-mobile .page-btn {
+  min-width: 60px;
+  height: 32px;
+  font-size: 12px;
+  font-weight: 600;
+  background: var(--bg-card-hover, #f3f4f6);
+  border: 1px solid var(--border, #d1d5db);
+  border-radius: var(--r-sm, 6px);
+}
+
+.pagination-mobile .page-btn:hover:not(:disabled) {
+  background: rgba(201, 168, 76, 0.10);
+  border-color: #C9A84C;
+  color: #C9A84C;
+}
+
+/* ── Page Info (Mobile) ── */
+.page-info {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary, #1f2937);
+  white-space: nowrap;
+  min-width: 60px;
+  text-align: center;
+  background: var(--bg-card-hover, #f3f4f6);
+  padding: 6px 12px;
+  border-radius: var(--r-sm, 6px);
+  border: 1px solid var(--border, #e5e7eb);
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 767px) {
+  .pagination-desktop {
+    display: none !important;
+  }
+
+  .pagination-mobile {
+    display: flex !important;
+  }
+}
+
+/* ============================================
+   BackButton — Base Styles
+   ============================================ */
+.btn-back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 38px;
+  width: 100px;
+  padding: 0 12px;
+  margin-bottom: 16px;
+  margin-left: 16px;
+  border-radius: 6px;
+  border: 1px solid var(--border, #e2e8f0);
+  background: var(--bg-secondary, #ffffff);
+  color: var(--text-primary, #1e293b);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.btn-back i {
+  font-size: 15px;
+  color: #C9A84C;
+  flex-shrink: 0;
+}
+
+.btn-back:hover {
+  background: rgba(201, 168, 76, 0.08);
+  border-color: #C9A84C;
+  color: #C9A84C;
+}
+
+/* ============================================
+   DARK MODE OVERRIDES — BackButton
+   ============================================ */
+body.dark-theme .btn-back {
+  background: var(--bg-secondary, #1f2937);
+  border-color: var(--border, #374151);
+  color: var(--text-primary, #e5e7eb);
+}
+
+body.dark-theme .btn-back:hover {
+  background: rgba(201, 168, 76, 0.10);
+  border-color: #C9A84C;
+  color: #C9A84C;
+}
+
+body.dark-theme .btn-back i {
+  color: #C9A84C;
+}

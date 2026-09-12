@@ -1,0 +1,4 @@
+
+export const PROJECTS = 'PROJECTS';
+export const SET_PROJECTS_FETCHED = 'SET_PROJECTS_FETCHED';
+ 

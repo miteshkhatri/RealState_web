@@ -1,0 +1,263 @@
+@font-face {
+    font-family: 'Kruti Dev 010';
+    src: url('../../assets/fonts/krutidev-010-hindi-font-download.ttf') format('truetype');
+  }
+  
+  .kruti-dev {
+    font-family: 'Kruti Dev 010', sans-serif;
+  }
+  
+/* ========== RECEIPT CARD ========== */
+.receipt-card {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 18px;
+  margin: 6mm auto;
+  /* background: #f7e671; */
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 130mm; /* Half page height */
+}
+
+/* ========== HEADER & STRUCTURE ========== */
+.receipt-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  margin-bottom: 5px;
+}
+
+.top-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 1px solid #000;
+}
+
+.company-name {
+  text-align: left;
+  margin-bottom: 5px;
+  font-size: 20px;
+}
+
+.company-address {
+  text-align: left;
+}
+
+.receipt-info {
+  font-size: 13px;
+  text-align: right;
+  margin-top: 1px;
+  border-bottom: 1px solid #000;
+}
+
+.receipt-title {
+  text-align: center;
+  font-size: 16px;
+  font-weight: bold;
+  margin: 12px 0 10px;
+  text-decoration: underline;
+}
+
+/* ========== CONTENT SECTION ========== */
+.paragraph-style {
+  margin: 0 35px;
+  line-height: 1.5;
+  font-size: 15px;
+}
+
+.line {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+
+.dots-line {
+  flex: 1;
+  border-bottom: 1px dotted #000;
+  margin: 0 6px;
+  min-width: 100px;
+  position: relative;
+}
+
+.data {
+    position: absolute;
+    left: 0px;
+    top: -15px;
+    padding: 0 3px;
+    font-size: 12px;
+}
+
+.dots-line.small {
+  min-width: 100px;
+}
+
+.data.name-line{
+  min-width: 50px;
+}
+
+
+.dots-line.wides {
+    min-width:200px;
+}
+
+.dots-line.medium {
+  min-width: 130px;
+}
+
+.dots-line.wide {
+  min-width: 313px;
+}
+
+/* ========== FOOTER SECTION ========== */
+.amount-signature-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-top: 35px;
+}
+
+.amount {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.footer-text {
+  font-size: 10px;
+  margin-top: 8px;
+  line-height: 1.5;
+}
+
+.sign-section {
+  text-align: right;
+}
+
+.dots-line.wideses {
+    min-width: 443px;
+}
+.dots-line.wides {
+    min-width: 352px;
+}
+/* .dots-line.widess {
+    min-width: 130px;
+} */
+.sign-line {
+  border-bottom: 1px solid #000;
+  width: 200px;
+  margin-left: auto;
+  margin-bottom: 4px;
+}
+
+.sign-text {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* ========== SCREEN HELPERS ========== */
+.no-print {
+  display: block;
+}
+.overflowss {
+  overflow: hidden !important;
+}
+.print-only { display: none;}
+.screen-only {
+  display: block;
+}
+.copy-label {
+  text-align: center;
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 2px;
+}
+
+/* .copy-separator {
+  border: 1px dashed #000;
+  margin: 20px 0;
+} */
+/* ========== PRINT RULES ========== */
+@media print {
+  /* .copy-label { display: block; } */
+  body {
+    margin: 0;
+    padding: 0;
+  }
+  
+
+  .dots-line.widess {
+    min-width: 0px;  /* jo bhi print ke liye perfect lagta ho */
+  }
+  .print-area {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+  .dots-line.wides {
+    min-width: 350px;
+}
+.dots-line.wideses {
+    min-width:400px;
+}
+   .no-print {
+    display: none !important;
+  }
+  .screen-only {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
+  }
+  /* .receipt-wrapper {
+    page-break-after: always;
+  } */
+
+  .dots-line {
+  flex: 1;
+  border-bottom: 1px dotted #BBBEC4;
+  margin: 0 6px;
+  min-width: 50px;
+  position: relative;
+}
+  .receipt-wrapper {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    page-break-inside: avoid;
+    /* -webkit-column-break-inside: avoid; */
+    break-inside: avoid;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* ✅ Force page break after every 2 receipts */
+  .receipt-wrapper:nth-child(2n) {
+    page-break-after: always;
+  }
+
+  /* ✅ Adjust receipt to fit 2 per A4 page */
+  .receipt-card {
+    width: calc(100% - 10mm);
+    margin: 5mm 3mm;
+   background: #fff !important; 
+    
+    max-height: 136mm;
+    page-break-inside: avoid;
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+    color: #000;
+   font-size: 10px;
+
+    box-shadow: none;
+  }
+
+  @page {
+    size: A4 portrait;
+    margin: 2mm;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+}
+ 

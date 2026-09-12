@@ -1,0 +1,1497 @@
+/* ── Google Font ── */
+// @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+/* ============================================================
+   🌑 MIDNIGHT TRUST — Project Table Card
+   Deep Navy + Gold | Premium Real Estate Theme
+   ============================================================ */
+
+/* ── Root Variables (Light) ── */
+:root {
+  // --font: 'Inter', system-ui, sans-serif;
+
+  /* Surface */
+  --bg-page: #f0f4ff;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f7f9ff;
+  // --bg-header:      linear-gradient(135deg, #C9A84C 0%, #B8963A 100%);
+  --bg-header-alt: #f8faff;
+
+  /* Border */
+  --border: #e4eaff;
+  --border-strong: #c7d2fe;
+
+  /* Text */
+  --text-primary: #0f172a;
+  --text-secondary: #64748b;
+  --text-muted: #94a3b8;
+  --text-on-accent: #ffffff;
+
+  /* Accent - Gold */
+  --accent: #C9A84C;
+  --accent-soft: rgba(201, 168, 76, 0.10);
+  --accent-glow: rgba(201, 168, 76, 0.30);
+
+  /* Status */
+  --green: #2ECC71;
+  --green-soft: rgba(46, 204, 113, 0.12);
+  --orange: #E8C56A;
+  --orange-soft: rgba(232, 197, 106, 0.12);
+  --blue: #2ECC71;
+  --blue-soft: rgba(46, 204, 113, 0.12);
+  --red: #E74C3C;
+  --red-soft: rgba(231, 76, 60, 0.10);
+
+  /* Shadow */
+  --shadow-card: 0 4px 24px rgba(201, 168, 76, 0.08);
+  --shadow-hover: 0 8px 32px rgba(201, 168, 76, 0.15);
+  --shadow-btn: 0 2px 10px rgba(201, 168, 76, 0.25);
+
+  /* Radius */
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 16px;
+  --r-xl: 20px;
+}
+
+/* ── Dark Mode Variables ── */
+body.dark-theme {
+  --bg-page: #0D1B2A;
+  --bg-card: #1E3A5F;
+  --bg-card-hover: #264A73;
+  // --bg-header:      linear-gradient(135deg, #C9A84C 0%, #B8963A 100%);
+  --bg-header-alt: #1B2D45;
+
+  --border: rgba(201, 168, 76, 0.12);
+  --border-strong: rgba(201, 168, 76, 0.20);
+
+  --text-primary: #F4F4F4;
+  --text-secondary: rgba(244, 244, 244, 0.55);
+  --text-muted: rgba(244, 244, 244, 0.30);
+  --text-on-accent: #0D1B2A;
+
+  --accent: #E8C56A;
+  --accent-soft: rgba(232, 197, 106, 0.12);
+  --accent-glow: rgba(232, 197, 106, 0.25);
+
+  --green: #2ECC71;
+  --green-soft: rgba(46, 204, 113, 0.12);
+  --orange: #E8C56A;
+  --orange-soft: rgba(232, 197, 106, 0.12);
+  --blue: #2ECC71;
+  --blue-soft: rgba(46, 204, 113, 0.12);
+  --red: #E74C3C;
+  --red-soft: rgba(231, 76, 60, 0.10);
+
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.45);
+  --shadow-hover: 0 8px 32px rgba(0, 0, 0, 0.60);
+  --shadow-btn: 0 2px 10px rgba(201, 168, 76, 0.30);
+}
+
+/* ============================================
+   CARD WRAPPER
+   ============================================ */
+
+.project-table-card .card {
+  border: 1px solid var(--border) !important;
+  border-radius: var(--r-xl) !important;
+  background: var(--bg-card) !important;
+  box-shadow: var(--shadow-card) !important;
+  /* overflow: hidden; — REMOVED: was clipping transliterate dropdown */
+  font-family: var(--font);
+}
+
+/* ============================================
+   CARD HEADER — Midnight Trust Gold
+   ============================================ */
+
+.project-header {
+  background: var(--bg-header) !important;
+  padding: 16px 22px !important;
+  border-bottom: none !important;
+  position: relative;
+  border-radius: var(--r-xl) var(--r-xl) 0 0;
+}
+
+.project-header>div {
+  flex-wrap: nowrap !important;
+}
+
+/* Subtle shimmer line at bottom of header — Gold */
+.project-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.30), transparent);
+}
+
+.project-title {
+  margin: 0 !important;
+  font-family: var(--font) !important;
+  font-weight: 700 !important;
+  font-size: 18px !important;
+  color: #FFFFFF !important;
+  letter-spacing: -0.03em !important;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.mobile-title {
+  font-size: 15px !important;
+}
+
+/* ── Controls Row ── */
+/* FIX: wrap kiya — layout shift nahi hogi refresh pe */
+.controls-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: nowrap;
+  flex-shrink: 0;
+}
+
+/* ── Limit Toggle ── */
+.limit-toggle {
+  background: rgba(255, 255, 255, 0.90) !important;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(13, 27, 42, 0.12) !important;
+  border-radius: var(--r-sm) !important;
+  height: 36px !important;
+  min-width: 60px;
+  font-weight: 600 !important;
+  font-size: 13px !important;
+  color: #0D1B2A !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 4px;
+  padding: 0 10px !important;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.limit-toggle:hover {
+  background: #ffffff !important;
+  color: #0D1B2A !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.limit-toggle::after {
+  display: none !important;
+}
+
+.limit-chevron {
+  font-size: 11px;
+}
+
+/* ── Limit Menu ── */
+.limit-menu {
+  min-width: 80px !important;
+  padding: 6px !important;
+  border-radius: var(--r-md) !important;
+  border: 1px solid var(--border) !important;
+  background: #ffffff !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18) !important;
+  z-index: 9999 !important;
+}
+
+.limit-item {
+  text-align: center;
+  border-radius: var(--r-sm);
+  font-size: 13px;
+  font-weight: 500;
+  font-family: var(--font);
+  padding: 8px 10px;
+  cursor: pointer;
+  color: #0D1B2A;
+  transition: background 0.15s;
+}
+
+.limit-item:hover {
+  background: var(--accent-soft);
+}
+
+.limit-item.active {
+  font-weight: 600;
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.limit-divider {
+  margin: 3px 0;
+  border-color: var(--border);
+}
+
+/* ── Select Dropdowns (White Background) ── */
+.custom-select {
+  height: 36px;
+  border-radius: var(--r-sm);
+  border: 1px solid rgba(13, 27, 42, 0.12) !important;
+  background: rgba(255, 255, 255, 0.90) !important;
+  color: #0D1B2A !important;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: var(--font);
+  padding: 0 10px;
+  cursor: pointer;
+  outline: none;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+
+.custom-select option {
+  background: #ffffff;
+  color: #0D1B2A;
+}
+
+.custom-select:focus {
+  background: #ffffff !important;
+  border-color: #C9A84C !important;
+  box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.15) !important;
+}
+
+/* ── Search Wrap ── */
+/* FIX: flex basis diya — consistent size across renders */
+.search-wrap {
+  position: relative;
+  min-width: 190px;
+  flex: 1 1 190px;
+  z-index: 100;
+}
+
+.search-wrap-full {
+  min-width: 100%;
+}
+
+.search-icon {
+  position: absolute;
+  left: 11px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgba(13, 27, 42, 0.40);
+  font-size: 14px;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.search-input {
+  height: 36px !important;
+  padding-left: 34px !important;
+  border-radius: var(--r-sm) !important;
+  border: 1px solid rgba(13, 27, 42, 0.12) !important;
+  background: rgba(255, 255, 255, 0.90) !important;
+  color: #0D1B2A !important;
+  font-size: 13px !important;
+  font-weight: 400 !important;
+  font-family: var(--font) !important;
+  width: 100% !important;
+  outline: none !important;
+  transition: background 0.2s !important;
+}
+
+.search-input::placeholder {
+  color: rgba(13, 27, 42, 0.40) !important;
+  font-weight: 400 !important;
+}
+
+.search-input:focus {
+  background: #ffffff !important;
+  border-color: #C9A84C !important;
+  box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.15) !important;
+}
+
+/* ── Transliterate Dropdown Fix ── */
+/* FIX: dropdown niche se clip nahi hogi */
+.search-wrap ul,
+.search-wrap [class*="dropdown"],
+.search-wrap [class*="suggestion"],
+.search-wrap>div>ul {
+  position: absolute !important;
+  z-index: 9999 !important;
+  top: 100% !important;
+  left: 0 !important;
+  right: 0 !important;
+  background: #ffffff !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--r-md) !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18) !important;
+  max-height: 220px !important;
+  overflow-y: auto !important;
+  margin-top: 4px !important;
+  list-style: none !important;
+  padding: 4px !important;
+}
+
+.search-wrap ul li,
+.search-wrap [class*="suggestion"] li {
+  padding: 8px 12px !important;
+  cursor: pointer !important;
+  border-radius: var(--r-sm) !important;
+  font-size: 13px !important;
+  color: #0D1B2A !important;
+  font-family: var(--font) !important;
+  transition: background 0.15s !important;
+}
+
+.search-wrap ul li:hover,
+.search-wrap [class*="suggestion"] li:hover {
+  background: var(--accent-soft) !important;
+}
+
+.search-wrap ul li[aria-selected="true"],
+.search-wrap ul li.active {
+  background: var(--accent-soft) !important;
+  color: var(--accent) !important;
+  font-weight: 600 !important;
+}
+
+body.dark-theme .search-wrap ul,
+body.dark-theme .search-wrap [class*="dropdown"],
+body.dark-theme .search-wrap [class*="suggestion"],
+body.dark-theme .search-wrap>div>ul {
+  background: #1E3A5F !important;
+  border-color: rgba(201, 168, 76, 0.15) !important;
+}
+
+body.dark-theme .search-wrap ul li,
+body.dark-theme .search-wrap [class*="suggestion"] li {
+  color: #F4F4F4 !important;
+}
+
+body.dark-theme .search-wrap ul li:hover,
+body.dark-theme .search-wrap [class*="suggestion"] li:hover {
+  background: rgba(232, 197, 106, 0.12) !important;
+}
+
+body.dark-theme .search-wrap ul li[aria-selected="true"],
+body.dark-theme .search-wrap ul li.active {
+  background: rgba(232, 197, 106, 0.15) !important;
+  color: #E8C56A !important;
+}
+
+/* ── Add Button ── */
+.btn-add {
+  background: rgba(255, 255, 255, 0.90) !important;
+  border: 1px solid rgba(13, 27, 42, 0.12) !important;
+  border-radius: var(--r-sm) !important;
+  height: 36px;
+  padding: 0 16px;
+  font-weight: 600 !important;
+  font-size: 13px !important;
+  font-family: var(--font) !important;
+  color: #0D1B2A !important;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.btn-add:hover {
+  background: #ffffff !important;
+  color: #0D1B2A !important;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* ============================================
+   CARD BODY
+   ============================================ */
+
+.card-body-p0 {
+  padding: 0 !important;
+  background: var(--bg-card) !important;
+}
+
+/* ============================================
+   DESKTOP TABLE
+   ============================================ */
+
+.project-table-desktop {
+  width: 100%;
+  margin-bottom: 0 !important;
+  border-collapse: collapse !important;
+  background: transparent;
+}
+
+/* Header cells */
+.table-header-cell {
+  font-family: var(--font);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-secondary) !important;
+  background: var(--bg-header-alt) !important;
+  padding: 6px 4px !important;
+  white-space: normal;
+  line-height: 1.2;
+  border-bottom: 2px solid var(--border-strong) !important;
+  border-top: none !important;
+  border-left: none !important;
+  border-right: none !important;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+/* Body rows */
+.project-table-desktop tbody tr {
+  border-bottom: 1px solid var(--border) !important;
+  transition: background 0.15s, box-shadow 0.15s;
+}
+
+.project-table-desktop tbody tr:last-child {
+  border-bottom: none !important;
+}
+
+.project-table-desktop td {
+  font-family: var(--font);
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-primary);
+  padding: 6px 4px !important;
+  vertical-align: middle !important;
+  border: none !important;
+  background: transparent;
+}
+
+.table-row-clickable {
+  cursor: pointer;
+}
+
+.table-row-clickable:hover td {
+  background: var(--bg-card-hover) !important;
+}
+
+/* Specific cells */
+.table-sno-cell {
+  font-weight: 600;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.table-name-cell {
+  font-weight: 600;
+  color: var(--text-primary);
+  text-wrap: wrap;
+}
+
+.table-address-cell {
+  color: var(--text-secondary);
+  white-space: normal !important;
+  word-break: break-word;
+  max-width: 200px;
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.table-rate-cell {
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-primary);
+}
+
+/* keep for mobile */
+.table-booked {
+  font-weight: 600;
+  color: var(--green);
+}
+
+.table-slash {
+  color: var(--text-muted);
+  margin: 0 4px;
+  font-weight: 300;
+}
+
+.table-pending {
+  font-weight: 600;
+  color: var(--orange);
+}
+
+/* ── Rate Chips ── */
+.rate-chip {
+  display: inline-block;
+  font-family: var(--font);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+.rate-chip-sqf {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border: 1px solid var(--border-strong);
+}
+
+.rate-chip-dlc {
+  background: rgba(232, 197, 106, 0.10);
+  color: #C9A84C;
+  border: 1px solid rgba(201, 168, 76, 0.20);
+}
+
+body.dark-theme .rate-chip-sqf {
+  background: rgba(232, 197, 106, 0.15);
+  color: #E8C56A;
+  border-color: rgba(232, 197, 106, 0.25);
+}
+
+body.dark-theme .rate-chip-dlc {
+  background: rgba(232, 197, 106, 0.12);
+  color: #E8C56A;
+  border-color: rgba(232, 197, 106, 0.25);
+}
+
+/* ── Booked / Pending Chips ── */
+.bp-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.bp-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+.bp-label {
+  font-weight: 500;
+  font-size: 11px;
+  opacity: 0.8;
+}
+
+.bp-booked {
+  background: var(--green-soft);
+  color: var(--green);
+  border: 1px solid rgba(46, 204, 113, 0.22);
+}
+
+.bp-pending {
+  background: var(--orange-soft);
+  color: var(--orange);
+  border: 1px solid rgba(232, 197, 106, 0.22);
+}
+
+/* ============================================
+   IMAGE BOX
+   ============================================ */
+
+.img-box {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--r-sm);
+  overflow: hidden;
+  border: 2px solid var(--border);
+  background: var(--bg-card-hover);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.img-box-mobile {
+  width: 34px;
+  height: 34px;
+}
+
+.img-box-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ============================================
+   STATUS BADGE
+   ============================================ */
+
+.status-badge {
+  font-family: var(--font);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 4px 10px;
+  border-radius: 20px;
+  display: inline-block;
+}
+
+.status-badge-allotment {
+  background: var(--blue-soft);
+  color: var(--blue);
+}
+
+.status-badge-registry {
+  background: var(--green-soft);
+  color: var(--green);
+}
+
+.status-badge-default {
+  background: var(--accent-soft);
+  color: var(--text-secondary);
+}
+
+/* ============================================
+   BROKER CELL
+   ============================================ */
+
+.broker-cell {
+  margin-bottom: 6px;
+}
+
+.broker-cell:last-child {
+  margin-bottom: 0;
+}
+
+.broker-cell-small {
+  margin-bottom: 3px;
+}
+
+.broker-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  display: block;
+}
+
+.broker-phone {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-secondary);
+}
+
+.broker-commission {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--text-muted);
+  margin-top: 1px;
+}
+
+.no-broker {
+  font-size: 11px;
+  font-weight: 500;
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-radius: 20px;
+  padding: 3px 10px;
+  display: inline-block;
+}
+
+/* ============================================
+   ACTION DROPDOWN
+   ============================================ */
+
+.action-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border);
+  background: var(--bg-card-hover);
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text-primary);
+  font-size: 16px;
+  transition: all 0.2s;
+}
+
+.action-icon:hover {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.custom-action-toggle::after {
+  display: none !important;
+  content: none !important;
+}
+
+/* Dropdown menu - White Background */
+.profile-notification {
+  border: 1px solid var(--border) !important;
+  background: #ffffff !important;
+  border-radius: var(--r-md) !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18) !important;
+  overflow: hidden;
+}
+
+.pro-body .list-group-item {
+  background: transparent !important;
+  border-color: var(--border) !important;
+}
+
+.pro-body .list-group-item:hover {
+  background: var(--accent-soft) !important;
+}
+
+.pro-body .dropdown-item {
+  color: #0D1B2A !important;
+  font-family: var(--font) !important;
+  font-size: 13px !important;
+  font-weight: 400 !important;
+}
+
+/* ============================================
+   MOBILE TABLE
+   ============================================ */
+
+.project-table-mobile-wrap {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  background: var(--bg-card);
+}
+
+.project-table-mobile {
+  width: 100%;
+  min-width: 480px;
+  border-collapse: collapse;
+}
+
+.mobile-table-header {
+  font-family: var(--font);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  padding: 11px 14px;
+  background: var(--bg-header-alt) !important;
+  white-space: nowrap;
+  border-bottom: 2px solid var(--border-strong) !important;
+  border-top: none !important;
+  border-left: none !important;
+  border-right: none !important;
+}
+
+.mobile-table-row {
+  cursor: pointer;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.15s;
+}
+
+.mobile-table-row:hover {
+  background: var(--bg-card-hover);
+}
+
+.mobile-table-cell {
+  padding: 12px 14px;
+  vertical-align: middle;
+  font-family: var(--font);
+  font-weight: 400;
+  color: var(--text-primary);
+  border: none !important;
+  background: transparent;
+}
+
+.mobile-name {
+  font-size: 13px;
+  font-weight: 600;
+  display: block;
+  color: var(--text-primary);
+}
+
+.mobile-address {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--text-secondary);
+  margin-top: 2px;
+  display: block;
+}
+
+.mobile-rate-cell {
+  font-size: 12px;
+  font-weight: 400;
+}
+
+/* ── Mobile Stack Layout ── */
+.mobile-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mobile-row-1 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mobile-row-3 {
+  display: flex;
+  gap: 8px;
+}
+
+.custom-select-mobile {
+  flex: 1;
+  height: 32px;
+  font-size: 11px;
+  font-weight: 400;
+  padding: 0 6px;
+}
+
+/* ============================================
+   MOBILE RESPONSIVE
+   ============================================ */
+
+@media (max-width: 767px) {
+
+  .project-header .d-flex.justify-content-between {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 8px !important;
+  }
+
+  // .project-title {
+  //   text-align: center !important;
+  //   font-size: 16px !important;
+  // }
+
+  .controls-row {
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+    justify-content: center !important;
+  }
+
+  .controls-row .custom-select {
+    flex: 1 1 auto !important;
+    min-width: 65px !important;
+    width: auto !important;
+    font-size: 11px !important;
+    height: 32px !important;
+    padding: 0 6px !important;
+  }
+
+  .controls-row .search-wrap {
+    flex: 1 1 100% !important;
+    min-width: 100% !important;
+  }
+
+  .controls-row .search-input {
+    height: 32px !important;
+    font-size: 12px !important;
+    padding-left: 30px !important;
+  }
+
+  .limit-toggle {
+    height: 32px !important;
+    min-width: 44px !important;
+    font-size: 11px !important;
+    padding: 0 6px !important;
+  }
+
+  .btn-add {
+    height: 32px !important;
+    font-size: 12px !important;
+    padding: 0 12px !important;
+  }
+
+  .btn-add-icon {
+    font-size: 13px !important;
+  }
+
+  .project-header .d-flex.gap-2.mt-3 {
+    justify-content: center !important;
+    gap: 6px !important;
+    flex-wrap: wrap !important;
+  }
+
+  .project-header .d-flex.gap-2.mt-3>div {
+    padding: 5px 10px !important;
+    border-radius: 8px !important;
+    flex: 1 1 30% !important;
+    min-width: 80px !important;
+    justify-content: center !important;
+  }
+
+  .project-header .d-flex.gap-2.mt-3>div span:first-child {
+    font-size: 14px !important;
+  }
+
+  .project-header .d-flex.gap-2.mt-3>div div:first-child {
+    font-size: 8px !important;
+    letter-spacing: 0.04em !important;
+    font-weight: 600 !important;
+  }
+
+  .project-header .d-flex.gap-2.mt-3>div div:last-child {
+    font-size: 11px !important;
+    font-weight: 600 !important;
+  }
+
+  .project-table-desktop {
+    display: none !important;
+  }
+
+  .mobile-booking-cards {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+    padding: 10px !important;
+  }
+}
+
+@media (min-width: 768px) {
+  .mobile-booking-cards {
+    display: none !important;
+  }
+}
+
+/* ============================================
+   MOBILE CARDS — Midnight Trust
+   ============================================ */
+
+.mobile-booking-cards {
+  display: none;
+}
+
+.mobile-booking-card {
+  background: #1E3A5F !important;
+  border-radius: 12px !important;
+  padding: 12px 14px !important;
+  border: 1px solid rgba(201, 168, 76, 0.15) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25) !important;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.mobile-booking-card:active {
+  transform: scale(0.98);
+}
+
+.mb-card-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(201, 168, 76, 0.10);
+}
+
+.mb-sno {
+  font-weight: 600;
+  font-size: 14px;
+  color: rgba(244, 244, 244, 0.35);
+  min-width: 24px;
+  padding-top: 2px;
+}
+
+.mb-customer {
+  flex: 1;
+}
+
+.mb-name {
+  font-weight: 600;
+  font-size: 15px;
+  color: #F4F4F4;
+  display: block;
+}
+
+.mb-mobile {
+  font-size: 12px;
+  font-weight: 400;
+  color: rgba(244, 244, 244, 0.55);
+}
+
+.mb-broker {
+  font-size: 11px;
+  font-weight: 400;
+  color: rgba(244, 244, 244, 0.55);
+  background: rgba(201, 168, 76, 0.12);
+  padding: 1px 8px;
+  border-radius: 4px;
+  display: inline-block;
+  margin-top: 2px;
+}
+
+.mb-card-mid {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(201, 168, 76, 0.10);
+}
+
+.mb-project {
+  font-weight: 600;
+  font-size: 14px;
+  color: #F4F4F4;
+}
+
+.mb-plot {
+  font-size: 12px;
+  font-weight: 400;
+  color: rgba(244, 244, 244, 0.55);
+}
+
+.mb-card-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 4px;
+}
+
+.mb-rate {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 400;
+  color: rgba(244, 244, 244, 0.55);
+}
+
+.mb-rate strong {
+  color: #E8C56A;
+  font-weight: 600;
+}
+
+.mb-status {
+  font-size: 9px;
+  font-weight: 600;
+  padding: 2px 10px;
+  border-radius: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.mb-status-allotment {
+  background: rgba(46, 204, 113, 0.15);
+  color: #2ECC71;
+}
+
+.mb-status-registry {
+  background: rgba(232, 197, 106, 0.15);
+  color: #E8C56A;
+}
+
+.mb-status-default {
+  background: rgba(46, 204, 113, 0.10);
+  color: #2ECC71;
+}
+
+.mb-action {
+  padding: 4px 8px;
+  cursor: pointer;
+  color: rgba(244, 244, 244, 0.35);
+  font-size: 18px;
+  border-radius: 6px;
+}
+
+.mb-action:hover {
+  background: rgba(201, 168, 76, 0.10);
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 991px) {
+  .project-title {
+    font-size: 16px !important;
+  }
+
+  .controls-row {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .search-wrap {
+    min-width: 140px;
+  }
+
+  .btn-add {
+    font-size: 12px !important;
+    padding: 0 12px;
+    height: 34px;
+  }
+
+  .limit-toggle {
+    height: 34px !important;
+    font-size: 12px !important;
+    min-width: 52px;
+  }
+
+  .custom-select {
+    height: 34px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 767px) {
+  .project-header {
+    padding: 12px 16px !important;
+  }
+
+  .project-title {
+    font-size: 14px !important;
+  }
+
+  .search-wrap {
+    min-width: 100%;
+  }
+
+  .btn-add {
+    height: 32px;
+    font-size: 12px !important;
+    padding: 0 10px;
+  }
+
+  .limit-toggle {
+    height: 32px !important;
+    min-width: 46px;
+    font-size: 11px !important;
+  }
+
+  .custom-select {
+    height: 32px;
+    font-size: 11px;
+  }
+
+  .search-input {
+    height: 32px !important;
+    font-size: 12px !important;
+  }
+
+  .mobile-table-header,
+  .mobile-table-cell {
+    padding: 10px 10px;
+    font-size: 11px;
+  }
+
+  .broker-name {
+    font-size: 11px;
+  }
+
+  .broker-phone,
+  .broker-commission {
+    font-size: 10px;
+  }
+
+  .img-box-mobile {
+    width: 30px;
+    height: 30px;
+  }
+}
+
+@media (max-width: 480px) {
+  .project-table-mobile {
+    min-width: 400px;
+  }
+
+  .mobile-table-header,
+  .mobile-table-cell {
+    padding: 8px 8px;
+    font-size: 10px;
+  }
+
+  .mobile-name {
+    font-size: 11px;
+  }
+
+  .mobile-address {
+    font-size: 10px;
+  }
+
+  .mobile-rate-cell {
+    font-size: 10px;
+  }
+}
+
+/* ============================================
+   UTILITIES
+   ============================================ */
+
+.gap-2 {
+  gap: 8px;
+}
+
+.btn-add-icon {
+  font-size: 14px;
+}
+
+.btn-add-icon-mobile {
+  font-size: 13px;
+}
+
+.btn-add-mobile {
+  height: 34px;
+}
+
+/* ============================================
+   Breadcrumb — Midnight Trust (Light Weight)
+   ============================================ */
+.bc-wrapper {
+  display: flex;
+  align-items: center;
+  padding: 0 4px;
+  min-height: 40px;
+}
+
+/* ── Hamburger (mobile) ── */
+.bc-hamburger {
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-primary, #333);
+  font-size: 20px;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.bc-hamburger:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.bc-hamburger:active {
+  transform: scale(0.95);
+}
+
+/* ── Desktop content ── */
+.bc-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* ── Page Title Pill ── */
+.bc-page-title {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-left: 10%;
+}
+
+.bc-page-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #C9A84C, #E8C56A);
+  flex-shrink: 0;
+  box-shadow: 0 0 6px rgba(201, 168, 76, 0.5);
+}
+
+.bc-page-label {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary, #F4F4F4);
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+/* ── Divider ── */
+.bc-divider {
+  width: 1px;
+  height: 18px;
+  background: var(--border, rgba(201, 168, 76, 0.15));
+  flex-shrink: 0;
+}
+
+/* ── Crumb Trail ── */
+.bc-trail {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.bc-crumb {
+  font-size: 12.5px;
+  font-weight: 400;
+  color: var(--text-secondary, rgba(244, 244, 244, 0.55));
+  text-decoration: none !important;
+  padding: 3px 6px;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.bc-crumb:hover {
+  color: #E8C56A;
+  background: rgba(201, 168, 76, 0.08);
+  text-decoration: none !important;
+}
+
+.bc-crumb-home {
+  color: var(--text-muted, rgba(244, 244, 244, 0.30));
+  padding: 3px 8px;
+}
+
+.bc-crumb-home:hover {
+  color: #E8C56A;
+  background: rgba(201, 168, 76, 0.08);
+}
+
+.bc-home-icon {
+  font-size: 14px;
+}
+
+.bc-sep {
+  font-size: 11px;
+  font-weight: 300;
+  color: var(--text-muted, rgba(244, 244, 244, 0.30));
+  margin: 0 1px;
+  opacity: 0.6;
+}
+
+/* Active (last) crumb */
+.bc-crumb-active {
+  color: #E8C56A !important;
+  font-weight: 500;
+  background: rgba(201, 168, 76, 0.10);
+  pointer-events: none;
+}
+
+/* ── Dark Mode ── */
+body.dark-theme .bc-page-label {
+  color: #F4F4F4;
+}
+
+body.dark-theme .bc-divider {
+  background: rgba(201, 168, 76, 0.12);
+}
+
+body.dark-theme .bc-crumb {
+  color: rgba(244, 244, 244, 0.50);
+}
+
+body.dark-theme .bc-crumb:hover {
+  color: #E8C56A;
+  background: rgba(201, 168, 76, 0.10);
+}
+
+body.dark-theme .bc-crumb-active {
+  color: #E8C56A !important;
+  background: rgba(201, 168, 76, 0.12);
+}
+
+body.dark-theme .bc-crumb-home {
+  color: rgba(244, 244, 244, 0.25);
+}
+
+body.dark-theme .bc-crumb-home:hover {
+  color: #E8C56A;
+}
+
+body.dark-theme .bc-page-dot {
+  box-shadow: 0 0 8px rgba(201, 168, 76, 0.4);
+}
+
+/* ============================================
+   DARK MODE OVERRIDES - Search & Dropdown
+   ============================================ */
+
+/* Dark Mode - Search Input */
+body.dark-theme .search-input {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #F4F4F4 !important;
+}
+
+body.dark-theme .search-input::placeholder {
+  color: rgba(244, 244, 244, 0.35) !important;
+}
+
+body.dark-theme .search-input:focus {
+  background: rgba(255, 255, 255, 0.10) !important;
+  border-color: #E8C56A !important;
+  box-shadow: 0 0 0 3px rgba(232, 197, 106, 0.15) !important;
+}
+
+body.dark-theme .search-icon {
+  color: rgba(244, 244, 244, 0.35);
+}
+
+/* Dark Mode - Custom Select Dropdown */
+body.dark-theme .custom-select {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #F4F4F4 !important;
+}
+
+body.dark-theme .custom-select option {
+  background: #1E3A5F;
+  color: #F4F4F4;
+}
+
+body.dark-theme .custom-select:focus {
+  background: rgba(255, 255, 255, 0.10) !important;
+  border-color: #E8C56A !important;
+  box-shadow: 0 0 0 3px rgba(232, 197, 106, 0.15) !important;
+}
+
+/* Dark Mode - Limit Toggle */
+body.dark-theme .limit-toggle {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #F4F4F4 !important;
+}
+
+body.dark-theme .limit-toggle:hover {
+  background: rgba(255, 255, 255, 0.10) !important;
+  color: #F4F4F4 !important;
+}
+
+/* Dark Mode - Add Button */
+body.dark-theme .btn-add {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #F4F4F4 !important;
+}
+
+body.dark-theme .btn-add:hover {
+  background: rgba(255, 255, 255, 0.10) !important;
+  color: #F4F4F4 !important;
+}
+
+/* Dark Mode - Limit Menu */
+body.dark-theme .limit-menu {
+  background: #1E3A5F !important;
+  border: 1px solid rgba(201, 168, 76, 0.12) !important;
+}
+
+body.dark-theme .limit-item {
+  color: #F4F4F4 !important;
+}
+
+body.dark-theme .limit-item:hover {
+  background: var(--accent-soft) !important;
+}
+
+body.dark-theme .limit-item.active {
+  color: #E8C56A !important;
+  background: var(--accent-soft) !important;
+}
+
+/* Dark Mode - Profile Dropdown */
+body.dark-theme .profile-notification {
+  background: #1E3A5F !important;
+  border: 1px solid rgba(201, 168, 76, 0.12) !important;
+}
+
+body.dark-theme .pro-body .dropdown-item {
+  color: #F4F4F4 !important;
+}
+
+body.dark-theme .pro-body .dropdown-item:hover {
+  background: var(--accent-soft) !important;
+}

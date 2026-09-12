@@ -1,0 +1,433 @@
+@font-face {
+  font-family: 'Kruti Dev 010';
+  src: url('../../assets/fonts/krutidev-010-hindi-font-download.ttf') format('truetype');
+}
+
+.kruti-dev {
+  font-family: 'Kruti Dev 010', sans-serif;
+}
+
+.drp-user .dropdown-toggle::after {
+  display: none !important;
+  content: '' !important;
+}
+
+/* number input arrow hide */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* 🔥 MOBILE TABLE FIX HERE */
+.mobile-table-container {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 0 auto;
+  scrollbar-width: thin;
+}
+
+/* scrollbar */
+.mobile-table-container::-webkit-scrollbar {
+  height: 6px !important;
+}
+
+.mobile-table-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.mobile-table-container::-webkit-scrollbar-thumb {
+  background: #b3b3b3;
+  border-radius: 3px;
+}
+
+/* mobile table width for overflow */
+.mobile-table {
+  width: 100%;
+  min-width: 480px;
+  border-collapse: collapse;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.mobile-table thead {
+  background-color: #f8f9fa;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.mobile-table th,
+.mobile-table td {
+  border: 1px solid #dee2e6;
+  padding: 8px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.mobile-table th {
+  font-weight: bold;
+}
+
+.mobile-table td img {
+  display: block;
+  margin: 0 auto;
+}
+
+.mobile-table tr {
+  background-color: #ffffff;
+}
+
+/* text wrap fix */
+.text-wrap-cell {
+  max-width: 120px;
+  white-space: normal;
+  word-wrap: break-word;
+  word-break: break-word;
+  overflow: hidden;
+}
+
+/* ─── Mobile table wrapper ─── */
+.project-table-mobile-wrap {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.project-table-mobile {
+  width: 100%;
+  min-width: 400px;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.mobile-table-header {
+  background-color: var(--mt-surface, #1b2d45);
+  color: rgba(244, 244, 244, 0.65);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 8px 6px;
+  border-bottom: 1px solid rgba(201, 168, 76, 0.12);
+  white-space: nowrap;
+}
+
+/* Column widths for mobile table */
+.project-table-mobile colgroup col:nth-child(1) { width: 48px; }  /* Img */
+.project-table-mobile colgroup col:nth-child(2) { width: 35%; }   /* Name/Address */
+.project-table-mobile colgroup col:nth-child(3) { width: 28%; }   /* Rate/Status */
+.project-table-mobile colgroup col:nth-child(4) { width: 25%; }   /* Broker */
+.project-table-mobile colgroup col:nth-child(5) { width: 36px; }  /* Action */
+
+.mobile-table-row {
+  border-bottom: 1px solid rgba(201, 168, 76, 0.07);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.mobile-table-row:hover { background: rgba(201, 168, 76, 0.05); }
+
+.mobile-table-cell {
+  padding: 8px 6px;
+  vertical-align: top;
+  font-size: 12px;
+  color: var(--mt-text, #f4f4f4);
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.mobile-name {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--mt-text, #f4f4f4);
+  margin-bottom: 2px;
+}
+
+.mobile-address {
+  display: block;
+  font-size: 11px;
+  color: var(--mt-text-secondary, rgba(244,244,244,0.6));
+  line-height: 1.4;
+}
+
+.mobile-rate-cell div {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--mt-text, #f4f4f4);
+}
+
+.img-box-mobile {
+  width: 36px;
+  height: 36px;
+}
+.img-box-mobile .img-box-img {
+  width: 36px;
+  height: 36px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+
+@media (max-width: 767px) {
+
+  /* Card: full width no overflow */
+  .project-table-card {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .project-table-card .card {
+    border-radius: 10px !important;
+    margin: 0 !important;
+    overflow: hidden;
+  }
+
+  /* Header padding */
+  .project-header {
+    padding: 12px 12px !important;
+  }
+
+  /* Title + Add button row: flex, space between */
+  .project-header .d-md-none > div:first-child {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    width: 100% !important;
+    margin-bottom: 8px !important;
+  }
+
+  /* Search bar: full width */
+  .search-wrap,
+  .search-wrap-full {
+    width: 100% !important;
+    box-sizing: border-box;
+    margin-bottom: 6px;
+  }
+
+  .search-input {
+    width: 100% !important;
+    font-size: 13px !important;
+  }
+
+  /* Controls row below search: 2 cols */
+  .project-header .d-md-none > div:last-child {
+    display: grid !important;
+    grid-template-columns: auto 1fr 1fr !important;
+    gap: 6px !important;
+    width: 100% !important;
+    margin-top: 6px !important;
+  }
+
+  /* Selects fill their column */
+  .project-header .custom-select {
+    width: 100% !important;
+    font-size: 12px !important;
+    height: 34px !important;
+  }
+
+  /* Limit toggle same height */
+  .limit-toggle {
+    height: 34px !important;
+    font-size: 12px !important;
+    padding: 0 10px !important;
+  }
+
+  /* Mobile table: horizontal scroll container */
+  .mobile-table-container {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .mobile-table {
+    width: 100%;
+    min-width: 480px;
+  }
+
+  .mobile-table th,
+  .mobile-table td {
+    white-space: normal !important;
+    word-break: break-word;
+    font-size: 12px !important;
+    padding: 6px 8px !important;
+    vertical-align: top;
+  }
+
+  /* Broker column: cap width */
+  .broker-cell,
+  .broker-cell-small {
+    max-width: 120px;
+    word-break: break-word;
+    font-size: 11px;
+  }
+
+  /* No horizontal overflow on whole page */
+  .project-table-card,
+  .project-table-card .card,
+  .card-body-p0 {
+    overflow-x: hidden !important;
+  }
+}
+
+/* ============================================
+   Button Wrapper
+   ============================================ */
+.btn-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 28px;
+}
+
+/* ============================================
+   Delete Button — Funky Style
+   ============================================ */
+.btn-funky-delete {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  width: 40px;
+  padding: 0;
+  border: 2px solid var(--border, #e2e8f0);
+  border-radius: 50%;
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 50%, #fca5a5 100%);
+  color: #ef4444;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-funky-delete::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(239, 68, 68, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.4s, height 0.4s;
+}
+
+.btn-funky-delete:hover::before {
+  width: 120px;
+  height: 120px;
+}
+
+.btn-funky-delete:hover {
+  border-color: #ef4444;
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+  transform: rotate(-15deg) scale(1.1);
+  background: linear-gradient(135deg, #fecaca 0%, #fca5a5 50%, #f87171 100%);
+}
+
+.btn-funky-delete:active {
+  transform: scale(0.9);
+  transition: all 0.1s ease;
+}
+
+/* ============================================
+   Add Button — Funky Style
+   ============================================ */
+.btn-funky-add {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  width: 40px;
+  padding: 0;
+  border: 2px solid var(--border, #e2e8f0);
+  border-radius: 50%;
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 50%, #6ee7b7 100%);
+  color: #10b981;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+  position: relative;
+  overflow: hidden;
+  animation: pulse-add 2s infinite;
+}
+
+.btn-funky-add::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(16, 185, 129, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.4s, height 0.4s;
+}
+
+.btn-funky-add:hover::before {
+  width: 120px;
+  height: 120px;
+}
+
+.btn-funky-add:hover {
+  border-color: #10b981;
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+  transform: rotate(15deg) scale(1.1);
+  background: linear-gradient(135deg, #a7f3d0 0%, #6ee7b7 50%, #34d399 100%);
+  animation: none;
+}
+
+.btn-funky-add:active {
+  transform: scale(0.9);
+  transition: all 0.1s ease;
+}
+
+/* Pulse Animation */
+@keyframes pulse-add {
+  0%, 100% {
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+  }
+  50% {
+    box-shadow: 0 2px 20px rgba(16, 185, 129, 0.5);
+  }
+}
+
+/* ============================================
+   DARK MODE — Delete Button
+   ============================================ */
+body.dark-theme .btn-funky-delete {
+  background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 50%, #b91c1c 100%);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #fca5a5;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.15);
+}
+
+body.dark-theme .btn-funky-delete:hover {
+  border-color: #ef4444;
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.3);
+  background: linear-gradient(135deg, #991b1b 0%, #b91c1c 50%, #dc2626 100%);
+}
+
+/* ============================================
+   DARK MODE — Add Button
+   ============================================ */
+body.dark-theme .btn-funky-add {
+  background: linear-gradient(135deg, #064e3b 0%, #065f46 50%, #047857 100%);
+  border-color: rgba(16, 185, 129, 0.3);
+  color: #6ee7b7;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.15);
+}
+
+body.dark-theme .btn-funky-add:hover {
+  border-color: #10b981;
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3);
+  background: linear-gradient(135deg, #065f46 0%, #047857 50%, #059669 100%);
+}
+

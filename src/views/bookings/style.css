@@ -1,0 +1,92 @@
+@font-face {
+    font-family: 'Kruti Dev 010';
+    src: url('../../assets/fonts/krutidev-010-hindi-font-download.ttf') format('truetype');
+  }
+  
+  .kruti-dev {
+    font-family: 'Kruti Dev 010', sans-serif;
+  }
+
+  .default-font-family{
+    font-family: 'Courier New', Courier, monospace !important; 
+  }
+  
+
+  .mobile-table-container {
+    width: 100%;
+    overflow-x: hidden;
+    margin: 0 auto;
+  }
+  
+  .mobile-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: auto;
+    padding: 0px !important;
+    margin: 0px !important;
+  }
+  
+  .mobile-table thead {
+    background-color: #f8f9fa;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+  
+  .mobile-table th,
+  .mobile-table td {
+    border: 1px solid #dee2e6;
+    padding: 8px;
+    text-align: left;
+    white-space: nowrap;  
+  }
+  
+  .mobile-table th {
+    font-weight: bold;
+  }
+  
+  .mobile-table td img {
+    display: block;
+    margin: 0 auto;
+  }
+  
+  .mobile-table tr {
+    background-color: #ffffff;
+  }
+  .text-wrap-cell {
+    width: 20px;
+    max-width: 20px;
+    white-space: wrap;  
+    word-wrap: break-word;  
+    overflow: hidden;  
+    text-overflow: ellipsis;  
+  }
+  
+  .table-responsive  {
+     overflow: visible;
+}
+
+.toolbar-row .btn,
+.toolbar-row .form-select,
+.toolbar-row .form-control {
+  height: 38px;        /* Bootstrap default */
+  padding-top: 6px;
+  padding-bottom: 6px;
+  display: flex;
+  align-items: center;
+}
+.disabled-custom {
+  background-color: #e9ecef !important;
+  color: #6c757d !important;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.custom-select {
+  background-color: #ffffff;
+  transition: all 0.3s ease;
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+  user-select: none;
+}

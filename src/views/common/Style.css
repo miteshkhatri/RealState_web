@@ -1,0 +1,14 @@
+.hindi-input-custom {
+  background-color: #ffffff;
+  width: 100%;
+}
+
+.radio-row {
+  width: 100%;
+}
+
+.radio-row input,
+.radio-row .radio-input {
+  flex: 1;
+  width: 100%;
+}
