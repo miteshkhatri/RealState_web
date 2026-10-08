@@ -88,29 +88,31 @@ const ProjectTable = () => {
 
   // Search filtering logic
   const filteredData = searchQuery
-    ? projectReduxData.filter((row) => {
+    ? (projectReduxData || []).filter((row) => {
         const q = searchQuery.toLowerCase().trim();
         const name = (row.name || '').toLowerCase();
         const address = (row.address || '').toLowerCase();
         return name.includes(q) || address.includes(q);
       })
-    : projectReduxData;
+    : (projectReduxData || []);
 
-  useEffect(() => { getAllProjects(1); }, [filterType, limit]);
+  const currentTableData = filteredData.slice((page - 1) * limit, page * limit);
+  const calculatedTotalPages = Math.ceil(filteredData.length / limit) || 1;
+
+  useEffect(() => { getAllProjects(1); }, [filterType]);
   useEffect(() => { setFilterType(PROJECT_TYPE); dispatch(setIsFetched(false)); }, [PROJECT_TYPE]);
 
-  const getAllProjects = async (pageNo = page) => {
+  const getAllProjects = async () => {
     try {
       const res = await api.get(`/project/all`, {
         headers: { Authorization: userData.user_token },
-        params: { user_id: userData?.user_id, type: filterType, page: pageNo, limit }
+        params: { user_id: userData?.user_id, type: filterType }
       });
       if (res.data.success === true) {
         dispatch(projects(res.data.data));
         dispatch(setIsFetched(true));
         setProjectData(res.data.data);
-        setTotalPages(Math.ceil((res.data.total_records || 0) / limit));
-        setPage(pageNo);
+        setPage(1);
       }
     } catch (error) { console.log(error, 'get all project api error'); }
   };
@@ -512,7 +514,7 @@ const ProjectTable = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredData && filteredData.map((row, index) => (
+                    {currentTableData && currentTableData.map((row, index) => (
                       <tr key={index} onClick={() => handleRouteNavigte(row)} className="table-row-clickable">
                         <td className="table-sno-cell">{(page - 1) * limit + index + 1}</td>
                         <td>
@@ -558,7 +560,7 @@ const ProjectTable = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {filteredData && filteredData.map((row, index) => (
+                      {currentTableData && currentTableData.map((row, index) => (
                         <tr key={index} onClick={() => handleRouteNavigte(row)} className="mobile-table-row">
                           <td className="mobile-table-cell">
                             <div className="img-box img-box-mobile">
@@ -598,8 +600,8 @@ const ProjectTable = () => {
 
               <ModernPagination
                 currentPage={page}
-                totalPages={totalPages}
-                onPageChange={(p) => { dispatch(setIsFetched(false)); getAllProjects(p); }}
+                totalPages={calculatedTotalPages}
+                onPageChange={(p) => setPage(p)}
               />
 
             </Card>
