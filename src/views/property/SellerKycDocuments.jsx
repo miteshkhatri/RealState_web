@@ -29,26 +29,64 @@ const SellerKycDocuments = ({
 
   const kycDocs = Array.isArray(formData.kycDocs) ? formData.kycDocs : [];
 
-  /* ---------- BASIC KYC TYPES ---------- */
-  const basicDocs = [
-    {
-      label: ph(
-        "sellerAadharLabel",
-        "Seller Aadhar (Compulsory)",
-        "विक्रेता आधार (आवश्यक)"
-      ),
-      key: "sellerAadhar",
-    },
-    {
-      label: ph("sellerPanLabel", "Seller PAN", "विक्रेता पैन"),
-      key: "sellerPAN",
-    },
-    {
-      label: ph("poaPanLabel", "POA Document", "POA दस्तावेज़"),
-      key: "poaPAN",
-      hasDate: true,
-    },
-  ];
+  const renderDocUpload = (docKey, label) => {
+    const files = kycDocs
+      .map((f, i) => ({ ...f, _index: i }))
+      .filter((f) => f.key === docKey && f.file);
+
+    return (
+      <Form.Group className="mb-2">
+        <Form.Label className="fw-semibold mb-1 d-block">{label}</Form.Label>
+        <Form.Control
+          type="file"
+          size="sm"
+          accept=".pdf,.jpg,.jpeg,.png"
+          style={{ width: "100%" }}
+          className="hindi-input-custom kyc-doc-input"
+          onChange={(e) => {
+            const file = e.target.files[0];
+            if (file) handleFileChange(docKey, file);
+            e.target.value = "";
+          }}
+        />
+        {files.map((f) => {
+          const fileObj = f.file;
+          const preview = getPreviewUrl(fileObj);
+          const name = isRealFile(fileObj)
+            ? fileObj.name
+            : fileObj?.name;
+
+          return (
+            <div
+              key={f._index}
+              className="mt-2 d-flex align-items-center gap-2 border p-1 rounded"
+              style={{ width: "100%" }}
+            >
+              {preview && (
+                <img
+                  src={preview}
+                  alt=""
+                  style={{ width: 45, height: 45, objectFit: "cover", borderRadius: 4 }}
+                />
+              )}
+              <span style={{ flex: 1, fontSize: "0.8rem", wordBreak: "break-all" }}>
+                {name}
+              </span>
+              <Button
+                size="sm"
+                variant="danger"
+                className="btn-remove-customer py-0 px-2"
+                style={{ height: 26, fontSize: 11 }}
+                onClick={() => removeFile(docKey, f._index)}
+              >
+                {ph("removeBtn", "Remove", "हटाएँ")}
+              </Button>
+            </div>
+          );
+        })}
+      </Form.Group>
+    );
+  };
 
   return (
     <Card className="border-0 shadow-none">
@@ -63,77 +101,49 @@ const SellerKycDocuments = ({
           )}
         </p>
 
-        {/* ---------- BASIC DOCS ---------- */}
-        <Row>
-          {basicDocs.map((doc) => {
-            const files = kycDocs
-              .map((f, i) => ({ ...f, _index: i }))
-              .filter((f) => f.key === doc.key && f.file);
+        {/* ---------- BASIC DOCS (ALL 4 IN ONE BALANCED ROW) ---------- */}
+        <Row className="mb-3">
+          {/* 1. Seller Aadhar */}
+          <Col md={3} sm={6} className="mb-2">
+            {renderDocUpload(
+              "sellerAadhar",
+              ph("sellerAadharLabel", "Seller Aadhar (Compulsory)", "विक्रेता आधार (आवश्यक)")
+            )}
+          </Col>
 
-            return (
-              <Col md={6} className="mb-3" key={doc.key}>
-                <Form.Label className="fw-semibold">{doc.label}</Form.Label>
+          {/* 2. Seller PAN */}
+          <Col md={3} sm={6} className="mb-2">
+            {renderDocUpload(
+              "sellerPAN",
+              ph("sellerPanLabel", "Seller PAN", "विक्रेता पैन")
+            )}
+          </Col>
 
-                <Form.Control
-                  type="file"
-                  size="sm"
-                  accept=".pdf,.jpg,.jpeg,.png"
-                  onChange={(e) => {
-                    const file = e.target.files[0];
-                    if (file) handleFileChange(doc.key, file);
-                    e.target.value = "";
-                  }}
-                />
+          {/* 3. POA Document */}
+          <Col md={3} sm={6} className="mb-2">
+            {renderDocUpload(
+              "poaPAN",
+              ph("poaPanLabel", "POA Document", "POA दस्तावेज़")
+            )}
+          </Col>
 
-                {files.map((f) => {
-                  const fileObj = f.file;
-                  const preview = getPreviewUrl(fileObj);
-                  const name = isRealFile(fileObj)
-                    ? fileObj.name
-                    : fileObj?.name;
-
-                  return (
-                    <div
-                      key={f._index}
-                      className="mt-2 d-flex align-items-center gap-2 border p-1 rounded"
-                    >
-                      {preview && (
-                        <img
-                          src={preview}
-                          alt=""
-                          style={{ width: 60, height: 60, objectFit: "cover" }}
-                        />
-                      )}
-                      <span style={{ flex: 1, fontSize: "0.8rem" }}>
-                        {name}
-                      </span>
-                      <Button
-                        size="sm"
-                        variant="danger"
-                        onClick={() => removeFile(doc.key, f._index)}
-                      >
-                        {ph("removeBtn", "Remove", "हटाएँ")}
-                      </Button>
-                    </div>
-                  );
-                })}
-
-                {doc.hasDate && (
-                  <>
-                    <Form.Label className="fw-semibold mt-3">
-                      {ph("poaDocDateLabel", "Document Date", "दस्तावेज़ तिथि")}
-                    </Form.Label>
-                    <Form.Control
-                      type="date"
-                      name="poaDocDate"
-                      value={formData.poaDocDate || ""}
-                      onChange={handleChange}
-                    />
-                  </>
-                )}
-              </Col>
-            );
-          })}
+          {/* 4. Document Date */}
+          <Col md={3} sm={6} className="mb-2">
+            <Form.Group>
+              <Form.Label className="fw-semibold mb-1 d-block">
+                {ph("poaDocDateLabel", "Document Date", "दस्तावेज़ तिथि")}
+              </Form.Label>
+              <Form.Control
+                type="date"
+                size="sm"
+                name="poaDocDate"
+                value={formData.poaDocDate || ""}
+                onChange={handleChange}
+                className="form-control-sm hindi-input-custom kyc-doc-input w-100"
+                style={{ width: "100%" }}
+              />
+            </Form.Group>
+          </Col>
         </Row>
 
         {/* ---------- COMMON ATTACHMENTS WITH DATE ---------- */}

@@ -17,8 +17,6 @@ const Payment_list = () => {
       ? locationState.data.all_payments
       : [];
 
-  console.log(locationState, 'jheigyi');
-
   const [searchText, setSearchText] = useState('');
   const [payments, setPayments] = useState(initialPayments);
   const [paymentTypes, setPaymentTypes] = useState([]);

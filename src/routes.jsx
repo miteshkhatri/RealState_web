@@ -59,6 +59,21 @@ const routes = [
     routes: [
       {
         exact: 'true',
+        path: '/',
+        element: () => <Navigate to="/dashboard" replace />
+      },
+      {
+        exact: 'true',
+        path: '/admin/dashboard',
+        element: () => <Navigate to="/dashboard" replace />
+      },
+      {
+        exact: 'true',
+        path: '/agent/dashboard',
+        element: () => <Navigate to="/dashboard" replace />
+      },
+      {
+        exact: 'true',
         path: '/dashboard',
         element: lazy(() => import('./views/dashboard'))
       },
@@ -134,6 +149,11 @@ path:'/project/complete/:project_id',
         exact: 'true',
         path: '/projects',
         element: lazy(() => import('./views/projects/ProjectTable'))
+      },
+      {
+        exact: 'true',
+        path: '/brokers',
+        element: lazy(() => import('./views/brokers/BrokerTable'))
       },
       {
         exact: 'true',

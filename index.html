@@ -39,7 +39,20 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Hind:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   </head>
-  <body>
+  <body style="background-color: #0b1426; margin: 0;">
+    <script>
+      (function() {
+        try {
+          var t = localStorage.getItem('theme');
+          if (t === 'light') {
+            document.body.style.backgroundColor = '#f4f6fa';
+          } else {
+            document.body.classList.add('dark-theme');
+            document.body.style.backgroundColor = '#0b1426';
+          }
+        } catch (e) {}
+      })();
+    </script>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
     <script type="module" src="/src/index.jsx"></script>

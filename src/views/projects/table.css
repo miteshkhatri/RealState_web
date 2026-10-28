@@ -3,13 +3,24 @@
   src: url('../../assets/fonts/krutidev-010-hindi-font-download.ttf') format('truetype');
 }
 
-.kruti-dev {
-  font-family: 'Kruti Dev 010', sans-serif;
+.kruti-dev,
+select.kruti-dev,
+option.kruti-dev,
+.custom-select.kruti-dev {
+  font-family: 'Kruti Dev 010', sans-serif !important;
 }
 
 .drp-user .dropdown-toggle::after {
   display: none !important;
   content: '' !important;
+}
+
+/* Hide default template h5:after line on header titles */
+.project-header h5::after,
+.project-header .project-title::after,
+.project-title::after {
+  display: none !important;
+  content: none !important;
 }
 
 /* number input arrow hide */
@@ -125,6 +136,23 @@ input[type="number"] {
 .project-table-mobile colgroup col:nth-child(4) { width: 25%; }   /* Broker */
 .project-table-mobile colgroup col:nth-child(5) { width: 36px; }  /* Action */
 
+/* Broker specific mobile table overrides */
+.broker-mobile-table {
+  min-width: 100% !important;
+  width: 100% !important;
+}
+.broker-mobile-table colgroup col:nth-child(1) { width: 28px !important; }
+.broker-mobile-table colgroup col:nth-child(2) { width: auto !important; }
+.broker-mobile-table colgroup col:nth-child(3) { width: 68px !important; }
+.broker-mobile-table colgroup col:nth-child(4) { width: 74px !important; }
+.broker-mobile-table colgroup col:nth-child(5) { display: none !important; }
+
+@media (min-width: 768px) {
+  .broker-mobile-header {
+    display: none !important;
+  }
+}
+
 .mobile-table-row {
   border-bottom: 1px solid rgba(201, 168, 76, 0.07);
   cursor: pointer;
@@ -222,6 +250,47 @@ input[type="number"] {
     gap: 6px !important;
     width: 100% !important;
     margin-top: 6px !important;
+  }
+
+  /* Broker Mobile Header Overrides inside media query */
+  .broker-mobile-header {
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+  .broker-mobile-header .broker-mobile-row-1 {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    width: 100% !important;
+    margin-bottom: 0 !important;
+  }
+  .broker-mobile-header .search-wrap,
+  .broker-mobile-header .broker-mobile-search {
+    flex: none !important;
+    height: 36px !important;
+    max-height: 36px !important;
+    min-height: 36px !important;
+    margin-bottom: 0 !important;
+    width: 100% !important;
+  }
+  .broker-mobile-header .broker-mobile-controls,
+  .project-header .broker-mobile-header > div:last-child {
+    display: flex !important;
+    grid-template-columns: none !important;
+    gap: 8px !important;
+    width: 100% !important;
+    margin-top: 0 !important;
+    align-items: center !important;
+  }
+
+  .broker-mobile-table .mobile-table-header {
+    background-color: #1b2d45 !important;
+    color: rgba(255, 255, 255, 0.85) !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    border-bottom: 1px solid rgba(201, 168, 76, 0.25) !important;
   }
 
   /* Selects fill their column */
@@ -430,4 +499,120 @@ body.dark-theme .btn-funky-add:hover {
   box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3);
   background: linear-gradient(135deg, #065f46 0%, #047857 50%, #059669 100%);
 }
+
+/* ============================================
+   🌑 REACT TRANSLITERATE DARK MODE FIX
+   Fix white text on white bg in transliteration dropdown suggestions
+   ============================================ */
+ul[class*="ReactTransliterate"],
+div[class*="ReactTransliterate"],
+/* Transliteration Dropdown - Light & Dark Mode */
+[class*="_ReactTransliterate"] {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
+  padding: 4px 0 !important;
+  z-index: 99999 !important;
+}
+
+body.dark-theme [class*="_ReactTransliterate"] {
+  background: #162338 !important;
+  background-color: #162338 !important;
+  border: 1px solid rgba(201, 168, 76, 0.35) !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6) !important;
+}
+
+ul[class*="ReactTransliterate"] > li,
+div[class*="ReactTransliterate"] > li,
+[class*="_ReactTransliterate"] > li {
+  color: #1e293b !important;
+  padding: 8px 14px !important;
+  font-size: 13px !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+  font-family: 'Mangal', 'Noto Sans Devanagari', 'Inter', sans-serif !important;
+}
+
+body.dark-theme ul[class*="ReactTransliterate"] > li,
+body.dark-theme div[class*="ReactTransliterate"] > li,
+body.dark-theme [class*="_ReactTransliterate"] > li {
+  color: #ffffff !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+
+ul[class*="ReactTransliterate"] > li:last-child,
+div[class*="ReactTransliterate"] > li:last-child,
+[class*="_ReactTransliterate"] > li:last-child {
+  border-bottom: none !important;
+}
+
+ul[class*="ReactTransliterate"] > li:hover,
+div[class*="ReactTransliterate"] > li:hover,
+[class*="_ReactTransliterate"] > li:hover {
+  background: rgba(201, 168, 76, 0.12) !important;
+  background-color: rgba(201, 168, 76, 0.12) !important;
+  color: #b8963a !important;
+}
+
+body.dark-theme ul[class*="ReactTransliterate"] > li:hover,
+body.dark-theme div[class*="ReactTransliterate"] > li:hover,
+body.dark-theme [class*="_ReactTransliterate"] > li:hover {
+  background: rgba(201, 168, 76, 0.18) !important;
+  background-color: rgba(201, 168, 76, 0.18) !important;
+  color: #e8c56a !important;
+}
+
+[class*="_Active"],
+ul[class*="ReactTransliterate"] > li[class*="Active"],
+[class*="_ReactTransliterate"] > li[class*="_Active"] {
+  background: linear-gradient(135deg, #c9a84c, #b8963a) !important;
+  background-color: #c9a84c !important;
+  color: #0b1426 !important;
+  font-weight: 700 !important;
+}
+
+/* ─── Broker Modal Input & Placeholder Support (Light & Dark) ─── */
+.broker-modal-input::placeholder,
+input.broker-modal-input::placeholder,
+textarea.broker-modal-input::placeholder,
+.broker-modal-input::-webkit-input-placeholder,
+input.broker-modal-input::-webkit-input-placeholder,
+textarea.broker-modal-input::-webkit-input-placeholder,
+.broker-modal-input::-moz-placeholder,
+input.broker-modal-input::-moz-placeholder,
+textarea.broker-modal-input::-moz-placeholder,
+.broker-modal-input:-ms-input-placeholder {
+  color: #64748b !important;
+  -webkit-text-fill-color: #64748b !important;
+  opacity: 1 !important;
+}
+
+body.dark-theme .broker-modal-input::placeholder,
+body.dark-theme input.broker-modal-input::placeholder,
+body.dark-theme textarea.broker-modal-input::placeholder,
+body.dark-theme .broker-modal-input::-webkit-input-placeholder,
+body.dark-theme input.broker-modal-input::-webkit-input-placeholder,
+body.dark-theme textarea.broker-modal-input::-webkit-input-placeholder,
+body.dark-theme .broker-modal-input::-moz-placeholder,
+body.dark-theme input.broker-modal-input::-moz-placeholder,
+body.dark-theme textarea.broker-modal-input::-moz-placeholder,
+body.dark-theme .broker-modal-input:-ms-input-placeholder {
+  color: #cbd5e1 !important;
+  -webkit-text-fill-color: #cbd5e1 !important;
+  opacity: 1 !important;
+}
+
+.broker-modal-input {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.broker-modal-input:focus {
+  border-color: #c9a84c !important;
+  box-shadow: 0 0 0 2px rgba(201, 168, 76, 0.25) !important;
+  outline: none !important;
+}
+
 

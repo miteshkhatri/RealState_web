@@ -15,20 +15,44 @@
 
 .parent-dev {
     width: 100%;
-    height: 100vh;
+    height: calc(100vh - 120px);
     margin: 0;
     border: none;
     overflow: auto;
-    background-color: #f5f5f5;
+    background-color: #cbd5e1;
     box-sizing: border-box;
     position: relative;
+    padding: 10px;
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+    scroll-behavior: auto;
+}
+
+.parent-dev.is-dragging {
+    cursor: grabbing !important;
+}
+
+.parent-dev.is-dragging * {
+    cursor: grabbing !important;
+}
+
+/* Wrapper jo scaled map ke exact size ko enforce karta hai taaki scrollbar sahi rahe aur niche empty space na aaye */
+.map-viewport {
+    position: relative;
+    overflow: hidden;
+    margin: 0;
+    background-color: white;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
 }
 
 /* Container jo zoom ko handle karega */
 .page-container {
     width: 2640px;
     height: 2640px;
-    position: relative;
+    position: absolute;
+    top: 0;
+    left: 0;
     transform-origin: top left;
 }
 
@@ -186,6 +210,7 @@ src: url(data:application/font-woff;charset=utf-8;base64,d09GRgABAAAAAJO4AA0AAAA
 </head>
 <body>
 <div class="parent-dev">
+<div class="map-viewport">
 <div class="page-container">
     
 <section class="page" style="width: 2640px; height: 2640px;" aria-label="Page 1">
@@ -780,6 +805,7 @@ left:1262px;bottom:1075.7px;letter-spacing:0.06px;">E-3 </span>
 </div>
 
 </div>
+</div>
 
 <script>
     const metadata = JSON.parse(document.getElementById("metadata").text);
@@ -863,32 +889,32 @@ left:1262px;bottom:1075.7px;letter-spacing:0.06px;">E-3 </span>
 
 <!-- Zoom Buttons -->
 <div id="zoom-controls" style="
-    position: absolute;
-    top: 12px;
-    right: 12px;
+    position: fixed;
+    top: 85px;
+    right: 25px;
     z-index: 9999;
     display: flex;
     flex-direction: column;
     gap: 8px;
 ">
     <button onclick="zoomIn()" style="
-        width: 48px; height: 48px;
-        font-size: 24px; font-weight: bold;
+        width: 44px; height: 44px;
+        font-size: 22px; font-weight: bold;
         background: #2563eb; color: white;
         border: none; border-radius: 10px;
         cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     ">+</button>
     <button onclick="zoomOut()" style="
-        width: 48px; height: 48px;
-        font-size: 24px; font-weight: bold;
+        width: 44px; height: 44px;
+        font-size: 22px; font-weight: bold;
         background: #2563eb; color: white;
         border: none; border-radius: 10px;
         cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     ">−</button>
     <button onclick="resetZoom()" style="
-        width: 48px; height: 48px;
-        font-size: 13px; font-weight: bold;
-        background: #6b7280; color: white;
+        width: 44px; height: 44px;
+        font-size: 12px; font-weight: bold;
+        background: #475569; color: white;
         border: none; border-radius: 10px;
         cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     ">Reset</button>
@@ -945,33 +971,197 @@ left:1262px;bottom:1075.7px;letter-spacing:0.06px;">E-3 </span>
 var currentZoom = 0.35;
 var zoomStep = 0.15;
 var pageContainer = document.querySelector('.page-container');
+var mapViewport = document.querySelector('.map-viewport');
+var parentDev = document.querySelector('.parent-dev');
+var isDragging = false;
+var dragMoved = false;
+var startX = 0, startY = 0;
+var startScrollLeft = 0, startScrollTop = 0;
 
 function zoomIn() {
-    currentZoom = Math.min(currentZoom + zoomStep, 3.0);
-    applyZoom();
+    zoomAtCenter(1.25);
 }
 function zoomOut() {
-    currentZoom = Math.max(currentZoom - zoomStep, 0.3);
-    applyZoom();
+    zoomAtCenter(1 / 1.25);
 }
 function resetZoom() {
     currentZoom = 0.35;
     applyZoom();
-}
-function applyZoom() {
-    pageContainer.style.transform = 'scale(' + currentZoom + ')';
-    pageContainer.style.transformOrigin = 'top left';
-    // Scrollable area sahi size mein set karo
-    var scaledSize = Math.round(2640 * currentZoom);
-    pageContainer.style.marginLeft = '0px';
-    pageContainer.style.marginTop = '0px';
-    // Parent div ko content ke scaled size ke barabar karo taaki scroll sahi kaam kare
-    var wrapper = pageContainer.parentElement;
-    if (wrapper) {
-        wrapper.style.width = scaledSize + 'px';
-        wrapper.style.height = scaledSize + 'px';
+    if (parentDev) {
+        parentDev.scrollLeft = 0;
+        parentDev.scrollTop = 0;
     }
 }
+
+function zoomAtCenter(factor) {
+    if (!parentDev) parentDev = document.querySelector('.parent-dev');
+    if (!mapViewport) mapViewport = document.querySelector('.map-viewport');
+    if (!parentDev || !mapViewport) return;
+
+    var rect = mapViewport.getBoundingClientRect();
+    var pRect = parentDev.getBoundingClientRect();
+    var centerX = (pRect.left + pRect.width / 2) - rect.left;
+    var centerY = (pRect.top + pRect.height / 2) - rect.top;
+
+    performZoom(factor, centerX, centerY);
+}
+
+function performZoom(factor, relX, relY) {
+    if (!pageContainer) pageContainer = document.querySelector('.page-container');
+    if (!mapViewport) mapViewport = document.querySelector('.map-viewport');
+    if (!parentDev) parentDev = document.querySelector('.parent-dev');
+    if (!pageContainer || !mapViewport || !parentDev) return;
+
+    var newZoom = Math.min(Math.max(currentZoom * factor, 0.2), 3.5);
+    if (Math.abs(newZoom - currentZoom) < 0.001) return;
+
+    var contentX = relX / currentZoom;
+    var contentY = relY / currentZoom;
+
+    currentZoom = newZoom;
+    applyZoom();
+
+    var newRelX = contentX * currentZoom;
+    var newRelY = contentY * currentZoom;
+
+    parentDev.scrollLeft += (newRelX - relX);
+    parentDev.scrollTop += (newRelY - relY);
+}
+
+function applyZoom() {
+    if (!pageContainer) {
+        pageContainer = document.querySelector('.page-container');
+    }
+    if (!mapViewport) {
+        mapViewport = document.querySelector('.map-viewport');
+    }
+    if (!pageContainer) return;
+
+    pageContainer.style.transform = 'scale(' + currentZoom + ')';
+    pageContainer.style.transformOrigin = 'top left';
+
+    // Scrollable viewport ko EXACT scaled size ke barabar karo taaki scroll map ke exact kinare par ruk jaye aur neeche khali jagah na aaye
+    var scaledSize = Math.round(2640 * currentZoom);
+    if (mapViewport) {
+        mapViewport.style.width = scaledSize + 'px';
+        mapViewport.style.height = scaledSize + 'px';
+    }
+}
+
+// ── Google Maps Mouse Wheel Zoom & Drag Handlers ──
+var googleMapsInitialized = false;
+function initGoogleMapInteractions() {
+    if (googleMapsInitialized) return;
+    if (!parentDev) parentDev = document.querySelector('.parent-dev');
+    if (!mapViewport) mapViewport = document.querySelector('.map-viewport');
+    if (!parentDev) return;
+
+    googleMapsInitialized = true;
+
+    // 1. Mouse Wheel Zoom (Scroll to zoom directly towards cursor position)
+    parentDev.addEventListener('wheel', function(e) {
+        e.preventDefault();
+        if (!mapViewport) mapViewport = document.querySelector('.map-viewport');
+        if (!mapViewport) return;
+
+        var rect = mapViewport.getBoundingClientRect();
+        var relX = e.clientX - rect.left;
+        var relY = e.clientY - rect.top;
+
+        var factor = e.deltaY < 0 ? 1.15 : (1 / 1.15);
+        performZoom(factor, relX, relY);
+    }, { passive: false });
+
+    // 2. Mouse Drag (Click & Drag like Google Maps)
+    parentDev.addEventListener('mousedown', function(e) {
+        if (e.button !== 0) return;
+        if (e.target.closest('#zoom-controls') || e.target.closest('#plot-modal')) return;
+
+        isDragging = true;
+        dragMoved = false;
+        startX = e.clientX;
+        startY = e.clientY;
+        startScrollLeft = parentDev.scrollLeft;
+        startScrollTop = parentDev.scrollTop;
+        parentDev.classList.add('is-dragging');
+    });
+
+    window.addEventListener('mousemove', function(e) {
+        if (!isDragging) return;
+        var dx = e.clientX - startX;
+        var dy = e.clientY - startY;
+        if (Math.abs(dx) > 4 || Math.abs(dy) > 4) {
+            dragMoved = true;
+        }
+        parentDev.scrollLeft = startScrollLeft - dx;
+        parentDev.scrollTop = startScrollTop - dy;
+    });
+
+    window.addEventListener('mouseup', function(e) {
+        if (!isDragging) return;
+        isDragging = false;
+        if (parentDev) parentDev.classList.remove('is-dragging');
+        setTimeout(function() {
+            dragMoved = false;
+        }, 80);
+    });
+
+    // 3. Double Click to Zoom In towards cursor
+    parentDev.addEventListener('dblclick', function(e) {
+        if (e.target.closest('#zoom-controls') || e.target.closest('#plot-modal') || e.target.closest('span[onclick^="showPlotInfo"]')) return;
+        e.preventDefault();
+        var rect = mapViewport.getBoundingClientRect();
+        performZoom(1.35, e.clientX - rect.left, e.clientY - rect.top);
+    });
+
+    // 4. Touch Support (Pinch to zoom + 1 finger drag)
+    var initialDist = 0;
+    var initialTouchZoom = currentZoom;
+    var touchStartX = 0, touchStartY = 0;
+    var touchScrollX = 0, touchScrollY = 0;
+
+    parentDev.addEventListener('touchstart', function(e) {
+        if (e.touches.length === 1) {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+            touchScrollX = parentDev.scrollLeft;
+            touchScrollY = parentDev.scrollTop;
+            dragMoved = false;
+        } else if (e.touches.length === 2) {
+            var dx = e.touches[0].clientX - e.touches[1].clientX;
+            var dy = e.touches[0].clientY - e.touches[1].clientY;
+            initialDist = Math.hypot(dx, dy);
+            initialTouchZoom = currentZoom;
+        }
+    }, { passive: true });
+
+    parentDev.addEventListener('touchmove', function(e) {
+        if (e.touches.length === 1 && !e.target.closest('#plot-modal')) {
+            var dx = e.touches[0].clientX - touchStartX;
+            var dy = e.touches[0].clientY - touchStartY;
+            if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
+                dragMoved = true;
+            }
+            parentDev.scrollLeft = touchScrollX - dx;
+            parentDev.scrollTop = touchScrollY - dy;
+        } else if (e.touches.length === 2) {
+            e.preventDefault();
+            var dx = e.touches[0].clientX - e.touches[1].clientX;
+            var dy = e.touches[0].clientY - e.touches[1].clientY;
+            var newDist = Math.hypot(dx, dy);
+            if (initialDist > 0) {
+                var factor = newDist / initialDist;
+                var rect = mapViewport.getBoundingClientRect();
+                var midX = (e.touches[0].clientX + e.touches[1].clientX) / 2 - rect.left;
+                var midY = (e.touches[0].clientY + e.touches[1].clientY) / 2 - rect.top;
+                var targetZoom = Math.min(Math.max(initialTouchZoom * factor, 0.2), 3.5);
+                var f = targetZoom / currentZoom;
+                performZoom(f, midX, midY);
+            }
+        }
+    }, { passive: false });
+}
+window.initGoogleMapInteractions = initGoogleMapInteractions;
 
 // ─── API Plot Data ───────────────────────────────────────────────
 // window.projectPlots is set by the React component before this HTML loads.
@@ -980,26 +1170,41 @@ function applyZoom() {
 // ─── API Data Fetch Karne Ka Sahi Tareeka ──────────────────────────
 function getApiPlot(label) {
     var plots = window.projectPlots || [];
-    // Agar label "E-3" hai toh usse "E" aur "3" mein todna
+    if (!plots || !plots.length) return null;
+
+    var cleanLabel = label.toUpperCase().replace(/\s+/g, '');
     var parts = label.split('-');
     if (parts.length < 2) return null;
 
     var sectionLetter = parts[0].trim().toUpperCase();
     var plotNum = parts[1].trim();
+    var plotNumInt = parseInt(plotNum, 10);
 
     for (var i = 0; i < plots.length; i++) {
         var p = plots[i];
-        var pSector = (p.sector_name || '').trim().toUpperCase();
-        var pNo = String(p.plot_no).trim();
-        
-        if (pSector === sectionLetter && pNo === plotNum) {
-            return p;
+        var pNo = String(p.plot_no || '').trim().toUpperCase().replace(/\s+/g, '');
+        var pSector = String(p.sector_name || '').trim().toUpperCase();
+
+        // 1. Direct label match (e.g. plot_no is 'E-2' or 'E-02')
+        if (pNo === cleanLabel) return p;
+
+        // 2. Clean alphanumeric match (e.g. 'E2' === 'E2')
+        var pNoAlpha = pNo.replace(/[^A-Z0-9]/g, '');
+        var labelAlpha = cleanLabel.replace(/[^A-Z0-9]/g, '');
+        if (pNoAlpha && pNoAlpha === labelAlpha) return p;
+
+        // 3. Match sector + plot_no (e.g. sector='E', plot_no='2' or '02')
+        var pNoInt = parseInt(pNo.replace(/\D/g, ''), 10);
+        if (pSector === sectionLetter) {
+            if (pNo === plotNum || (!isNaN(pNoInt) && pNoInt === plotNumInt)) {
+                return p;
+            }
         }
     }
     return null;
 }
 
-// ─── Click se pehle Layout par Status Tag (🔴/🟢) dikhana ──────────
+// ─── Layout par Status Box (🔴 Booked / 🟢 Available) Pura Box Dikhana ──
 function applyPlotColors() {
     var spans = document.querySelectorAll('span[onclick^="showPlotInfo"]');
     
@@ -1014,31 +1219,105 @@ function applyPlotColors() {
 
         if (apiPlot) {
             var isBooked = apiPlot.is_booked === 1 || apiPlot.status === 'Booked';
-            
-            if (isBooked) {
-                // 🔴 Booked — Red background
-                span.style.backgroundColor = 'rgba(220, 38, 38, 0.82)';
-                span.style.color = '#fff';
-                span.style.borderRadius = '3px';
-                span.style.padding = '1px 3px';
-                span.style.fontWeight = 'bold';
-                span.innerHTML = label;
-            } else {
-                // 🟢 Available — Green background
-                span.style.backgroundColor = 'rgba(22, 163, 74, 0.82)';
-                span.style.color = '#fff';
-                span.style.borderRadius = '3px';
-                span.style.padding = '1px 3px';
-                span.style.fontWeight = 'bold';
-                span.innerHTML = label;
+            var parts = label.split('-');
+            var section = parts[0].trim().toUpperCase();
+            var plotNum = parseInt(parts[1], 10) || 0;
+
+            // Opposing (right-side) row of plots in the commercial blocks
+            var isRight = false;
+            if (section === 'E' && plotNum >= 36) isRight = true;
+            else if (section === 'B' && plotNum >= 32) isRight = true;
+            else if (section === 'C' && plotNum >= 32) isRight = true;
+            else if (section === 'D' && plotNum >= 34) isRight = true;
+            else if (section === 'F' && plotNum >= 34) isRight = true;
+
+            // Exact CAD plot cell dimensions in pixels:
+            // Standard shops (10ft frontage × 25ft depth): ~17.5px × 44px
+            var boxWidth = 44;
+            var boxHeight = 17.5;
+            var shiftX = -4;     // Left row extends forward from text to center line
+            var shiftY = 8.8;    // Centers box vertically around text baseline
+
+            if (isRight) {
+                // Right row extends backwards from text towards center dividing line
+                shiftX = -26;
             }
+
+            if (section === 'F') {
+                // Section F: 8ft × 12ft shops
+                boxWidth = 22;
+                boxHeight = 14;
+                shiftY = 7;
+                shiftX = isRight ? -14 : -3;
+            } else if (section === 'A') {
+                // Section A: 12ft × 30ft shops
+                boxWidth = 53;
+                boxHeight = 21;
+                shiftY = 10.5;
+                shiftX = -4;
+            }
+
+            // Get base rotation matrix once
+            var baseTransform = span.getAttribute('data-base-transform');
+            if (!baseTransform) {
+                baseTransform = window.getComputedStyle(span).transform;
+                if (!baseTransform || baseTransform === 'none') {
+                    baseTransform = '';
+                }
+                span.setAttribute('data-base-transform', baseTransform);
+            }
+
+            // Apply translation in the element's local coordinate system (aligned with CAD box slope)
+            span.style.transform = baseTransform + ' translate(' + shiftX + 'px, ' + shiftY + 'px)';
+            span.style.display = 'inline-flex';
+            span.style.alignItems = 'center';
+            span.style.justifyContent = 'center';
+            span.style.width = boxWidth + 'px';
+            span.style.height = boxHeight + 'px';
+            span.style.marginLeft = '0px';
+            span.style.marginBottom = '0px';
+            span.style.boxSizing = 'border-box';
+            span.style.borderRadius = '2px';
+            span.style.textAlign = 'center';
+            span.style.lineHeight = '1';
+            span.style.fontWeight = 'bold';
+            span.style.fontSize = '9px';
+            span.style.letterSpacing = '0px';
+            span.style.zIndex = '10';
+            span.style.cursor = 'pointer';
+            span.style.transition = 'filter 0.15s ease, box-shadow 0.15s ease';
+
+            if (isBooked) {
+                // 🔴 Booked — Red Plot Box
+                span.style.backgroundColor = 'rgba(220, 38, 38, 0.88)';
+                span.style.border = '1px solid #991b1b';
+                span.style.color = '#ffffff';
+                span.style.boxShadow = '0 0 2px rgba(220, 38, 38, 0.5)';
+            } else {
+                // 🟢 Available — Green Plot Box
+                span.style.backgroundColor = 'rgba(22, 163, 74, 0.88)';
+                span.style.border = '1px solid #166534';
+                span.style.color = '#ffffff';
+                span.style.boxShadow = '0 0 2px rgba(22, 163, 74, 0.5)';
+            }
+
+            span.onmouseenter = function() {
+                span.style.filter = 'brightness(1.15)';
+                span.style.zIndex = '15';
+            };
+            span.onmouseleave = function() {
+                span.style.filter = 'none';
+                span.style.zIndex = '10';
+            };
+
+            span.innerHTML = label;
             span.setAttribute('data-processed', 'true');
         }
-        // Agar API mein plot nahi mila toh span as-is rahega (no color)
     });
 }
 // ─── Modal ───────────────────────────────────────────────────────
 function showPlotInfo(label) {
+    if (dragMoved) return;
     var section = label.split('-')[0];
     var apiPlot = getApiPlot(label);
     var bodyHtml = '';
@@ -1106,6 +1385,7 @@ function closeModal() {
 // Apply zoom + colors — React injection ke liye turant bhi call karo
 function initMap() {
     applyZoom();
+    initGoogleMapInteractions();
     setTimeout(applyPlotColors, 200);
 }
 

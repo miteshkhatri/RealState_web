@@ -59,6 +59,35 @@ const BookingTable = () => {
   const initialPage = parseInt(searchParams.get('page')) || 1;
   const [page, setPage] = useState(initialPage);
 
+  const [brokerFilter, setBrokerFilter] = useState(
+    searchParams.get("broker_id") || location.state?.broker_id || ""
+  );
+  const [brokerFilterName, setBrokerFilterName] = useState(
+    location.state?.broker_name || searchParams.get("broker_name") || ""
+  );
+
+  useEffect(() => {
+    const qBroker = searchParams.get("broker_id") || location.state?.broker_id;
+    const qBrokerName = searchParams.get("broker_name") || location.state?.broker_name;
+    if (qBroker) {
+      setBrokerFilter(qBroker);
+      if (qBrokerName) setBrokerFilterName(qBrokerName);
+    }
+  }, [location.state, searchParams]);
+
+  const clearBrokerFilter = (e) => {
+    if (e) e.stopPropagation();
+    setBrokerFilter("");
+    setBrokerFilterName("");
+    const currentParams = Object.fromEntries([...searchParams]);
+    delete currentParams.broker_id;
+    delete currentParams.broker_name;
+    setSearchParams(currentParams, { replace: true });
+    if (location.state?.broker_id) {
+      window.history.replaceState({}, document.title);
+    }
+  };
+
   useEffect(() => {
     const currentParams = Object.fromEntries([...searchParams]);
     let hasChanged = false;
@@ -188,22 +217,32 @@ const BookingTable = () => {
     bookingsData.forEach((booking) => {
       const key = `${booking.project_name}_${booking.plot_no}`;
       if (!projectMap[key]) {
-        projectMap[key] = { ...booking, all_customers: [{ name: booking.customer_name, mobile: booking.mobile_no, font: booking.krutiDev_font, id: booking.booking_id }] };
+        projectMap[key] = { 
+          ...booking, 
+          all_customers: [{ name: booking.customer_name, mobile: booking.mobile_no, font: booking.krutiDev_font, id: booking.booking_id }],
+          all_broker_ids: booking.broker_id ? [booking.broker_id] : []
+        };
       } else {
         const exists = projectMap[key].all_customers.find(c => c.name === booking.customer_name && c.mobile === booking.mobile_no);
         if (!exists) {
           projectMap[key].all_customers.push({ name: booking.customer_name, mobile: booking.mobile_no, font: booking.krutiDev_font, id: booking.booking_id });
+        }
+        if (booking.broker_id && !projectMap[key].all_broker_ids?.includes(booking.broker_id)) {
+          projectMap[key].all_broker_ids = projectMap[key].all_broker_ids || [];
+          projectMap[key].all_broker_ids.push(booking.broker_id);
         }
         
         const existingDate = new Date(projectMap[key].create_at);
         const currentDate = new Date(booking.create_at);
         if (currentDate < existingDate) {
           const mergedCustomers = projectMap[key].all_customers;
-          projectMap[key] = { ...booking, all_customers: mergedCustomers };
+          const mergedBrokers = projectMap[key].all_broker_ids;
+          projectMap[key] = { ...booking, all_customers: mergedCustomers, all_broker_ids: mergedBrokers };
         } else if (currentDate.getTime() === existingDate.getTime()) {
           if (booking.booking_id < projectMap[key].booking_id) {
             const mergedCustomers = projectMap[key].all_customers;
-            projectMap[key] = { ...booking, all_customers: mergedCustomers };
+            const mergedBrokers = projectMap[key].all_broker_ids;
+            projectMap[key] = { ...booking, all_customers: mergedCustomers, all_broker_ids: mergedBrokers };
           }
         }
       }
@@ -221,6 +260,12 @@ const BookingTable = () => {
 
   const filteredData = React.useMemo(() => {
     let base = uniqueProjectBookings();
+    if (brokerFilter) {
+      base = base.filter((row) => 
+        Number(row.broker_id) === Number(brokerFilter) || 
+        (row.all_broker_ids && row.all_broker_ids.some(bId => Number(bId) === Number(brokerFilter)))
+      );
+    }
     if (projectFilter) {
       base = base.filter((row) => Number(row.project_id) === Number(projectFilter));
     }
@@ -281,7 +326,7 @@ const BookingTable = () => {
       if (row.all_customers && row.all_customers.some(c => c.name?.toLowerCase().includes(q) || c.mobile?.toLowerCase().includes(q))) return true;
       return false;
     });
-  }, [bookingsData, SecarhProject, projectFilter, typeFilter, SearchLang, dateSortType, dateSortOrder, location.state]);
+  }, [bookingsData, SecarhProject, projectFilter, typeFilter, brokerFilter, SearchLang, dateSortType, dateSortOrder, location.state]);
 
   const totalPages = Math.max(1, Math.ceil(filteredData.length / limit));
   const startIndex = (page - 1) * limit;
@@ -304,7 +349,7 @@ const BookingTable = () => {
       return;
     }
     if (page !== 1) setPage(1);
-  }, [SecarhProject, projectFilter, typeFilter]);
+  }, [SecarhProject, projectFilter, typeFilter, brokerFilter]);
 
   const columns = [
     "#",
@@ -405,11 +450,33 @@ const BookingTable = () => {
                 {/* Desktop View */}
                 <div className="d-none d-md-flex flex-column gap-2 w-100">
                   <div className="d-flex justify-content-between align-items-center flex-wrap gap-2 w-100">
-                    <h5 className="project-title mb-0" style={{ color: "#ffffff", fontWeight: 800, fontSize: "18px", letterSpacing: "-0.03em" }}>
-                      Bookings&nbsp;
-                      <span style={{ background: "rgba(255,255,255,0.22)", color: "#ffffff", fontSize: "12px", fontWeight: 700, borderRadius: "20px", padding: "3px 10px", border: "1px solid rgba(255,255,255,0.35)", display: "inline-block", verticalAlign: "middle" }}>
+                    <h5 className="project-title mb-0 d-flex align-items-center flex-wrap gap-2" style={{ color: "#ffffff", fontWeight: 800, fontSize: "18px", letterSpacing: "-0.03em" }}>
+                      <span>Bookings</span>
+                      <span style={{ background: "rgba(255,255,255,0.22)", color: "#ffffff", fontSize: "12px", fontWeight: 700, borderRadius: "20px", padding: "3px 10px", border: "1px solid rgba(255,255,255,0.35)", display: "inline-block" }}>
                         {filteredData.length}
                       </span>
+                      {brokerFilter && (
+                        <span
+                          onClick={clearBrokerFilter}
+                          title="Click to remove filter"
+                          style={{
+                            background: "rgba(201, 168, 76, 0.25)",
+                            color: "#f5d77f",
+                            fontSize: "12px",
+                            fontWeight: 600,
+                            borderRadius: "20px",
+                            padding: "3px 10px",
+                            border: "1px solid rgba(201, 168, 76, 0.5)",
+                            cursor: "pointer",
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: "6px"
+                          }}
+                        >
+                          <span>Broker: {brokerFilterName || bookingsData.find(b => Number(b.broker_id) === Number(brokerFilter))?.broker_name || brokerFilter}</span>
+                          <span style={{ fontSize: "14px", fontWeight: "bold" }}>✕</span>
+                        </span>
+                      )}
                     </h5>
 
                     <div className="controls-row d-flex align-items-center gap-2">
@@ -487,12 +554,33 @@ const BookingTable = () => {
                 {/* Mobile View */}
                 <div className="d-md-none" style={{ width: '100%' }}>
                   {/* Title & Add Button */}
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-                    <h5 className="project-title mb-0" style={{ color: "#ffffff", fontWeight: 800, fontSize: "16px", letterSpacing: "-0.03em" }}>
-                      Bookings&nbsp;
-                      <span style={{ background: "rgba(255,255,255,0.22)", color: "#ffffff", fontSize: "11px", fontWeight: 700, borderRadius: "20px", padding: "2px 8px", border: "1px solid rgba(255,255,255,0.35)", display: "inline-block", verticalAlign: "middle" }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px', flexWrap: 'wrap', gap: '6px' }}>
+                    <h5 className="project-title mb-0 d-flex align-items-center flex-wrap gap-2" style={{ color: "#ffffff", fontWeight: 800, fontSize: "16px", letterSpacing: "-0.03em" }}>
+                      <span>Bookings</span>
+                      <span style={{ background: "rgba(255,255,255,0.22)", color: "#ffffff", fontSize: "11px", fontWeight: 700, borderRadius: "20px", padding: "2px 8px", border: "1px solid rgba(255,255,255,0.35)", display: "inline-block" }}>
                         {filteredData.length}
                       </span>
+                      {brokerFilter && (
+                        <span
+                          onClick={clearBrokerFilter}
+                          style={{
+                            background: "rgba(201, 168, 76, 0.25)",
+                            color: "#f5d77f",
+                            fontSize: "11px",
+                            fontWeight: 600,
+                            borderRadius: "20px",
+                            padding: "2px 8px",
+                            border: "1px solid rgba(201, 168, 76, 0.5)",
+                            cursor: "pointer",
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: "4px"
+                          }}
+                        >
+                          <span>{brokerFilterName || bookingsData.find(b => Number(b.broker_id) === Number(brokerFilter))?.broker_name || brokerFilter}</span>
+                          <span style={{ fontSize: "12px", fontWeight: "bold" }}>✕</span>
+                        </span>
+                      )}
                     </h5>
                     <button className="btn-add" style={{ width: '75px', padding: "4px 0", fontSize: "12px", display: "flex", justifyContent: "center", alignItems: "center" }} onClick={() => navigate("/bookings/add")}>
                       <span className="btn-add-icon" style={{ fontSize: "14px", marginRight: "4px" }}>＋</span> Add

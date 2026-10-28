@@ -25,10 +25,22 @@
 }
 .hindi-input-custom {
   background-color: #ffffff;
+  color: #111827;
 }
 .hindi-input-custom:focus {
   background-color: #ffffff;
   box-shadow: none;
+}
+body.dark-theme .hindi-input-custom {
+  background-color: #0D1B2A !important;
+  color: #F4F4F4 !important;
+  border-color: rgba(201, 168, 76, 0.3) !important;
+}
+body.dark-theme .hindi-input-custom:focus {
+  background-color: #0D1B2A !important;
+  color: #FFFFFF !important;
+  border-color: #C9A84C !important;
+  box-shadow: 0 0 0 2px rgba(201, 168, 76, 0.25) !important;
 }
 
 .bx {
@@ -90,10 +102,17 @@
 /* ================= CARD COMPACT MODE ================= */
 
 .no-gap-card {
-  margin-bottom: 4px !important;
-  padding: 6px !important;
-  border-radius: 6px;
+  margin-bottom: 8px !important;
+  padding: 10px 12px !important;
+  border-radius: 8px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
   box-shadow: none !important;
+}
+
+body.dark-theme .no-gap-card {
+  background: #14243b !important;
+  border: 1px solid rgba(201, 168, 76, 0.18) !important;
 }
 
 .no-gap-card .form-label,
@@ -105,8 +124,8 @@
 .no-gap-card .form-control,
 .no-gap-card .form-control-sm,
 .no-gap-card .hindi-input-custom {
-  padding-top: 6px;
-  padding-bottom: 6px;
+  padding-top: 4px;
+  padding-bottom: 4px;
 }
 
 /* ================= BUTTONS ================= */
@@ -127,6 +146,20 @@
 
 .add-buyer-btn {
   margin-top: 6px;
+}
+
+body.dark-theme .add-buyer-btn {
+  background: linear-gradient(135deg, #C9A84C 0%, #B8963A 100%) !important;
+  border: none !important;
+  color: #0D1B2A !important;
+  font-weight: 700 !important;
+  box-shadow: 0 2px 8px rgba(201, 168, 76, 0.25) !important;
+}
+
+body.dark-theme .remove-buyer-btn {
+  background: rgba(231, 76, 60, 0.15) !important;
+  border: 1px solid rgba(231, 76, 60, 0.35) !important;
+  color: #ff8a80 !important;
 }
 
 /* ================= TABLE (DESKTOP) ================= */
@@ -255,3 +288,826 @@
     text-align: center;
   }
 }
+
+/* ===== INPUT GROUP SINGLE ROW FIX ===== */
+.input-group {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: stretch !important;
+  width: 100% !important;
+}
+
+.input-group > .form-control {
+  flex: 1 1 auto !important;
+  width: 1% !important;
+  min-width: 0 !important;
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+
+.input-group > .form-select,
+.input-group > select {
+  flex: 0 0 auto !important;
+  width: auto !important;
+  min-width: 90px !important;
+  max-width: 125px !important;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  border-left: 0 !important;
+}
+
+/* ==========================================================================
+   PROPERTY FORM REDESIGN — DUAL MODE (Light + Complete Midnight Trust Dark)
+   ========================================================================== */
+
+/* Remove default background/borders on inner cards so nested sections don't look boxed */
+.add-project-card .card:not(.no-gap-card) {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   1. LIGHT MODE (Default)
+   ───────────────────────────────────────────────────────────── */
+
+/* Main Card Container */
+.add-project-card {
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 4px 18px -2px rgba(15, 23, 42, 0.08);
+  overflow: hidden;
+  background: #ffffff;
+}
+
+/* Card Header */
+.add-project-card .project-header {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+  padding: 12px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.add-project-card .project-title {
+  color: #ffffff !important;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  margin-bottom: 0;
+}
+
+.add-project-card .custom-select {
+  background-color: #ffffff;
+  color: #1e3a8a;
+  font-weight: 600;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  height: 32px;
+  font-size: 13px;
+  background-repeat: no-repeat !important;
+  background-position: right 10px center !important;
+  background-size: 12px 8px !important;
+  padding-right: 28px !important;
+}
+
+/* Form Body Spacing */
+.add-project-card .card-body {
+  padding: 20px 24px;
+}
+
+/* Section Title & Accent Bar */
+.add-project-card h5.text-primary {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1e40af;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px;
+  background: #eff6ff;
+  border-left: 4px solid #2563eb;
+  border-radius: 0 6px 6px 0;
+  margin-bottom: 0;
+}
+
+/* Section Dividers */
+.add-project-card hr {
+  border: 0;
+  border-top: 1px solid #e5e7eb;
+  margin: 20px 0 16px 0;
+  opacity: 1;
+}
+
+/* Form Labels */
+.add-project-card .form-label,
+.add-project-card label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 4px;
+  letter-spacing: 0.1px;
+}
+
+/* Uniform Compact Inputs (Light Mode) */
+.add-project-card .form-control,
+.add-project-card .form-control-sm,
+.add-project-card .form-select,
+.add-project-card .form-select-sm,
+.add-project-card .hindi-input-custom,
+.add-project-card input[type="text"],
+.add-project-card input[type="number"],
+.add-project-card input[type="date"],
+.add-project-card select {
+  height: 33px;
+  min-height: 33px;
+  max-height: 33px;
+  font-size: 13px;
+  line-height: 1.35;
+  padding: 4px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background-color: #ffffff;
+  color: #111827;
+  box-shadow: none;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.add-project-card .form-control:focus,
+.add-project-card .form-control-sm:focus,
+.add-project-card .form-select:focus,
+.add-project-card .form-select-sm:focus,
+.add-project-card .hindi-input-custom:focus,
+.add-project-card input[type="text"]:focus,
+.add-project-card input[type="date"]:focus,
+.add-project-card select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2.5px rgba(37, 99, 235, 0.15);
+  outline: none;
+  background-color: #ffffff;
+}
+
+/* Date Input Light */
+.add-project-card input[type="date"] {
+  padding-top: 3px;
+  padding-bottom: 3px;
+  display: inline-flex;
+  align-items: center;
+  width: 100%;
+}
+
+.add-project-card input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  opacity: 0.65;
+  filter: invert(0.2);
+  transition: opacity 0.15s;
+}
+
+.add-project-card input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+
+/* Selects / Dropdowns Light */
+.add-project-card select,
+.add-project-card .form-select,
+.add-project-card .form-select-sm {
+  padding-right: 28px;
+  background-repeat: no-repeat !important;
+  background-position: right 10px center !important;
+  background-size: 12px 8px !important;
+  cursor: pointer;
+}
+
+/* File Inputs Light */
+.add-project-card input[type="file"].form-control,
+.add-project-card input[type="file"].form-control-sm,
+.add-project-card input[type="file"] {
+  height: 33px;
+  min-height: 33px;
+  padding: 3px 8px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  max-width: 300px;
+}
+
+.add-project-card input[type="file"]::file-selector-button {
+  background: #2563eb;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  padding: 2px 10px;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-right: 8px;
+  height: 25px;
+}
+
+/* KYC 4-Column Row Inputs */
+.add-project-card .kyc-doc-input,
+body.dark-theme .add-project-card .kyc-doc-input {
+  max-width: 100% !important;
+  width: 100% !important;
+  height: 33px !important;
+}
+
+/* Attachment Rows Light (Full & Proper Width) */
+.attachment-row-card {
+  width: 100% !important;
+  max-width: 100% !important;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 10px 18px;
+  margin-bottom: 10px;
+  display: flex !important;
+  align-items: flex-end !important;
+  gap: 16px !important;
+}
+
+.attachment-file-col {
+  flex: 1 1 420px !important;
+  min-width: 280px !important;
+  max-width: 580px !important;
+}
+
+.attachment-file-col input[type="file"] {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.attachment-preview-col {
+  flex: 0 0 60px !important;
+  max-width: 60px !important;
+}
+
+.attachment-date-col {
+  flex: 0 0 200px !important;
+  width: 200px !important;
+  max-width: 200px !important;
+}
+
+.attachment-date-col input[type="date"] {
+  width: 100% !important;
+  max-width: 200px !important;
+}
+
+.btn-attachment-add {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+  border: none !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  font-size: 12px !important;
+  height: 33px !important;
+  padding: 0 16px !important;
+  border-radius: 6px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.btn-attachment-remove {
+  background: #fee2e2 !important;
+  border: 1px solid #fca5a5 !important;
+  color: #dc2626 !important;
+  font-size: 12px !important;
+  height: 33px !important;
+  padding: 0 12px !important;
+  border-radius: 6px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Extra Payments Box Light */
+.extra-payment-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px 14px 4px 14px;
+  margin-bottom: 12px;
+  position: relative;
+}
+
+/* Add Payment Button Light */
+.btn-add-payment {
+  background: #f59e0b !important;
+  border-color: #d97706 !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  font-size: 12px !important;
+  padding: 4px 14px !important;
+  border-radius: 6px !important;
+  box-shadow: 0 1px 2px rgba(245, 158, 11, 0.25) !important;
+  transition: all 0.2s ease !important;
+}
+
+.btn-add-payment:hover {
+  background: #d97706 !important;
+  border-color: #b45309 !important;
+  transform: translateY(-1px);
+}
+
+/* Submit Button Light */
+.submit-btn {
+  background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%) !important;
+  border: none !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  font-size: 13.5px !important;
+  padding: 6px 22px !important;
+  height: 35px !important;
+  border-radius: 6px !important;
+  box-shadow: 0 2px 5px rgba(37, 99, 235, 0.28) !important;
+  transition: all 0.2s ease !important;
+}
+
+.submit-btn:hover {
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.38) !important;
+  transform: translateY(-1px);
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   2. COMPLETE DARK THEME (body.dark-theme) — Midnight Trust Palette
+   ───────────────────────────────────────────────────────────── */
+
+body.dark-theme .add-project-card {
+  background: #1B2D45 !important;
+  border: 1px solid rgba(201, 168, 76, 0.22) !important;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45) !important;
+}
+
+body.dark-theme .add-project-card .project-header {
+  background: linear-gradient(135deg, #0D1B2A 0%, #172A42 100%) !important;
+  border-bottom: 1px solid rgba(201, 168, 76, 0.25) !important;
+}
+
+body.dark-theme .add-project-card .project-title {
+  color: #F4F4F4 !important;
+}
+
+body.dark-theme .add-project-card .custom-select {
+  background-color: #0D1B2A !important;
+  color: #E8C56A !important;
+  border: 1px solid rgba(201, 168, 76, 0.45) !important;
+  background-repeat: no-repeat !important;
+  background-position: right 10px center !important;
+  background-size: 12px 8px !important;
+  padding-right: 28px !important;
+}
+
+body.dark-theme .add-project-card .card-body {
+  background: #1B2D45 !important;
+  color: #F4F4F4 !important;
+}
+
+/* Dark Section Titles */
+body.dark-theme .add-project-card h5.text-primary {
+  background: rgba(201, 168, 76, 0.12) !important;
+  color: #E8C56A !important;
+  border-left: 4px solid #C9A84C !important;
+}
+
+body.dark-theme .add-project-card h6 {
+  color: #F4F4F4 !important;
+}
+
+/* Dark Dividers */
+body.dark-theme .add-project-card hr {
+  border-top: 1px solid rgba(201, 168, 76, 0.16) !important;
+}
+
+/* Dark Labels & Text */
+body.dark-theme .add-project-card .form-label,
+body.dark-theme .add-project-card label {
+  color: #F4F4F4 !important;
+  font-weight: 500 !important;
+}
+
+body.dark-theme .add-project-card .text-muted,
+body.dark-theme .add-project-card small:not(.text-danger) {
+  color: rgba(244, 244, 244, 0.65) !important;
+}
+
+body.dark-theme .add-project-card .text-danger,
+body.dark-theme .add-project-card small.text-danger {
+  color: #fca5a5 !important;
+}
+
+/* Dark Radios & Checkboxes */
+body.dark-theme .add-project-card .form-check-label {
+  color: #F4F4F4 !important;
+}
+
+body.dark-theme .add-project-card .form-check-input {
+  background-color: #0D1B2A !important;
+  border-color: rgba(201, 168, 76, 0.5) !important;
+}
+
+body.dark-theme .add-project-card .form-check-input:checked {
+  background-color: #C9A84C !important;
+  border-color: #C9A84C !important;
+}
+
+/* Dark All Inputs: Text, Number, Date, Hindi, Select */
+body.dark-theme .add-project-card .form-control,
+body.dark-theme .add-project-card .form-control-sm,
+body.dark-theme .add-project-card .form-select,
+body.dark-theme .add-project-card .form-select-sm,
+body.dark-theme .add-project-card .hindi-input-custom,
+body.dark-theme .add-project-card input[type="text"],
+body.dark-theme .add-project-card input[type="number"],
+body.dark-theme .add-project-card input[type="date"],
+body.dark-theme .add-project-card select {
+  background-color: #0D1B2A !important;
+  color: #F4F4F4 !important;
+  border: 1px solid rgba(201, 168, 76, 0.3) !important;
+  box-shadow: none !important;
+}
+
+/* Dark Input Placeholder */
+body.dark-theme .add-project-card input::placeholder,
+body.dark-theme .add-project-card .form-control::placeholder {
+  color: rgba(244, 244, 244, 0.38) !important;
+}
+
+/* Dark Input Focus */
+body.dark-theme .add-project-card .form-control:focus,
+body.dark-theme .add-project-card .form-control-sm:focus,
+body.dark-theme .add-project-card .form-select:focus,
+body.dark-theme .add-project-card .form-select-sm:focus,
+body.dark-theme .add-project-card .hindi-input-custom:focus,
+body.dark-theme .add-project-card input[type="text"]:focus,
+body.dark-theme .add-project-card input[type="date"]:focus,
+body.dark-theme .add-project-card select:focus {
+  border-color: #C9A84C !important;
+  box-shadow: 0 0 0 2.5px rgba(201, 168, 76, 0.25) !important;
+  background-color: #0D1B2A !important;
+  color: #FFFFFF !important;
+}
+
+/* Dark Select Dropdown Arrow (No repeating, perfectly centered) */
+body.dark-theme .add-project-card select,
+body.dark-theme .add-project-card .form-select,
+body.dark-theme .add-project-card .form-select-sm,
+body.dark-theme select.form-control-sm {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23C9A84C' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 10px center !important;
+  background-size: 12px 8px !important;
+  padding-right: 28px !important;
+}
+
+body.dark-theme .add-project-card option {
+  background-color: #1B2D45 !important;
+  color: #F4F4F4 !important;
+}
+
+/* Dark Date Picker */
+body.dark-theme .add-project-card input[type="date"] {
+  width: 100%;
+}
+
+body.dark-theme .add-project-card input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1) brightness(0.9) !important;
+  opacity: 0.85;
+}
+
+/* Dark File Inputs & Buttons */
+body.dark-theme .add-project-card input[type="file"]::file-selector-button {
+  background: linear-gradient(135deg, #C9A84C 0%, #B8963A 100%) !important;
+  color: #0D1B2A !important;
+  border: none !important;
+  border-radius: 4px !important;
+  padding: 2px 10px !important;
+  font-size: 11.5px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  margin-right: 8px !important;
+  height: 25px !important;
+}
+
+body.dark-theme .add-project-card input[type="file"] {
+  max-width: 300px !important;
+}
+
+/* Dark Attachment Rows (Full & Proper Width) */
+body.dark-theme .attachment-row-card {
+  width: 100% !important;
+  max-width: 100% !important;
+  background: rgba(13, 27, 42, 0.6) !important;
+  border: 1px solid rgba(201, 168, 76, 0.22) !important;
+  border-radius: 8px !important;
+  padding: 10px 18px !important;
+  margin-bottom: 10px !important;
+  display: flex !important;
+  align-items: flex-end !important;
+  gap: 16px !important;
+}
+
+body.dark-theme .attachment-file-col input[type="file"] {
+  max-width: 100% !important;
+}
+
+body.dark-theme .btn-attachment-add {
+  background: linear-gradient(135deg, #C9A84C 0%, #B8963A 100%) !important;
+  border: none !important;
+  color: #0D1B2A !important;
+  font-weight: 700 !important;
+  font-size: 12px !important;
+  height: 33px !important;
+  padding: 0 16px !important;
+  border-radius: 6px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0 2px 6px rgba(201, 168, 76, 0.25) !important;
+}
+
+body.dark-theme .btn-attachment-add:hover {
+  background: linear-gradient(135deg, #E8C56A 0%, #C9A84C 100%) !important;
+}
+
+body.dark-theme .btn-attachment-remove {
+  background: rgba(231, 76, 60, 0.15) !important;
+  border: 1px solid rgba(231, 76, 60, 0.35) !important;
+  color: #ff8a80 !important;
+  font-size: 12px !important;
+  height: 33px !important;
+  padding: 0 12px !important;
+  border-radius: 6px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Dark Extra Payments Box */
+body.dark-theme .extra-payment-box {
+  background: rgba(13, 27, 42, 0.6) !important;
+  border: 1px solid rgba(201, 168, 76, 0.22) !important;
+}
+
+/* Dark Add Payment Button */
+body.dark-theme .btn-add-payment {
+  background: linear-gradient(135deg, #C9A84C 0%, #B8963A 100%) !important;
+  border-color: #C9A84C !important;
+  color: #0D1B2A !important;
+  font-weight: 700 !important;
+  box-shadow: 0 2px 8px rgba(201, 168, 76, 0.3) !important;
+}
+
+body.dark-theme .btn-add-payment:hover {
+  background: linear-gradient(135deg, #E8C56A 0%, #C9A84C 100%) !important;
+  color: #0D1B2A !important;
+}
+
+/* Dark Submit Button */
+body.dark-theme .submit-btn {
+  background: linear-gradient(135deg, #C9A84C 0%, #B8963A 100%) !important;
+  border: none !important;
+  color: #0D1B2A !important;
+  font-weight: 700 !important;
+  box-shadow: 0 4px 15px rgba(201, 168, 76, 0.35) !important;
+}
+
+body.dark-theme .submit-btn:hover {
+  background: linear-gradient(135deg, #E8C56A 0%, #C9A84C 100%) !important;
+  box-shadow: 0 6px 20px rgba(201, 168, 76, 0.45) !important;
+}
+
+/* Dark Payment Summary Box */
+body.dark-theme .payment-summary-box {
+  background: #0D1B2A !important;
+  border: 1px solid rgba(201, 168, 76, 0.25) !important;
+}
+
+body.dark-theme .payment-summary-box h6 {
+  color: #E8C56A !important;
+}
+
+body.dark-theme .payment-summary-box div[style*="background: rgb(248, 250, 252)"],
+body.dark-theme .payment-summary-box div[style*="#f8fafc"] {
+  background: rgba(27, 45, 69, 0.7) !important;
+  border-left-color: #C9A84C !important;
+}
+
+body.dark-theme .payment-summary-box div[style*="background: rgb(238, 242, 255)"],
+body.dark-theme .payment-summary-box div[style*="#eef2ff"] {
+  background: rgba(27, 45, 69, 0.7) !important;
+  border-left-color: #6366f1 !important;
+}
+
+body.dark-theme .payment-summary-box div[style*="background: rgb(254, 242, 242)"],
+body.dark-theme .payment-summary-box div[style*="#fef2f2"] {
+  background: rgba(45, 20, 25, 0.7) !important;
+  border-left-color: #E74C3C !important;
+}
+
+body.dark-theme .payment-summary-box span {
+  color: rgba(244, 244, 244, 0.85) !important;
+}
+
+body.dark-theme .payment-summary-box strong {
+  color: #F4F4F4 !important;
+}
+
+/* Dark Searchable Suggestions Dropdown */
+body.dark-theme .searchable-suggestions-dropdown {
+  background: #1B2D45 !important;
+  border: 1px solid rgba(201, 168, 76, 0.35) !important;
+  color: #F4F4F4 !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5) !important;
+}
+
+body.dark-theme .searchable-suggestion-item {
+  color: #F4F4F4 !important;
+  border-bottom: 1px solid rgba(201, 168, 76, 0.1) !important;
+}
+
+body.dark-theme .searchable-suggestion-item:hover {
+  background: #264A73 !important;
+  color: #E8C56A !important;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   3. SECTION ACTION BUTTONS (Edit, Cancel, Submit)
+   ───────────────────────────────────────────────────────────── */
+.btn-back {
+  background: #eff6ff !important;
+  border: 1px solid #93c5fd !important;
+  color: #1d4ed8 !important;
+  font-weight: 600 !important;
+  font-size: 12px !important;
+  padding: 3px 14px !important;
+  border-radius: 6px !important;
+  height: 29px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  transition: all 0.15s ease !important;
+}
+
+.btn-back:hover {
+  background: #dbeafe !important;
+  border-color: #60a5fa !important;
+  color: #1e40af !important;
+  transform: translateY(-1px);
+}
+
+.btn-cancel {
+  background: #f1f5f9 !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #475569 !important;
+  font-weight: 600 !important;
+  font-size: 12px !important;
+  padding: 3px 14px !important;
+  border-radius: 6px !important;
+  height: 29px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+}
+
+.btn-cancel:hover {
+  background: #e2e8f0 !important;
+  color: #1e293b !important;
+}
+
+.btn-add-customer {
+  background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%) !important;
+  border: none !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  font-size: 12px !important;
+  padding: 3px 14px !important;
+  border-radius: 6px !important;
+  height: 29px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  box-shadow: 0 1px 3px rgba(37, 99, 235, 0.25) !important;
+}
+
+.btn-add-customer:hover {
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%) !important;
+  color: #ffffff !important;
+}
+
+/* Dark Section Action Buttons */
+body.dark-theme .btn-back {
+  background: rgba(201, 168, 76, 0.12) !important;
+  border: 1px solid rgba(201, 168, 76, 0.4) !important;
+  color: #E8C56A !important;
+}
+
+body.dark-theme .btn-back:hover {
+  background: rgba(201, 168, 76, 0.25) !important;
+  border-color: #C9A84C !important;
+  color: #FFFFFF !important;
+}
+
+body.dark-theme .btn-cancel {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  color: #e2e8f0 !important;
+}
+
+body.dark-theme .btn-cancel:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+  color: #ffffff !important;
+}
+
+body.dark-theme .btn-add-customer {
+  background: linear-gradient(135deg, #C9A84C 0%, #B8963A 100%) !important;
+  border: none !important;
+  color: #0D1B2A !important;
+  font-weight: 700 !important;
+  box-shadow: 0 2px 6px rgba(201, 168, 76, 0.25) !important;
+}
+
+body.dark-theme .btn-add-customer:hover {
+  background: linear-gradient(135deg, #E8C56A 0%, #C9A84C 100%) !important;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   4. DIVISION OF AREA DROPDOWN
+   ───────────────────────────────────────────────────────────── */
+.division-btn {
+  height: 33px !important;
+  font-size: 13px !important;
+  border-radius: 6px !important;
+  border: 1px solid #d1d5db !important;
+  background-color: #ffffff !important;
+  color: #374151 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+
+body.dark-theme .division-btn {
+  background-color: #0D1B2A !important;
+  border-color: rgba(201, 168, 76, 0.3) !important;
+  color: #F4F4F4 !important;
+}
+
+.division-dropdown-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+}
+
+body.dark-theme .division-dropdown-card {
+  background: #1B2D45 !important;
+  border: 1px solid rgba(201, 168, 76, 0.35) !important;
+  color: #F4F4F4 !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45) !important;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   5. UPLOAD PREVIEW CARDS (Dark & Light)
+   ───────────────────────────────────────────────────────────── */
+.add-project-card div[style*="border: 1px solid"],
+.add-project-card div[style*="border:1px solid"] {
+  border-color: #e2e8f0 !important;
+  background: #f8fafc;
+  border-radius: 6px !important;
+}
+
+body.dark-theme .add-project-card div[style*="border: 1px solid"],
+body.dark-theme .add-project-card div[style*="border:1px solid"] {
+  border-color: rgba(201, 168, 76, 0.25) !important;
+  background: #0D1B2A !important;
+  color: #F4F4F4 !important;
+}
+
+body.dark-theme .add-project-card div[style*="border: 1px solid"] span,
+body.dark-theme .add-project-card div[style*="border:1px solid"] span {
+  color: #E2E8F0 !important;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   6. ALERTS & VALIDATION SUMMARY IN DARK MODE
+   ───────────────────────────────────────────────────────────── */
+body.dark-theme .alert-success {
+  background-color: #0d3320 !important;
+  border-color: #198754 !important;
+  color: #a3e635 !important;
+}
+
+body.dark-theme .alert-danger {
+  background-color: #3b1114 !important;
+  border-color: #ef4444 !important;
+  color: #fca5a5 !important;
+}
+
+body.dark-theme .alert-danger strong,
+body.dark-theme .alert-danger b {
+  color: #ffffff !important;
+}
+
+
+
+
+

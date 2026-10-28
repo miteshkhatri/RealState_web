@@ -108,6 +108,7 @@ function AddBooking() {
   const [brokerFont, setBrokerFont] = useState(null);
 
   const [project_font, setProject_font] = useState(null);
+  const [sector_font, setSector_font] = useState(null);
   const [towrod, setTowrod] = useState("");
   const [TowrodError, setTowrodError] = useState("");
 
@@ -608,6 +609,10 @@ function AddBooking() {
                 : data?.sector_id || '';
 
               setSectorId(selectedSectorId);
+              const foundSector = sectors?.find((s) => String(s.sector_id) === String(selectedSectorId));
+              if (foundSector) {
+                setSector_font(Number(foundSector.krutiDev_font ?? foundSector.kruti_font ?? 0));
+              }
 
               if (selectedSectorId) {
                 const selectedPlotId = Array.isArray(data) && data.length > 0 
@@ -935,6 +940,9 @@ const formattedBookingDate = currentData.booking_date
     const selectedSectorId = event.target.value;
 
     setSectorId(selectedSectorId);
+    const foundSector = SectorData?.find((s) => String(s.sector_id) === String(selectedSectorId));
+    setSector_font(foundSector ? Number(foundSector.krutiDev_font ?? foundSector.kruti_font ?? 0) : 0);
+
     // ⭐ Clear Plot when Sector changes
     setPlotNumber('');
     setSquareFeet('');
@@ -945,6 +953,7 @@ const formattedBookingDate = currentData.booking_date
       getAllPlots(selectedSectorId);
     } else {
       setSectorId('');
+      setSector_font(0);
     }
   };
 
@@ -1132,8 +1141,8 @@ const formattedBookingDate = currentData.booking_date
           bank_name: bankname,
           check_date: checkdate,
           towords: towrod,
-          broker_name: brokerName,
-          broker_id: Number(broker_id),
+          broker_name: broker_id ? brokerName : null,
+          broker_id: broker_id ? Number(broker_id) : null,
           commission_type: commissionType,
           commission_value: commissionValue,
           created_by_id: userData?.user_id
@@ -1330,7 +1339,7 @@ const formattedBookingDate = currentData.booking_date
         check_date: checkdate || null,
         project_id: Number(ProjectId),
         broker_id: broker_id ? Number(broker_id) : null,
-        broker_name: brokerName && brokerName.trim() !== "" ? brokerName : null,
+        broker_name: broker_id ? brokerName : null,
         commission_type: commissionType || null,
         commission_value: commissionValue ? Number(commissionValue) : null,
         mobile_no: customerList?.[0]?.number ? Number(customerList[0].number) : null,
@@ -1692,21 +1701,37 @@ const formattedRegisterDate = res.data?.data[0]?.register_date
     {isEnglish ? FromLable[1].EnglishName : FromLable[1].HindiName}
   </Form.Label>
   
-  <Form.Select
-    className={`custom-select ${!ProjectId ? 'disabled-custom' : ''}`}
-    onChange={handleSectorChange}
-    value={sector_id || ''}
-    disabled={!ProjectId}
-  >
-    <option value="">
-      {isEnglish ? "Select Sector" : "सेक्टर चुनें"}
-    </option>
-    {SectorData?.map((data, index) => (
-      <option key={index} value={data.sector_id}>
-        {data.sector_name}
-      </option>
-    ))}
-  </Form.Select>
+  {(() => {
+    const selectedSector = SectorData?.find((s) => String(s.sector_id) === String(sector_id));
+    const isSelectedKruti = Number(selectedSector?.krutiDev_font ?? selectedSector?.kruti_font ?? sector_font) === 1;
+
+    return (
+      <Form.Select
+        className={`custom-select ${!ProjectId ? 'disabled-custom' : ''} ${isSelectedKruti ? 'kruti-dev' : ''}`}
+        style={isSelectedKruti ? { fontFamily: "'Kruti Dev 010', sans-serif !important", fontSize: '16px' } : undefined}
+        onChange={handleSectorChange}
+        value={sector_id || ''}
+        disabled={!ProjectId}
+      >
+        <option value="" style={{ fontFamily: 'inherit' }}>
+          {isEnglish ? "Select Sector" : "सेक्टर चुनें"}
+        </option>
+        {SectorData?.map((data, index) => {
+          const isItemKruti = Number(data.krutiDev_font ?? data.kruti_font) === 1;
+          return (
+            <option
+              key={index}
+              value={data.sector_id}
+              className={isItemKruti ? 'kruti-dev' : ''}
+              style={isItemKruti ? { fontFamily: "'Kruti Dev 010', sans-serif !important", fontSize: '16px' } : undefined}
+            >
+              {data.sector_name}
+            </option>
+          );
+        })}
+      </Form.Select>
+    );
+  })()}
   
   <Form.Text className="form-text text-muted">
     <p className="error-text">{SectorError}</p>
@@ -2090,11 +2115,13 @@ const formattedRegisterDate = res.data?.data[0]?.register_date
                                     setBroker_id(null);
                                     setBrokerFont(null);
                                     setIsBrokerSelected(false);
-                                    if (value.trim().length >= 2) {
-                                      await fetchBrokers(value);
-                                    } else {
+
+                                    const endsWithEnglishLetters = /[a-zA-Z]$/.test(value);
+                                    if (endsWithEnglishLetters) {
                                       setBrokerDropdownOpen(false);
-                                      setBrokerList([]);
+                                    } else {
+                                      await fetchBrokers(value.trim());
+                                      setBrokerDropdownOpen(true);
                                     }
                                   }}
                                   lang="hi"
@@ -2111,7 +2138,9 @@ const formattedRegisterDate = res.data?.data[0]?.register_date
                                       : ""
                                   }`}
                                   onFocus={() => {
-                                    if (brokerName.trim().length >= 2 && BrokerList.length > 0) {
+                                    const endsWithEnglishLetters = /[a-zA-Z]$/.test(brokerName || "");
+                                    if (!endsWithEnglishLetters) {
+                                      fetchBrokers((brokerName || "").trim());
                                       setBrokerDropdownOpen(true);
                                     }
                                   }}
@@ -2126,11 +2155,19 @@ const formattedRegisterDate = res.data?.data[0]?.register_date
                                           b.broker_name.toLowerCase() ===
                                           (brokerName || "").trim().toLowerCase()
                                       );
-                                      if (!matched) {
+                                      if (matched) {
+                                        setBroker_id(matched.broker_id);
+                                        setBrokerName(matched.broker_name);
+                                        setBrokerNumber(matched.phone_number || "");
+                                        setBrokerFont(matched.kruti_brokers_font);
+                                      } else if (!broker_id) {
+                                        setBrokerName("");
+                                        setBrokerNumber("");
                                         setBroker_id(null);
+                                        setBrokerFont(null);
                                       }
                                       setBrokerDropdownOpen(false);
-                                    }, 200);
+                                    }, 250);
                                   }}
                                 />
                               ) : (
@@ -2143,12 +2180,7 @@ const formattedRegisterDate = res.data?.data[0]?.register_date
                                     setBrokerName(value);
                                     setBroker_id(null);
                                     setBrokerFont(null);
-                                    if (value.trim().length >= 2) {
-                                      fetchBrokers(value);
-                                    } else {
-                                      setBrokerDropdownOpen(false);
-                                      setBrokerList([]);
-                                    }
+                                    fetchBrokers(value);
                                   }}
                                   placeholder={isEnglish
                                     ? FromLable.find((item) => item.id === 26)?.EnglishName
@@ -2163,9 +2195,8 @@ const formattedRegisterDate = res.data?.data[0]?.register_date
                                       : ""
                                   }`}
                                   onFocus={() => {
-                                    if (brokerName.trim().length >= 2 && BrokerList.length > 0) {
-                                      setBrokerDropdownOpen(true);
-                                    }
+                                    fetchBrokers(brokerName || "");
+                                    setBrokerDropdownOpen(true);
                                   }}
                                   onBlur={() => {
                                     setTimeout(() => {
@@ -2178,19 +2209,27 @@ const formattedRegisterDate = res.data?.data[0]?.register_date
                                           b.broker_name.toLowerCase() ===
                                           (brokerName || "").trim().toLowerCase()
                                       );
-                                      if (!matched) {
+                                      if (matched) {
+                                        setBroker_id(matched.broker_id);
+                                        setBrokerName(matched.broker_name);
+                                        setBrokerNumber(matched.phone_number || "");
+                                        setBrokerFont(matched.kruti_brokers_font);
+                                      } else if (!broker_id) {
+                                        setBrokerName("");
+                                        setBrokerNumber("");
                                         setBroker_id(null);
+                                        setBrokerFont(null);
                                       }
                                       setBrokerDropdownOpen(false);
-                                    }, 200);
+                                    }, 250);
                                   }}
                                 />
                               )}
 
                               {brokerDropdownOpen && BrokerList.length > 0 && (
-                                <ul className="broker-dropdown show">
+                                <ul className="broker-dropdown show" style={{ maxHeight: '220px', overflowY: 'auto' }}>
                                   {BrokerList.filter((b) =>
-                                    b.broker_name.toLowerCase().includes(brokerName.toLowerCase())
+                                    !brokerName.trim() || b.broker_name.toLowerCase().includes(brokerName.trim().toLowerCase())
                                   ).map((data, index) => (
                                     <li
                                       key={index}
@@ -2203,16 +2242,25 @@ const formattedRegisterDate = res.data?.data[0]?.register_date
                                         setCommissionValue(data?.commission_value);
                                         setBrokerName(data.broker_name);
                                         setBroker_id(data.broker_id);
+                                        setBrokerNumber(data.phone_number || "");
                                         setBrokerDropdownOpen(false);
                                         setBrokerList([]);
                                         setBrokerFont(data.kruti_brokers_font);
                                       }}
                                     >
-                                      {data.broker_name}
+                                      <div className="d-flex justify-content-between align-items-center">
+                                        <span>{data.broker_name}</span>
+                                        {data.phone_number && (
+                                          <small style={{ opacity: 0.7, fontSize: '11px', marginLeft: '8px' }}>({data.phone_number})</small>
+                                        )}
+                                      </div>
                                     </li>
                                   ))}
                                 </ul>
                               )}
+                              <small style={{ fontSize: '11px', color: '#c9a84c', display: 'block', marginTop: '3px' }}>
+                                * केवल लिस्ट में से ही ब्रोकर सेलेक्ट करें (Select from list only)
+                              </small>
                             </div>
                           </Col>
 
@@ -2342,20 +2390,23 @@ const formattedRegisterDate = res.data?.data[0]?.register_date
                               {isEnglish ? 'Broker Number' : 'दलाल का नंबर'}
                             </Form.Label>
                             <Form.Control
-                              value={brokerNumber}
-                              onChange={(e) => {
-                                const value = e.target.value;
-                                if (value.length <= 12) setBrokerNumber(value);
-                              }}
-                              onKeyDown={(e) => {
-                                if (['.', '-', 'e', '+'].includes(e.key)) e.preventDefault();
-                              }}
-                              type="number"
-                              placeholder={isEnglish ? 'Enter Broker Number' : 'दलाल का नंबर दर्ज करें'}
+                              value={brokerNumber || ''}
+                              readOnly
+                              disabled
+                              type="text"
+                              placeholder={isEnglish ? 'Auto-filled on broker selection' : 'ब्रोकर चुनने पर स्वतः आएगा'}
                               className="form-control form-control-sm"
+                              style={{
+                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                                cursor: 'not-allowed',
+                                color: '#ffffff',
+                                opacity: 0.9
+                              }}
                             />
                             <Form.Text className="form-text text-muted">
-                              <p className="error-text">{brokerNumberError}</p>
+                              <small style={{ fontSize: '11px', color: 'rgba(255, 255, 255, 0.5)' }}>
+                                * {isEnglish ? 'Auto-filled from selected broker' : 'चुने गए ब्रोकर से स्वतः भरा जाएगा'}
+                              </small>
                             </Form.Text>
                           </Col>
                         </Row>

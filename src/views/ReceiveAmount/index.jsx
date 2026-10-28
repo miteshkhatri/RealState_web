@@ -14,7 +14,6 @@ import { useLocation } from 'react-router-dom';
 function Index() {
   const location = useLocation();
   const isPendingOnly = location.pathname.includes('/pendingamount') || location.state?.filterPendingOnly;
-  console.log("🔥 Routing Info:", { pathname: location.pathname, isPendingOnly });
   
   const [ReceiveAmountData, setReceiveAmountData] = useState();
   const userData = JSON.parse(localStorage.getItem('users'));
@@ -88,10 +87,8 @@ function Index() {
     });
 
     let data = Object.values(map);
-    console.log("📊 Data before filtering:", data);
     if (isPendingOnly) {
       data = data.filter((item) => Math.floor(Number(item.pending_amount)) > 0);
-      console.log("📊 Data after pending filter:", data);
     }
     return data;
   };

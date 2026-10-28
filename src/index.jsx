@@ -3,6 +3,12 @@ import { createRoot } from 'react-dom/client';
  
 import store from './redux/Store';   
 
+if (import.meta.env.PROD) {
+  console.log = () => {};
+  console.info = () => {};
+  console.debug = () => {};
+}
+
 import { ConfigProvider } from './contexts/ConfigContext';
 import { Provider } from "react-redux";
 import './index.scss';

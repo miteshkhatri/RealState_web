@@ -590,7 +590,7 @@ function SellerBuyerSection({
                             {ph("sellerAreaLabel", "Area", "एरिया")}
                           </Form.Label>
 
-                          <InputGroup size="sm">
+                          <InputGroup size="sm" className="flex-nowrap">
                             <Form.Control
                               type="text"
                               inputMode="decimal"
@@ -1122,7 +1122,7 @@ function SellerBuyerSection({
                             {ph("sellerAreaLabel", "Area", "एरिया")}
                           </Form.Label>
 
-                          <InputGroup size="sm">
+                          <InputGroup size="sm" className="flex-nowrap">
                             <Form.Control
                               type="text"
                               inputMode="numeric"
@@ -1589,7 +1589,7 @@ function SellerBuyerSection({
                         {ph("buyerAreaLabel", "Area", "एरिया")}
                       </Form.Label>
 
-                      <InputGroup size="sm">
+                      <InputGroup size="sm" className="flex-nowrap">
                         <Form.Control
                           type="text"
                           inputMode="decimal"

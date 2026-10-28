@@ -885,6 +885,16 @@ function resetZoom() {
   document.getElementById('baseSvg').style.transform = 'scale(1)';
 }
 
+document.addEventListener('DOMContentLoaded', function() {
+  const mapArea = document.querySelector('.map-area');
+  if (mapArea) {
+    mapArea.addEventListener('wheel', function(e) {
+      e.preventDefault();
+      changeZoom(e.deltaY < 0 ? 0.15 : -0.15);
+    }, { passive: false });
+  }
+});
+
 // ── FILTER BLOCKS ──
 function filterBlock(block, el) {
   document.querySelectorAll('.block-tab').forEach(t=>t.classList.remove('active'));

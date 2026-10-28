@@ -17,6 +17,10 @@ export default defineConfig(({ mode }) => {
       global: 'window'
     },
 
+    esbuild: {
+      drop: mode === 'production' ? ['console', 'debugger'] : []
+    },
+
     resolve: {
       alias: [
         // { find: '', replacement: path.resolve(__dirname, 'src') },
@@ -38,7 +42,10 @@ export default defineConfig(({ mode }) => {
     css: {
       preprocessorOptions: {
         scss: {
-          charset: false
+          charset: false,
+          api: 'modern',
+          silenceDeprecations: ['legacy-js-api', 'import', 'global-builtin', 'color-functions'],
+          quietDeps: true
         },
         less: {
           charset: false
@@ -63,9 +70,34 @@ export default defineConfig(({ mode }) => {
       }
     },
 
-    // Local me normal chalega
-    // Build me /realestate/ use hoga
-    base: mode === 'production' ? '/realestate/' : '/',
+    base: '/realestate/',
+
+    build: {
+      chunkSizeWarningLimit: 2500,
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (id.includes('node_modules')) {
+              if (id.includes('xlsx')) {
+                return 'vendor-xlsx';
+              }
+              if (id.includes('docx') || id.includes('mammoth') || id.includes('pizzip')) {
+                return 'vendor-docx';
+              }
+              if (id.includes('jspdf')) {
+                return 'vendor-jspdf';
+              }
+              if (id.includes('html2canvas') || id.includes('html2pdf')) {
+                return 'vendor-html2canvas';
+              }
+              if (id.includes('react-bootstrap') || id.includes('@restart')) {
+                return 'vendor-react-bootstrap';
+              }
+            }
+          }
+        }
+      }
+    },
 
     plugins: [react(), jsconfigPaths()]
   };

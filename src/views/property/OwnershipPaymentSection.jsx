@@ -64,22 +64,19 @@ function OwnershipPaymentSection({
           label={ph("paymentLabel", "Payment", "संपादित भुगतान")}
           value={formData.paymentA}
           onChange={(v) => setFormData(p => ({ ...p, paymentA: v }))}
-          placeholder={ph("payment", "Enter Payment", "संपादित भुगतान")}
+          placeholder={ph("payment", "Enter Payment", "संपादित भुगतान दर्ज करें")}
           fontMode={FontValue}
           HindiInput={HindiInput}
           maxLength={15}
-            disableHindi={true}
+          disableHindi={true}
         />
 
         <CommonHindiInput
           md={4}
-          label={ph("consideration amount ", "Consideration amount", "भुगतान की प्रतिफल राशि")}
-          value={formData.considerationAmount }
-          onChange={(v) => setFormData(p => ({ ...p, considerationAmount : v }))}
-
-
-          
-          placeholder={ph("considerationamountPh", "Enter consideration amount ", "भुगतान की प्रतिफल राशि")}
+          label={ph("consideration amount ", "Consideration amount", "प्रतिफल राशि")}
+          value={formData.considerationAmount}
+          onChange={(v) => setFormData(p => ({ ...p, considerationAmount: v }))}
+          placeholder={ph("considerationamountPh", "Enter consideration amount ", "प्रतिफल राशि दर्ज करें")}
           fontMode={FontValue}
           HindiInput={HindiInput}
           maxLength={15}
@@ -99,23 +96,22 @@ function OwnershipPaymentSection({
           maxLength={7}
         />
 
-        <Col md={4}>
-          <Form.Label>{ph("categoryLabel", "Category of Land", "भूमि की श्रेणी")}</Form.Label>
-          <Form.Select
-            size="sm"
-            value={formData.category || ""}
-            onChange={(e) => setFormData(p => ({ ...p, category: e.target.value }))}
-          >
-            <option value="">{ph("selectCategory", "Select Category", "श्रेणी चुनें")}</option>
-            <option value="Agricultural">कृषि</option>
-            <option value="Residential">आवासीय</option>
-            <option value="Commercial">व्यावसायिक</option>
-            <option value="Industrial">औद्योगिक</option>
-            <option value="NA">गैर-कृषि</option>
-            <option value="Institutional">संस्थागत</option>
-            <option value="Other">अन्य</option>
-          </Form.Select>
-        </Col>
+        <CommonSelect
+          md={4}
+          label={ph("categoryLabel", "Category of Land", "भूमि की श्रेणी")}
+          value={formData.category || ""}
+          onChange={(v) => setFormData(p => ({ ...p, category: v }))}
+          placeholder={ph("selectCategory", "Select Category", "श्रेणी चुनें")}
+          options={[
+            { value: "Agricultural", label: "कृषि" },
+            { value: "Residential", label: "आवासीय" },
+            { value: "Commercial", label: "व्यावसायिक" },
+            { value: "Industrial", label: "औद्योगिक" },
+            { value: "NA", label: "गैर-कृषि" },
+            { value: "Institutional", label: "संस्थागत" },
+            { value: "Other", label: "अन्य" }
+          ]}
+        />
 
         {/* ✅ CommonDateInput */}
         <CommonDateInput
@@ -181,37 +177,36 @@ function OwnershipPaymentSection({
       </Row>
 
       {/* ================= EXTRA PAYMENTS ================= */}
-      <div className="d-flex justify-content-between align-items-center mb-2">
-        <h6>{ph("addPaymentExtraTitle", "Add Payment (Extra)", "भुगतान जोड़ें (एक्स्ट्रा)")}</h6>
-        <Button size="sm" onClick={addPaymentRow}>
-          + {ph("addPaymentBtn", "Add Payment", "भुगतान जोड़ें")}
+      <div className="d-flex justify-content-between align-items-center mt-3 mb-2 pt-2 border-top">
+        <h6 className="mb-0 fw-bold text-dark">{ph("addPaymentExtraTitle", "Add Payment (Extra)", "अतिरिक्त भुगतान")}</h6>
+        <Button size="sm" className="btn-add-payment" onClick={addPaymentRow}>
+          + {ph("addPaymentBtn", "Add Payment", "+ भुगतान जोड़ें")}
         </Button>
       </div>
 
       {extraPayments.map((p, idx) => (
-        <React.Fragment key={idx}>
+        <div key={idx} className="extra-payment-box mt-3">
+          {/* ROW 1 */}
+          <div className="d-flex justify-content-between align-items-center mb-2">
+            <h6 className="text-primary fw-bold mb-0" style={{ fontSize: "13px" }}>
+              {ph("extraPaymentTitle", "Extra Payment", "अतिरिक्त भुगतान")} #{idx + 1}
+            </h6>
 
-          <hr></hr>
-          {/* ROW 1 */}<div className="d-flex justify-content-between align-items-center mb-2">
-            
-  <h6 className="text-muted">
-    {ph("extraPaymentTitle", "Extra Payment", "अतिरिक्त भुगतान")} #{idx + 1}
-  </h6>
-
-  <Button
-    size="sm"
-    variant="danger"
-    onClick={() => {
-      // 🔥 EXISTING payment → mark for delete
-      if (isExistingMode && p.id && onAddDeletedPaymentId) {
-        onAddDeletedPaymentId(p.id);
-      }
-      removeExtraPayment(idx);
-    }}
-  >
- {ph("removeBtn", "Remove", "हटाएँ")}
-  </Button>
-</div>
+            <Button
+              size="sm"
+              variant="outline-danger"
+              style={{ fontSize: "11px", padding: "2px 10px" }}
+              onClick={() => {
+                // 🔥 EXISTING payment → mark for delete
+                if (isExistingMode && p.id && onAddDeletedPaymentId) {
+                  onAddDeletedPaymentId(p.id);
+                }
+                removeExtraPayment(idx);
+              }}
+            >
+              {ph("removeBtn", "Remove", "हटाएं")}
+            </Button>
+          </div>
 
           
           <Row className="mb-3">
@@ -237,7 +232,7 @@ function OwnershipPaymentSection({
               label={ph("paymentLabel", "Payment", "संपादित भुगतान")}
               value={p.paymentA || ""}
               onChange={(v) => handleExtraPaymentChange(idx, "paymentA", v)}
-              placeholder={ph("payment", "Enter Payment", "संपादित भुगतान")}
+              placeholder={ph("payment", "Enter Payment", "संपादित भुगतान दर्ज करें")}
               fontMode={FontValue}
               HindiInput={HindiInput}
               maxLength={15}
@@ -246,11 +241,11 @@ function OwnershipPaymentSection({
 
             <CommonHindiInput
               md={4}
-              label={ph("considerationamountLabel", "considerationAmount ", "भुगतान की प्रतिफल राशि")}
+              label={ph("considerationamountLabel", "considerationAmount ", "प्रतिफल राशि")}
               value={p.considerationAmount || ""}
               onChange={(v) => handleExtraPaymentChange(idx, "considerationAmount", v)
 }
-              placeholder={ph("considerationamountPh", "Enter consideration amount ", "भुगतान की प्रतिफल राशि")}
+              placeholder={ph("considerationamountPh", "Enter consideration amount ", "प्रतिफल राशि दर्ज करें")}
               fontMode={FontValue}
               HindiInput={HindiInput}
               maxLength={15}
@@ -270,23 +265,22 @@ function OwnershipPaymentSection({
               HindiInput={HindiInput}
             />
 
-            <Col md={4}>
-              <Form.Label>{ph("categoryLabel", "Category of Land", "भूमि की श्रेणी")}</Form.Label>
-              <Form.Select
-                size="sm"
-                value={p.category || ""}
-                onChange={(e) => handleExtraPaymentChange(idx, "category", e.target.value)}
-              >
-                <option value="">{ph("selectCategory", "Select Category", "श्रेणी चुनें")}</option>
-                <option value="Agricultural">कृषि</option>
-                <option value="Residential">आवासीय</option>
-                <option value="Commercial">व्यावसायिक</option>
-                <option value="Industrial">औद्योगिक</option>
-                <option value="NA">गैर-कृषि</option>
-                <option value="Institutional">संस्थागत</option>
-                <option value="Other">अन्य</option>
-              </Form.Select>
-            </Col>
+            <CommonSelect
+              md={4}
+              label={ph("categoryLabel", "Category of Land", "भूमि की श्रेणी")}
+              value={p.category || ""}
+              onChange={(v) => handleExtraPaymentChange(idx, "category", v)}
+              placeholder={ph("selectCategory", "Select Category", "श्रेणी चुनें")}
+              options={[
+                { value: "Agricultural", label: "कृषि" },
+                { value: "Residential", label: "आवासीय" },
+                { value: "Commercial", label: "व्यावसायिक" },
+                { value: "Industrial", label: "औद्योगिक" },
+                { value: "NA", label: "गैर-कृषि" },
+                { value: "Institutional", label: "संस्थागत" },
+                { value: "Other", label: "अन्य" }
+              ]}
+            />
 
             {/* ✅ CommonDateInput */}
             <CommonDateInput
@@ -348,7 +342,7 @@ function OwnershipPaymentSection({
               maxLength={12}
             />
           </Row>
-        </React.Fragment>
+        </div>
       ))}
     </>
   );

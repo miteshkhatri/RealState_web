@@ -10,6 +10,7 @@ import {
   FiCheckCircle
 } from 'react-icons/fi';
 import ProjectOverview from './ProjectOverview';
+import DashboardAnalyticsCharts from './DashboardAnalyticsCharts';
 import api from 'utils/api';
 import ThemeLoader from 'components/Loader/ThemeLoader';
 
@@ -18,6 +19,8 @@ const DashDefault = () => {
   const [totalReceived, setTotalReceived] = useState(0);
   const [totalPending, setTotalPending] = useState(0);
   const [overdueCount, setOverdueCount] = useState(0);
+  const [chartsLoaded, setChartsLoaded] = useState(false);
+  const [projectsLoaded, setProjectsLoaded] = useState(false);
 
   const userData = JSON.parse(localStorage.getItem('users')) || {};
   const navigate = useNavigate();
@@ -87,7 +90,7 @@ const DashDefault = () => {
           setData(res.data || {});
         }
       } catch (error) {
-        console.log('DashboardData api error:', error);
+        console.error('DashboardData api error:', error);
         setData({});
       }
     }
@@ -112,7 +115,7 @@ const DashDefault = () => {
       setTotalReceived(totalReceivedAmount);
       setTotalPending(totalPendingAmount);
     } catch (error) {
-      console.log('Project API error:', error);
+      console.error('Project API error:', error);
     }
   };
 
@@ -157,7 +160,7 @@ const DashDefault = () => {
       });
       setOverdueCount(count);
     } catch (error) {
-      console.log('Error fetching overdue count:', error);
+      console.error('Error fetching overdue count:', error);
     }
   };
 
@@ -184,19 +187,19 @@ const DashDefault = () => {
       {
         title: 'Total Received',
         subtitle: 'All Receive',
-        amount: formatAmount(totalReceived),
+        amount: formatAmount(data?.total_received_amount_dedup != null ? data.total_received_amount_dedup : totalReceived),
         icon: <FiTrendingUp size={16} style={{ color: colors.success }} />,
         barColor: colors.success,
-        value: totalReceived || 0,
+        value: (data?.total_received_amount_dedup != null ? data.total_received_amount_dedup : totalReceived) || 0,
         navigateTo: '/receiveamount'
       },
       {
         title: 'Total Pending',
         subtitle: 'All Pending',
-        amount: formatAmount(totalPending),
+        amount: formatAmount(data?.total_pending_amount != null ? data.total_pending_amount : totalPending),
         icon: <FiClock size={16} style={{ color: colors.amber }} />,
         barColor: colors.amber,
-        value: totalPending || 0,
+        value: (data?.total_pending_amount != null ? data.total_pending_amount : totalPending) || 0,
         navigateTo: '/pendingamount'
       },
       {
@@ -245,19 +248,19 @@ const DashDefault = () => {
       {
         title: 'Total Received',
         subtitle: 'All Receive',
-        amount: formatAmount(totalReceived),
+        amount: formatAmount(data?.total_received_amount_dedup != null ? data.total_received_amount_dedup : totalReceived),
         icon: <FiTrendingUp size={16} style={{ color: colors.success }} />,
         barColor: colors.success,
-        value: totalReceived || 0,
+        value: (data?.total_received_amount_dedup != null ? data.total_received_amount_dedup : totalReceived) || 0,
         navigateTo: '/receiveamount'
       },
       {
         title: 'Total Pending',
         subtitle: 'All Pending',
-        amount: formatAmount(totalPending),
+        amount: formatAmount(data?.total_pending_amount != null ? data.total_pending_amount : totalPending),
         icon: <FiClock size={16} style={{ color: colors.amber }} />,
         barColor: colors.amber,
-        value: totalPending || 0,
+        value: (data?.total_pending_amount != null ? data.total_pending_amount : totalPending) || 0,
         navigateTo: '/pendingamount'
       },
       {
@@ -303,6 +306,14 @@ const DashDefault = () => {
     DashboardData();
     fetchProjectTotals();
     fetchOverdueCount();
+
+    // Safety fallback: ensure dashboard reveals within 3.5s even if an API stalls
+    const fallbackTimer = setTimeout(() => {
+      setChartsLoaded(true);
+      setProjectsLoaded(true);
+    }, 3500);
+
+    return () => clearTimeout(fallbackTimer);
   }, []);
 
   const handleCardClick = (item) => {
@@ -315,13 +326,14 @@ const DashDefault = () => {
     }
   };
 
-  if (!data) {
-    return <ThemeLoader />;
-  }
+  const isPageLoading = !data || !chartsLoaded || !projectsLoaded;
 
   return (
     <React.Fragment>
-      {/* 🌑 Dashboard Header - Midnight Trust */}
+      {isPageLoading && <ThemeLoader />}
+
+      <div style={{ display: isPageLoading ? 'none' : 'block' }}>
+        {/* 🌑 Dashboard Header - Midnight Trust */}
       <div
         style={{
           display: 'flex',
@@ -620,7 +632,19 @@ const DashDefault = () => {
         }
       `}</style>
 
-      <ProjectOverview />
+        <ProjectOverview onLoaded={() => setProjectsLoaded(true)} />
+        <div style={{ marginTop: '28px' }}>
+          <DashboardAnalyticsCharts 
+            onLoaded={() => setChartsLoaded(true)} 
+            projectFinancials={{ 
+              totalReceived: data?.total_received_amount_dedup != null ? data.total_received_amount_dedup : totalReceived, 
+              totalPending: data?.total_pending_amount != null ? data.total_pending_amount : totalPending,
+              todayReceived: data?.today_received_amount != null ? data.today_received_amount : 0,
+              todayBooked: data?.today_booked_count != null ? data.today_booked_count : 0
+            }}
+          />
+        </div>
+      </div>
     </React.Fragment>
   );
 };

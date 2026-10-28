@@ -18,6 +18,7 @@ function CommonSelect({
         value={value || ""}
         onChange={(e) => onChange(e.target.value)}
         className="form-control-sm hindi-input-custom"
+        style={{ maxWidth: 280 }}
       >
         <option value="">{placeholder}</option>
 

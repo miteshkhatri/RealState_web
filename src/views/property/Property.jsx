@@ -260,8 +260,6 @@ export default function LandDetails() {
   const isAutoLandArea = useRef(true);
   const [landForms, setLandForms] = useState([]);
 
-  console.log(deletedReraAttachmentIds, 'setDeletedKycDocIdssetDeletedKycDocIds');
-
   // ---------- initial state ----------
   const initialState = {
     seller_area: '',
@@ -328,7 +326,6 @@ export default function LandDetails() {
     mapAttachment: [],
     remarks: '',
     category: '',
-    mutationStatus: '',
     physicalPossession: '',
     paymentA: '',
     paymentAdmin: '',
@@ -353,7 +350,6 @@ export default function LandDetails() {
     dateOfDocuments: '',
     tirReportUpload: [],
     valuationReportUpload: [],
-    murbaKila: '',
     considerationAmount: '',
     allotmentAttachment: [],
     relatedPaymentDocs: [],
@@ -387,7 +383,6 @@ export default function LandDetails() {
   };
 
   const mapApiToForm = (apiRow) => {
-    console.log(apiRow, 'jnhouhrirgyigi data..?')
     if (!apiRow) return initialState;
 
     const conversionAttachments =
@@ -659,10 +654,7 @@ export default function LandDetails() {
       conversion_application_date: toDateInput(activeConv.application_date),
       provision_section: activeConv.provision_section || "",
       conversion_authority: activeConv.authority || "BDA",
-      division_of_area: apiRow?.conversion?.division_of_area || "",
-      divisionDetails: apiRow?.conversion?.division_details || {},
       conversionAttachments: apiRow?.conversion_attachments || [],
-      physicalPossession: primaryPayment.physical_possession_status || "",
       paymentA: primaryPayment.payment_a || "",
       paymentDate: toDateInput(primaryPayment.payment_date),
       conversionChallanDocs:
@@ -680,7 +672,6 @@ export default function LandDetails() {
       convertedArea: apiRow?.conversion?.converted_area || "",
       division_of_area: divisionOfArea,
       divisionDetails: divisionDetailsObj,
-      projectName: apiRow.project_name || "",
     };
   };
 
@@ -974,7 +965,7 @@ export default function LandDetails() {
             setFormData((prev) => ({ ...prev, paymentMode: paymentModeId }));
         }
       } catch (error) {
-        console.log(error, 'Initialization error');
+        console.error('Initialization error:', error);
       }
     };
     initPaymentModes();
@@ -1430,6 +1421,10 @@ export default function LandDetails() {
   };
 
   const LABELS = {
+    sellerBuyer: {
+      en: 'Seller & Buyer Details',
+      hi: 'विक्रेता एवं खरीदार विवरण',
+    },
     landDetailsTitle: {
       en: 'Land Details Entry',
       hi: 'भूमि विवरण प्रविष्टि',
@@ -2136,7 +2131,8 @@ export default function LandDetails() {
               <Form id="landForm" ref={formRef} noValidate onSubmit={handleSubmit}>
                 {errors.api && <div className="text-danger mb-2">{errors.api}</div>}
 
-                <div className="d-flex align-items-center justify-content-end mb-3">
+                <div className="d-flex justify-content-between align-items-center mb-3">
+                  <h5 className="mb-0 text-primary">{getLabel('sellerBuyer')}</h5>
                   {renderSectionActions('sellerBuyer')}
                 </div>
                 <fieldset disabled={isSectionDisabled('sellerBuyer')}>
@@ -2268,7 +2264,7 @@ export default function LandDetails() {
 
                 {
                   <div
-                    className="mt-3 p-3 rounded"
+                    className="mt-3 p-3 rounded payment-summary-box"
                     style={{
                       background: "#ffffff",
                       border: "1px solid #e5e7eb"

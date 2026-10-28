@@ -1988,8 +1988,9 @@ body.dark-theme {
     }
 
     &::placeholder {
-      color: var(--mt-text-muted) !important;
-      opacity: 0.6;
+      color: rgba(255, 255, 255, 0.65) !important;
+      -webkit-text-fill-color: rgba(255, 255, 255, 0.65) !important;
+      opacity: 1 !important;
     }
   }
 
@@ -2251,3 +2252,54 @@ body.dark-theme {
 .mt-transition {
   transition: var(--mt-transition) !important;
 }
+
+/* ============================================================
+   🌑 REACT TRANSLITERATE DARK MODE FIX (Global)
+   Fix white text on white bg in transliteration dropdown suggestions
+   ============================================================ */
+ul[class*="ReactTransliterate"],
+div[class*="ReactTransliterate"],
+[class*="_ReactTransliterate"] {
+  background: #162338 !important;
+  background-color: #162338 !important;
+  border: 1px solid rgba(201, 168, 76, 0.35) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6) !important;
+  padding: 4px 0 !important;
+  z-index: 99999 !important;
+}
+
+ul[class*="ReactTransliterate"] > li,
+div[class*="ReactTransliterate"] > li,
+[class*="_ReactTransliterate"] > li {
+  color: #ffffff !important;
+  padding: 8px 14px !important;
+  font-size: 13px !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+  font-family: 'Mangal', 'Noto Sans Devanagari', 'Inter', sans-serif !important;
+}
+
+ul[class*="ReactTransliterate"] > li:last-child,
+div[class*="ReactTransliterate"] > li:last-child,
+[class*="_ReactTransliterate"] > li:last-child {
+  border-bottom: none !important;
+}
+
+ul[class*="ReactTransliterate"] > li:hover,
+div[class*="ReactTransliterate"] > li:hover,
+[class*="_ReactTransliterate"] > li:hover {
+  background: rgba(201, 168, 76, 0.18) !important;
+  background-color: rgba(201, 168, 76, 0.18) !important;
+  color: #e8c56a !important;
+}
+
+[class*="_Active"],
+ul[class*="ReactTransliterate"] > li[class*="Active"],
+[class*="_ReactTransliterate"] > li[class*="_Active"] {
+  background: linear-gradient(135deg, #c9a84c, #b8963a) !important;
+  background-color: #c9a84c !important;
+  color: #0b1426 !important;
+  font-weight: 700 !important;
+}

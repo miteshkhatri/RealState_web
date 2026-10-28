@@ -33,9 +33,10 @@ const ConversionInfo = ({
 
   return (
     <div>
-      {/* 📅 DATES */}
+      {/* 📅 DATES, PROVISION & AUTHORITY (IN ONE ROW) */}
       <Row className="mb-3">
-        <Col md={6}>
+        {/* 1. 📅 Conversion Application Date */}
+        <Col md={3} sm={6}>
           <CommonDateInput
             md={12}
             size="sm"
@@ -54,14 +55,10 @@ const ConversionInfo = ({
           />
         </Col>
 
-       
-      </Row>
-
-      {/* 📄 PROVISION / SECTION */}
-      <Row className="mb-3">
-        <Col md={6}>
+        {/* 2. 📄 Provision / Section */}
+        <Col md={5} sm={6}>
           <Form.Group controlId="provision_section">
-            <Form.Label>
+            <Form.Label className="mb-1">
               {ph(
                 "provisionLabel",
                 "Conversion under Provision / Section",
@@ -85,15 +82,14 @@ const ConversionInfo = ({
               fontMode={FontValue}
               className="form-control-sm hindi-input-custom"
               maxLength={50}
-
             />
           </Form.Group>
         </Col>
 
-        {/* 🏛 AUTHORITY */}
-        <Col md={6}>
+        {/* 3. 🏛 Authority */}
+        <Col md={4} sm={12}>
           <Form.Group controlId="conversion_authority">
-            <Form.Label>
+            <Form.Label className="mb-1">
               {ph(
                 "authorityLabel",
                 "Under BDA / HB / JDA",
@@ -101,7 +97,7 @@ const ConversionInfo = ({
               )}
             </Form.Label>
 
-            <div className="d-flex flex-wrap gap-3">
+            <div className="d-flex flex-wrap gap-3 align-items-center" style={{ minHeight: "33px" }}>
               {[
                 { id: "BDA", en: "BDA", hi: "BDA" },
                 { id: "HB", en: "HB", hi: "HB" },
@@ -111,8 +107,7 @@ const ConversionInfo = ({
                 <Form.Check
                   key={authority.id}
                   type="radio"
-                  // name="conversion_authority"
-                   name={radioGroupName} 
+                  name={radioGroupName}
                   value={authority.id}
                   label={ph(
                     `auth_${authority.id}`,

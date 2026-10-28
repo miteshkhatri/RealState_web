@@ -9,6 +9,7 @@ import {
   FiDollarSign, 
   FiUsers, 
   FiUser,
+  FiUserCheck,
   FiSliders,
   FiDownload,
   FiFileText,
@@ -39,6 +40,8 @@ const NavIcon = ({ items }) => {
     IconComponent = FiFileText;
   } else if (iconName.includes('layers') || iconName.includes('property')) {
     IconComponent = FiGrid;
+  } else if (iconName.includes('broker') || iconName.includes('user-check')) {
+    IconComponent = FiUserCheck;
   } else if (iconName === 'feather icon-user') {
     IconComponent = FiUser;
   } else if (iconName.includes('users')) {

@@ -67,7 +67,7 @@
   transition: all 0.2s;
   min-width: 120px;
   appearance: none;
-background-image: url("/assets/images/logoAuth_1.png") !important;
+background-image: url("../../images/logoAuth_1.png") !important;
   background-repeat: no-repeat;
   background-position: right 12px center;
 }
@@ -185,6 +185,33 @@ background-image: url("/assets/images/logoAuth_1.png") !important;
   width: 100%;
   font-family: var(--font);
   line-height: 1.5;
+}
+
+.add-project-card .input-group,
+.input-group {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: stretch !important;
+
+  > .form-control {
+    flex: 1 1 auto !important;
+    width: 1% !important;
+    min-width: 0 !important;
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+  }
+
+  > .form-select,
+  > select {
+    flex: 0 0 auto !important;
+    width: auto !important;
+    min-width: 90px !important;
+    max-width: 125px !important;
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+    border-left: 0 !important;
+  }
 }
 
 .add-project-card .custom-select:disabled,

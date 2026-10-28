@@ -1,8 +1,7 @@
 import React from 'react';
 import { Card } from 'react-bootstrap';
 
-// import sidebarImages from '../../../../assets/images/Datta-able-img.svg';
-import sidebarImages from '../../../../../public/logo/logoAuth.png';
+import sidebarImages from '../../../../assets/images/logoAuth.png';
 
 let itemTarget = '_blank';
 

@@ -175,135 +175,141 @@ const AttachmentsSection = ({
         }}
       />
 
-      {/* ========= AREA & DIVISION ========= */}
-      <Row className="mt-3">
-        <Col md={6}>
-          <Form.Label>{ph("convertedArea", "Converted Area", "परिवर्तित क्षेत्र")}</Form.Label>
-       <Form.Control
-  type="number"
-  size="sm"
-  className="hindi-input-custom"
-  value={formData.convertedArea || ""}
-  onChange={(e) => {
-    const value = e.target.value;
-
-    // ❌ negative / scientific notation block
-    if (value === "" || (/^\d+$/.test(value) && value.length <= 7)) {
-      setFormData(p => ({
-        ...p,
-        convertedArea: value
-      }));
-    }
-  }}
-  inputMode="numeric"   // 📱 mobile numeric keypad
-/>
-
-        </Col>
-
-        <Col md={6} ref={ddRef}>
-          <Form.Label>{ph("division", "Division of Area", "क्षेत्र का विभाजन")}</Form.Label>
-          <Button
-            size="sm"
-            variant="outline-secondary"
-            onClick={() => setOpen(!open)}
-            className="w-100 text-start"
-          >
-            {divisionArray.length
-              ? `${divisionArray.length} selected`
-              : ph("select", "Select", "चुनें")}
-          </Button>
-
-          {open && (
-            <div className="border p-2 mt-1 bg-white">
-              {DIV_OPTIONS.map((o) => (
-                <Form.Check
-                  key={o.value}
-                  label={FontValue === LANGUAGE.EN ? o.en : o.hi}
-                  checked={divisionArray.includes(o.value)}
-                  onChange={() => toggleDivision(o.value)}
-                />
-              ))}
-            </div>
-          )}
-        </Col>
-      </Row>
-
-      {/* ========= DIVISION DETAILS ========= */}
-      <Row className="mt-2">
-        {divisionArray.map((d) => (
-          <Col md={6} key={d} className="mt-2">
-            <Form.Label>{d}</Form.Label>
+      {/* ========= AREA, DIVISION & PROJECT NAME (IN ONE ROW) ========= */}
+      <Row className="mt-3 align-items-start">
+        {/* 1. Converted Area */}
+        <Col md={4} sm={6}>
+          <Form.Group>
+            <Form.Label className="mb-1">
+              {ph("convertedArea", "Converted Area", "परिवर्तित क्षेत्र")}
+            </Form.Label>
             <Form.Control
               type="number"
               size="sm"
               className="hindi-input-custom"
-              value={formData.divisionDetails?.[d] || ""}
+              value={formData.convertedArea || ""}
               onChange={(e) => {
-                let value = Number(e.target.value || 0);
-
-                setFormData((p) => {
-                  const details = { ...(p.divisionDetails || {}) };
-
-                  const otherSum = Object.entries(details).reduce(
-                    (sum, [key, val]) =>
-                      key === d ? sum : sum + Number(val || 0),
-                    0
-                  );
-
-                  const maxAllowed = Math.max(
-                    0,
-                    Number(p.convertedArea || 0) - otherSum
-                  );
-
-                  if (value > maxAllowed) value = maxAllowed;
-
-                  details[d] = value;
-
-                  return { ...p, divisionDetails: details };
-                });
+                const value = e.target.value;
+                if (value === "" || (/^\d+$/.test(value) && value.length <= 7)) {
+                  setFormData((p) => ({
+                    ...p,
+                    convertedArea: value,
+                  }));
+                }
               }}
+              inputMode="numeric"
             />
-          </Col>
-        ))}
-      </Row>
-
-      <div className="mt-2 text-muted">
-        {ph("total", "Total:", "कुल:")} {totalDivisionSum} |{" "}
-        {ph("remaining", "Remaining:", "शेष:")} {remaining}
-      </div>
-
-      <Row className="my-3">
-        <Col md={6}>
-        <Form.Label className="mb-1">
-  {ph("projectNameLabel", "Project Name*", "प्रोजेक्ट का नाम*")}
-</Form.Label>
-          <Form.Group>
-          <HindiInput
-  value={formData.projectName || ""}
-  onChange={(text) =>
-    setFormData((p) => ({ ...p, projectName: text }))
-  }
-  placeholder={ph(
-    "projectNamePh",
-    "Enter Project Name*",
-    "प्रोजेक्ट का नाम दर्ज करें*"
-  )}
-  fontMode={FontValue}
-  maxLength={50}
-  className="form-control-sm hindi-input-custom"
-/>
-
           </Form.Group>
+        </Col>
 
+        {/* 2. Division of Area */}
+        <Col md={4} sm={6} ref={ddRef} style={{ position: "relative" }}>
+          <Form.Group>
+            <Form.Label className="mb-1">
+              {ph("division", "Division of Area", "क्षेत्र का विभाजन")}
+            </Form.Label>
+            <Button
+              size="sm"
+              variant="outline-secondary"
+              onClick={() => setOpen(!open)}
+              className="w-100 text-start division-btn"
+            >
+              {divisionArray.length
+                ? `${divisionArray.length} selected`
+                : ph("select", "Select", "चुनें")}
+            </Button>
+
+            {open && (
+              <div
+                className="division-dropdown-card p-2 mt-1 rounded w-100"
+                style={{ position: "absolute", zIndex: 1050 }}
+              >
+                {DIV_OPTIONS.map((o) => (
+                  <Form.Check
+                    key={o.value}
+                    label={FontValue === LANGUAGE.EN ? o.en : o.hi}
+                    checked={divisionArray.includes(o.value)}
+                    onChange={() => toggleDivision(o.value)}
+                  />
+                ))}
+              </div>
+            )}
+            <div className="mt-1 text-muted small" style={{ fontSize: "11px" }}>
+              {ph("total", "Total:", "कुल:")} {totalDivisionSum} |{" "}
+              {ph("remaining", "Remaining:", "शेष:")} {remaining}
+            </div>
+          </Form.Group>
+        </Col>
+
+        {/* 3. Project Name */}
+        <Col md={4} sm={12}>
+          <Form.Group>
+            <Form.Label className="mb-1">
+              {ph("projectNameLabel", "Project Name*", "प्रोजेक्ट का नाम*")}
+            </Form.Label>
+            <HindiInput
+              value={formData.projectName || ""}
+              onChange={(text) =>
+                setFormData((p) => ({ ...p, projectName: text }))
+              }
+              placeholder={ph(
+                "projectNamePh",
+                "Enter Project Name*",
+                "प्रोजेक्ट का नाम दर्ज करें*"
+              )}
+              fontMode={FontValue}
+              maxLength={50}
+              className="form-control-sm hindi-input-custom"
+            />
             <div style={{ minHeight: "14px" }}>
-      {errors?.projectName && (
-        <small className="text-danger">
-          {errors.projectName}
-        </small>
-      )}
-    </div>
+              {errors?.projectName && (
+                <small className="text-danger">{errors.projectName}</small>
+              )}
+            </div>
+          </Form.Group>
         </Col>
       </Row>
+
+      {/* ========= DIVISION DETAILS (EXPANDS UNDERNEATH WHEN SELECTED) ========= */}
+      {divisionArray.length > 0 && (
+        <Row className="mt-2">
+          {divisionArray.map((d) => (
+            <Col md={3} sm={6} key={d} className="mt-2">
+              <Form.Label className="mb-1 small">{d}</Form.Label>
+              <Form.Control
+                type="number"
+                size="sm"
+                className="hindi-input-custom"
+                value={formData.divisionDetails?.[d] || ""}
+                onChange={(e) => {
+                  let value = Number(e.target.value || 0);
+
+                  setFormData((p) => {
+                    const details = { ...(p.divisionDetails || {}) };
+
+                    const otherSum = Object.entries(details).reduce(
+                      (sum, [key, val]) =>
+                        key === d ? sum : sum + Number(val || 0),
+                      0
+                    );
+
+                    const maxAllowed = Math.max(
+                      0,
+                      Number(p.convertedArea || 0) - otherSum
+                    );
+
+                    if (value > maxAllowed) value = maxAllowed;
+
+                    details[d] = value;
+
+                    return { ...p, divisionDetails: details };
+                  });
+                }}
+              />
+            </Col>
+          ))}
+        </Row>
+      )}
     </div>
   );
 };

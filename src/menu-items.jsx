@@ -78,6 +78,21 @@ const menuItems = () => {
         ]
       },
       {
+        id: 'brokers-section',
+        title: 'Brokers',
+        type: 'group',
+        icon: 'icon-navigation',
+        children: [
+          {
+            id: 'brokers',
+            title: 'Brokers',
+            type: 'item',
+            icon: 'feather icon-user-check',
+            url: '/brokers'
+          }
+        ]
+      },
+      {
         id: 'system',
         title: 'System',
         type: 'group',
@@ -169,6 +184,21 @@ const menuItems = () => {
             type: 'item',
             url: '/reports',
             icon: 'feather icon-file-text'
+          }
+        ]
+      },
+      {
+        id: 'brokers-section',
+        title: 'Brokers',
+        type: 'group',
+        icon: 'icon-navigation',
+        children: [
+          {
+            id: 'brokers',
+            title: 'Brokers',
+            type: 'item',
+            icon: 'feather icon-user-check',
+            url: '/brokers'
           }
         ]
       },
@@ -328,6 +358,21 @@ const menuItems = () => {
             type: 'item',
             url: '/reports',
             icon: 'feather icon-file-text'
+          }
+        ]
+      },
+      {
+        id: 'brokers-section',
+        title: 'Brokers',
+        type: 'group',
+        icon: 'icon-navigation',
+        children: [
+          {
+            id: 'brokers',
+            title: 'Brokers',
+            type: 'item',
+            icon: 'feather icon-user-check',
+            url: '/brokers'
           }
         ]
       },

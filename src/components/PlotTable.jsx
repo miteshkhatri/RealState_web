@@ -467,19 +467,33 @@ const PlotTable = () => {
                     </Dropdown>
 
                     {/* Sector filter */}
-                    <select
-                      className="custom-select"
-                      style={{ width: "150px" }}
-                      value={sectorId}
-                      onChange={(e) => handleFilterData(e.target.value)}
-                    >
-                      <option value="">All Sectors</option>
-                      {SectorData && SectorData.map((sector) => (
-                        <option key={sector.id} value={sector.id}>
-                          {sector.sector_name}
-                        </option>
-                      ))}
-                    </select>
+                    {(() => {
+                      const selectedSector = SectorData?.find((s) => String(s.id ?? s.sector_id) === String(sectorId));
+                      const isSelectedKruti = Number(selectedSector?.krutiDev_font ?? selectedSector?.kruti_font) === 1;
+                      return (
+                        <select
+                          className={`custom-select ${isSelectedKruti ? 'kruti-dev' : ''}`}
+                          style={{ width: "150px", fontFamily: isSelectedKruti ? "'Kruti Dev 010', sans-serif !important" : undefined }}
+                          value={sectorId}
+                          onChange={(e) => handleFilterData(e.target.value)}
+                        >
+                          <option value="" style={{ fontFamily: 'inherit' }}>All Sectors</option>
+                          {SectorData && SectorData.map((sector) => {
+                            const isItemKruti = Number(sector.krutiDev_font ?? sector.kruti_font) === 1;
+                            return (
+                              <option 
+                                key={sector.id ?? sector.sector_id} 
+                                value={sector.id ?? sector.sector_id}
+                                className={isItemKruti ? 'kruti-dev' : ''}
+                                style={isItemKruti ? { fontFamily: "'Kruti Dev 010', sans-serif !important" } : undefined}
+                              >
+                                {sector.sector_name}
+                              </option>
+                            );
+                          })}
+                        </select>
+                      );
+                    })()}
 
                     {/* Search - Right side with icon */}
                     <div className="search-wrap">

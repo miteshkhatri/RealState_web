@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Card, ProgressBar, Row, Col, Spinner } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import { FiMap, FiTrendingUp, FiAlertCircle, FiCalendar, FiCheck } from 'react-icons/fi';
+import { FiTrendingUp, FiAlertCircle, FiCalendar, FiCheck, FiMap } from 'react-icons/fi';
 import '../style.css';
 import api from 'utils/api';
 
-const ProjectOverview = () => {
+const ProjectOverview = ({ onLoaded }) => {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -31,12 +31,16 @@ const ProjectOverview = () => {
   };
 
   const fetchProjects = async (assignedOnly = false) => {
-    if (!userData?.user_token) return;
+    if (!userData?.user_token) {
+      if (typeof onLoaded === 'function') onLoaded();
+      return;
+    }
     const userId = userData?.user_id ?? userData?.id ?? null;
 
     if (assignedOnly && !userId) {
       console.warn('fetchProjects: assignedOnly requested but no user id available.');
       setProjects([]);
+      if (typeof onLoaded === 'function') onLoaded();
       return;
     }
 
@@ -61,6 +65,9 @@ const ProjectOverview = () => {
       setProjects([]);
     } finally {
       setLoading(false);
+      if (typeof onLoaded === 'function') {
+        onLoaded();
+      }
     }
   };
 
@@ -241,6 +248,30 @@ const ProjectOverview = () => {
           padding: 4px 12px;
         }
 
+        .btn-map-icon {
+          display: inline-flex;
+          align-items: center;
+          gap: 5px;
+          background: #EFF6FF;
+          color: #2563EB;
+          border: 1px solid #BFDBFE;
+          border-radius: 20px;
+          padding: 3px 10px;
+          font-size: 11px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          line-height: 1.2;
+        }
+
+        .btn-map-icon:hover {
+          background: #2563EB;
+          color: #FFFFFF;
+          border-color: #2563EB;
+          transform: translateY(-1px);
+          box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
+        }
+
         /* ─── Dark Mode Card Header ─── */
         body.dark-theme .project-card-header {
           border-bottom: 1px solid rgba(201, 168, 76, 0.08);
@@ -254,6 +285,19 @@ const ProjectOverview = () => {
           background: rgba(201, 168, 76, 0.12);
           color: #E8C56A;
           border: 1px solid rgba(201, 168, 76, 0.15);
+        }
+
+        body.dark-theme .btn-map-icon {
+          background: rgba(37, 99, 235, 0.16);
+          color: #93C5FD;
+          border: 1px solid rgba(96, 165, 250, 0.3);
+        }
+
+        body.dark-theme .btn-map-icon:hover {
+          background: #2563EB;
+          color: #FFFFFF;
+          border-color: #2563EB;
+          box-shadow: 0 2px 8px rgba(37, 99, 235, 0.4);
         }
 
         /* ─── Stats Boxes ─── */
@@ -595,6 +639,15 @@ const ProjectOverview = () => {
                           {project.project_name}
                         </h5>
                         <div className="d-flex gap-2 align-items-center">
+                          {Number(project.project_id) === 49 && (
+                            <span
+                              className="btn-map-icon"
+                              title="View Project Map"
+                              {...makeActivationProps(() => goToMap(project.project_id))}
+                            >
+                              <FiMap size={12} /> Map
+                            </span>
+                          )}
                           <span className="plot-badge">
                             {formatNumber(totalPlots)} Plots
                           </span>

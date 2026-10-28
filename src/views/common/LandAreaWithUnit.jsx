@@ -17,7 +17,7 @@ function LandAreaWithUnit({
     <Col md={md}>
       <Form.Label className="mb-1">{label}</Form.Label>
 
-      <InputGroup size="sm">
+      <InputGroup size="sm" className="flex-nowrap">
         {/* ===== LAND AREA INPUT (FLOAT ALLOWED) ===== */}
         <Form.Control
           type="text"                 // 🔥 number ❌ → text ✅

@@ -148,8 +148,6 @@ export default function MoreInfo({ onClose }) {
 
   const documentsDate = Array.isArray(row.documents_date) ? row.documents_date : Array.isArray(row.documentsDate) ? row.documentsDate : [];
 
-  console.log(row);
-
   const normalizeDate1 = (val) => {
     if (!val) return "";
     if (val instanceof Date) {

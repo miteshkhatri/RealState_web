@@ -24,11 +24,7 @@ const JWTLogin = () => {
 
   useEffect(() => {
     if (userData && Object.keys(userData).length > 0) {
-      const { role_id } = userData;
-      let target = '/';
-      if (role_id === 1) target = '/admin/dashboard';
-      else if (role_id === 2) target = '/agent/dashboard';
-      navigate(target, { replace: true });
+      navigate('/dashboard', { replace: true });
     }
   }, []);
 
@@ -75,15 +71,10 @@ const JWTLogin = () => {
         dispatch(loginSuccess(res.data.user));
         localStorage.setItem('users', JSON.stringify(res.data.user));
 
-        const { role_id } = res.data.user;
-        let target = '/';
-        if (role_id === 1) target = '/admin/dashboard';
-        else if (role_id === 2) target = '/agent/dashboard';
-
         setEmail('');
         setPassword('');
         setSuccessMessage('Login successful!');
-        navigate(target, { replace: true });
+        navigate('/dashboard', { replace: true });
 
       } else if (res.data.success === false) {
         const msg = res.data.message || 'Invalid credentials.';

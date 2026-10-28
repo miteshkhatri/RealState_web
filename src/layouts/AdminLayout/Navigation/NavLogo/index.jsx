@@ -6,7 +6,7 @@ import * as actionType from '../../../../store/actions';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 
 
-import sidebarImages from '../../../../../public/logo/logoAuth_1.png';
+import sidebarImages from '../../../../assets/images/logoAuth_1.png';
 
 const NavLogo = () => {
   const configContext = useContext(ConfigContext);

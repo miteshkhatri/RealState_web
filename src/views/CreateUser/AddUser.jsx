@@ -37,8 +37,6 @@ function AddUser() {
   const { data, mode } = location?.state || {};
   const [projectNumbers, setProjectNumbers] = useState({});
 
-  console.log(data, 'dnhen');
-
   useEffect(() => {
     if (!data) return;
     const current = Array.isArray(data) ? data[0] : data;

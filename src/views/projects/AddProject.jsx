@@ -267,11 +267,10 @@ function Addproject({ setshowAddProject }) {
       formData.append("cin_number", cinNumber);
       formData.append("phone_number", phoneNumber);
       formData.append("gst_pan_type", idType);
-      formData.append("gst_pan_number", gstOrPan);
-      formData.append("broker_name", brokerName);
+      formData.append("broker_name", broker_id ? brokerName : "");
       formData.append("commission_type", commissionType);
       formData.append("commission_value", commissionValue || 0);
-      formData.append("broker_id", broker_id || null);
+      formData.append("broker_id", broker_id ? broker_id : "");
       formData.append("krutiDev_font", FontValue);
       formData.append("rera_reg_no", reraRegNo);
       formData.append("rera_reg_date", reraRegDate ? reraRegDate : null);
@@ -398,11 +397,10 @@ function Addproject({ setshowAddProject }) {
       formData.append("cin_number", cinNumber);
       formData.append("phone_number", phoneNumber);
       formData.append("gst_pan_type", idType);
-      formData.append("gst_pan_number", gstOrPan);
-      formData.append("broker_name", brokerName);
+      formData.append("broker_name", broker_id ? brokerName : "");
       formData.append("commission_type", commissionType);
       formData.append("commission_value", commissionValue || "");
-      formData.append("broker_id", broker_id);
+      formData.append("broker_id", broker_id ? broker_id : "");
 
       if (companyLogo) {
         formData.append("company_logo", companyLogo);
@@ -852,21 +850,53 @@ function Addproject({ setshowAddProject }) {
                               setBroker_id(null);
                               setBrokerFont(null);
                               setIsBrokerSelected(false);
-                              if (value.trim().length >= 2) {
-                                await fetchBrokers(value);
-                                setBrokerDropdownOpen(true);
-                              } else {
-                                setBrokerList([]);
+
+                              // Check if user is actively typing English letters to convert in Mangal
+                              // e.g. "m", "mit" (ends with English letters without space)
+                              const endsWithEnglishLetters = /[a-zA-Z]$/.test(value);
+
+                              if (endsWithEnglishLetters) {
+                                // User is still typing in ReactTransliterate
+                                // Keep API broker-dropdown closed so both don't open together!
                                 setBrokerDropdownOpen(false);
+                              } else {
+                                // Hindi word selected or Space/Enter pressed!
+                                // Now fetch and open the broker list dropdown
+                                await fetchBrokers(value.trim());
+                                setBrokerDropdownOpen(true);
                               }
                             }}
                             lang="hi"
-                            placeholder={FontValue === "0" ? "Enter Broker Name" : "दलाल का नाम दर्ज करें"}
+                            placeholder={FontValue === "0" ? "Select Broker Name" : "दलाल का नाम चुनें"}
                             className={`form-control form-control-md ${brokerFont !== null ? (brokerFont === 1 ? "kruti-dev" : "") : FontValue === "1" ? "kruti-dev" : ""}`}
                             onFocus={() => {
-                              if ((brokerName || "").trim().length >= 2) {
+                              const endsWithEnglishLetters = /[a-zA-Z]$/.test(brokerName || "");
+                              if (!endsWithEnglishLetters) {
+                                fetchBrokers((brokerName || "").trim());
                                 setBrokerDropdownOpen(true);
                               }
+                            }}
+                            onBlur={() => {
+                              if (window.blurTimeout) clearTimeout(window.blurTimeout);
+                              window.blurTimeout = setTimeout(() => {
+                                const matched = BrokerList.find(
+                                  (b) =>
+                                    b.broker_name.toLowerCase() ===
+                                    (brokerName || "").trim().toLowerCase()
+                                );
+                                if (matched) {
+                                  setBroker_id(matched.broker_id);
+                                  setBrokerName(matched.broker_name);
+                                  setBrokerFont(matched.kruti_brokers_font);
+                                  setIsBrokerSelected(true);
+                                } else if (!broker_id) {
+                                  setBrokerName("");
+                                  setBroker_id(null);
+                                  setBrokerFont(null);
+                                  setIsBrokerSelected(false);
+                                }
+                                setBrokerDropdownOpen(false);
+                              }, 250);
                             }}
                           />
                         ) : (
@@ -881,43 +911,44 @@ function Addproject({ setshowAddProject }) {
                               setBroker_id(null);
                               setBrokerFont(null);
                               setIsBrokerSelected(false);
-                              if (value.trim().length >= 2) {
-                                await fetchBrokers(value);
-                                setBrokerDropdownOpen(true);
-                              } else {
-                                setBrokerList([]);
-                                setBrokerDropdownOpen(false);
-                              }
+                              await fetchBrokers(value);
+                              setBrokerDropdownOpen(true);
                             }}
-                            placeholder={FontValue === "0" ? "Enter Broker Name" : "दलाल का नाम दर्ज करें"}
+                            placeholder={FontValue === "0" ? "Select Broker Name" : "दलाल का नाम चुनें"}
                             onFocus={() => {
-                              if ((brokerName || "").trim().length >= 2) {
-                                setBrokerDropdownOpen(true);
-                              }
+                              fetchBrokers(brokerName || "");
+                              setBrokerDropdownOpen(true);
                             }}
                             onBlur={() => {
                               if (window.blurTimeout) clearTimeout(window.blurTimeout);
                               window.blurTimeout = setTimeout(() => {
-                                if (!isBrokerSelected) {
-                                  const matched = BrokerList.find(
-                                    (b) =>
-                                      b.broker_name.toLowerCase() ===
-                                      (brokerName || "").trim().toLowerCase()
-                                  );
-                                  if (!matched) {
-                                    setBroker_id(null);
-                                    setBrokerFont(null);
-                                  }
+                                const matched = BrokerList.find(
+                                  (b) =>
+                                    b.broker_name.toLowerCase() ===
+                                    (brokerName || "").trim().toLowerCase()
+                                );
+                                if (matched) {
+                                  setBroker_id(matched.broker_id);
+                                  setBrokerName(matched.broker_name);
+                                  setBrokerFont(matched.kruti_brokers_font);
+                                  setIsBrokerSelected(true);
+                                } else if (!broker_id) {
+                                  setBrokerName("");
+                                  setBroker_id(null);
+                                  setBrokerFont(null);
+                                  setIsBrokerSelected(false);
                                 }
                                 setBrokerDropdownOpen(false);
-                              }, 200);
+                              }, 250);
                             }}
                           />
                         )}
 
                         {brokerDropdownOpen && BrokerList.length > 0 && (
-                          <ul className="broker-dropdown">
-                            {BrokerList.map((data, index) => (
+                          <ul className="broker-dropdown show" style={{ maxHeight: '220px', overflowY: 'auto' }}>
+                            {BrokerList.filter((b) =>
+                              !brokerName.trim() || b.broker_name.toLowerCase().includes(brokerName.trim().toLowerCase())
+                            ).map((data, index) => (
                               <li
                                 key={index}
                                 className={`dropdown-item ${data.kruti_brokers_font === 1 ? "kruti-dev" : ""}`}
@@ -930,11 +961,19 @@ function Addproject({ setshowAddProject }) {
                                   setBrokerDropdownOpen(false);
                                 }}
                               >
-                                {data.broker_name}
+                                <div className="d-flex justify-content-between align-items-center">
+                                  <span>{data.broker_name}</span>
+                                  {data.phone_number && (
+                                    <small style={{ opacity: 0.7, fontSize: '11px', marginLeft: '8px' }}>({data.phone_number})</small>
+                                  )}
+                                </div>
                               </li>
                             ))}
                           </ul>
                         )}
+                        <small style={{ fontSize: '11px', color: '#c9a84c', display: 'block', marginTop: '3px' }}>
+                          * केवल लिस्ट में से ही ब्रोकर सेलेक्ट करें (Select from list only)
+                        </small>
                       </div>
                     </div>
                   </div>

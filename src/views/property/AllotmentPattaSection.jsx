@@ -168,7 +168,7 @@ const AllotmentPattaSection = ({
 
   return (
     <Card className="border-0 shadow-none p-0">
-      <Card.Body className="p-3">
+      <Card.Body className="p-0">
 
         {/* FILE UPLOADS (hidden as before) */}
         <Row className="mb-0 d-none">
@@ -214,6 +214,7 @@ const AllotmentPattaSection = ({
                 onChange={handleChange}
                 size="sm"
                 className="form-control-sm"
+                style={{ maxWidth: 240 }}
               >
                 <option value="">
                   {ph("selectOption", "Select Option", "विकल्प चुनें")}

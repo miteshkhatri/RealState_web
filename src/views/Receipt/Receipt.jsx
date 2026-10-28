@@ -115,12 +115,6 @@ function RecipetContent({ index, data }) {
   const plotCustomers = data?.plotCustomers || [];
   const selectedRow = plotCustomers[0] || data?.selectedRow || data;
 
-
-   console.log(selectedRow,'hddhh')
-
-
-   console.log(data)
-
   // ✅ NEW: customer_list se data lena
   const customerList = data?.selectedRow?.customer_list || [];
 

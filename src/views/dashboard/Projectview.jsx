@@ -30,6 +30,7 @@ const Projectview = () => {
   const [sortField, setSortField] = useState(null);
   const [sortOrder, setSortOrder] = useState("asc");
 
+  const [totalRecordsCount, setTotalRecordsCount] = useState(0);
   const [stats, setStats] = useState({
     total: 0, received: 0, pending: 0, todayReceived: 0,
   });
@@ -49,24 +50,24 @@ const Projectview = () => {
   const params = new URLSearchParams(location.search);
   const projectId = params.get("project_id");
 
-  const showProjectColumn =
-    (!projectId || projectId === "null") &&
-    (filterDropdown === "today" || filterDropdown === "today_received");
+  const showProjectColumn = !projectId || projectId === "null" || projectId === "all";
+
+  const isPaymentMode = (f) => f === "cheque" || f === "online" || f === "upi" || f === "cash" || f === "30d_received";
 
   const isTodayLike = (f) =>
-    f === "booked" || f === "completed" || f === "sold" || f === "today" || f === "today_received" || f === "pending";
+    f === "booked" || f === "completed" || f === "sold" || f === "today" || f === "today_received" || f === "pending" || isPaymentMode(f) || f === "30d_bookings" || f === "30d_registries" || f === "15d_dues";
 
   const columns = isTodayLike(filterDropdown)
-    ? filterDropdown === "today_received"
+    ? (filterDropdown === "today_received" || isPaymentMode(filterDropdown))
       ? ["#", ...(showProjectColumn ? ["Project"] : []), "Plot No", "Name", "Size", "Dates", "Received", "Action"]
-      : filterDropdown === "today"
+      : (filterDropdown === "today" || filterDropdown === "30d_bookings")
         ? ["#", ...(showProjectColumn ? ["Project"] : []), "Plot No", "Name", "Size", "Dates", "Booking Amt", "Total Amount", "Action"]
-        : filterDropdown === "pending"
+        : (filterDropdown === "pending" || filterDropdown === "15d_dues")
           ? ["#", ...(showProjectColumn ? ["Project"] : []), "Plot No", "Name", "Size", "Dates", "Pending Amt", "Action"]
-          : ["#", "Plot No", "Name", "Size", "Dates", "Action"]
+          : ["#", ...(showProjectColumn ? ["Project"] : []), "Plot No", "Name", "Size", "Dates", "Action"]
     : filterDropdown === "available"
-      ? ["#", "Plot No", "Contact Info", "Sector", "Plot Rate", "Size", "Amount", "Direction", "Action"]
-      : ["#", "Plot No", "Contact Info", "Sector", "Plot Rate", "Size", "Amount", "Direction", "Dates", "Action"];
+      ? ["#", ...(showProjectColumn ? ["Project"] : []), "Plot No", "Contact Info", "Sector", "Plot Rate", "Size", "Amount", "Direction", "Action"]
+      : ["#", ...(showProjectColumn ? ["Project"] : []), "Plot No", "Contact Info", "Sector", "Plot Rate", "Size", "Amount", "Direction", "Dates", "Action"];
 
   const formatDecimal = (val) => {
     if (!val && val !== 0) return "—";
@@ -104,26 +105,19 @@ const Projectview = () => {
       const params = new URLSearchParams(location.search);
       const project_id = params.get("project_id");
       const filter = (params.get("filter") || "all").toLowerCase();
-      const allowedWithoutProject = ["today", "today_received"];
-      
-      if (!project_id && !allowedWithoutProject.includes(filter)) {
-        setFilterData([]);
-        setLoading(false);
-        return;
-      }
-      
-      const cleanProjectId = project_id && project_id !== "null" ? project_id : null;
+
+      const cleanProjectId = (project_id && project_id !== "null" && project_id !== "all") ? project_id : null;
       const queryParts = [
         cleanProjectId ? `project_id=${cleanProjectId}` : "",
         `filter=${filter}`, `page=${pageNo}`, `limit=${limit}`,
         currentSortField ? `sortField=${encodeURIComponent(currentSortField)}` : "",
         currentSortOrder ? `sortOrder=${currentSortOrder}` : "",
       ].filter(Boolean).join("&");
-      
+
       const response = await api.get(`/dashboard/ProjectDetails?${queryParts}`, {
         headers: { Authorization: userData.user_token || "" }
       });
-      
+
       const result = response.data;
       setFilterData(result?.data || []);
       setStats({
@@ -133,6 +127,7 @@ const Projectview = () => {
         todayReceived: result?.grand_today_received || 0,
       });
       const totalRecords = result?.total_records || 0;
+      setTotalRecordsCount(totalRecords);
       setTotalPages(Math.ceil(totalRecords / limit));
       setPage(pageNo);
     } catch (err) {
@@ -179,6 +174,14 @@ const Projectview = () => {
     if (f === "today") return "Today Booked";
     if (f === "today_received") return "Today Received";
     if (f === "pending") return "Pending Amount";
+    if (f === "cheque") return "Cheque Receipts";
+    if (f === "online") return "Online / RTGS Receipts";
+    if (f === "upi") return "UPI Receipts";
+    if (f === "cash") return "Cash Receipts";
+    if (f === "30d_bookings") return "Last 30 Days Booked";
+    if (f === "30d_received") return "Last 30 Days Received";
+    if (f === "30d_registries") return "Last 30 Days Registries";
+    if (f === "15d_dues") return "15-Day Dues Alert";
     return "All";
   };
 
@@ -363,6 +366,7 @@ const Projectview = () => {
                 <h5 className="project-title" style={{ margin: 0 }}>
                   Project Plots{" "}
                   <Badge bg="secondary" className="ms-2" style={{ fontSize: '11px' }}>{filterLabel(filterDropdown)}</Badge>
+                  <Badge bg="primary" className="ms-1" style={{ fontSize: '11px' }}>{totalRecordsCount} {isPaymentMode(filterDropdown) ? "Receipts" : "Plots"}</Badge>
                 </h5>
                 <div className="d-flex align-items-center gap-2" style={{ paddingRight: '10px' }}>
                   <Form.Select className="custom-select w-auto" value={filterDropdown} onChange={(e) => handleFilterChange(e.target.value)} style={{ height: '38px', minWidth: '140px' }}>
@@ -374,6 +378,14 @@ const Projectview = () => {
                     <option value="today">Today Booked</option>
                     <option value="today_received">Today Received</option>
                     <option value="pending">Pending Amount</option>
+                    <option value="cheque">Cheque</option>
+                    <option value="online">Online / RTGS</option>
+                    <option value="upi">UPI</option>
+                    <option value="cash">Cash</option>
+                    <option value="30d_bookings">Last 30 Days Booked</option>
+                    <option value="30d_received">Last 30 Days Received</option>
+                    <option value="30d_registries">Last 30 Days Registries</option>
+                    <option value="15d_dues">15-Day Dues Alert</option>
                   </Form.Select>
                   <Dropdown>
                     <Dropdown.Toggle className="custom-select w-auto" style={{ height: '38px', minWidth: '70px' }}>{limit}</Dropdown.Toggle>
@@ -387,11 +399,13 @@ const Projectview = () => {
               </div>
               <div className="d-md-none" style={{ flex: 1 }}>
                 <div className="d-flex justify-content-between align-items-center mb-2">
-                  <h5 className="project-title" style={{ margin: 0 }}>Project Plots <Badge bg="secondary">{filterLabel(filterDropdown)}</Badge></h5>
+                  <h5 className="project-title" style={{ margin: 0 }}>
+                    Project Plots <Badge bg="secondary">{filterLabel(filterDropdown)}</Badge> <Badge bg="primary" className="ms-1">{totalRecordsCount} {isPaymentMode(filterDropdown) ? "Receipts" : "Plots"}</Badge>
+                  </h5>
                 </div>
                 <div className="d-flex gap-2">
                   <Form.Select className="custom-select w-auto" value={filterDropdown} onChange={(e) => handleFilterChange(e.target.value)} style={{ height: '34px', fontSize: '12px', flex: 1 }}>
-                    <option value="all">All</option><option value="available">Available</option><option value="booked">Booked</option><option value="completed">Completed</option><option value="today">Today Booked</option><option value="today_received">Today Received</option><option value="pending">Pending Amount</option>
+                    <option value="all">All</option><option value="available">Available</option><option value="booked">Booked</option><option value="completed">Completed</option><option value="sold">Sold</option><option value="today">Today Booked</option><option value="today_received">Today Received</option><option value="pending">Pending Amount</option><option value="cheque">Cheque</option><option value="online">Online / RTGS</option><option value="upi">UPI</option><option value="cash">Cash</option><option value="30d_bookings">Last 30 Days Booked</option><option value="30d_received">Last 30 Days Received</option><option value="30d_registries">Last 30 Days Registries</option><option value="15d_dues">15-Day Dues Alert</option>
                   </Form.Select>
                   <Dropdown>
                     <Dropdown.Toggle className="custom-select w-auto" style={{ height: '34px', fontSize: '12px' }}>{limit}</Dropdown.Toggle>
@@ -403,8 +417,10 @@ const Projectview = () => {
 
             {FilterData.length > 0 && (
               <div style={{ padding: '8px 16px', background: 'var(--bg-card-hover)', borderBottom: '1px solid var(--border)', display: 'flex', gap: '20px', fontSize: '12px', flexWrap: 'wrap', alignItems: 'center' }}>
-                {filterDropdown === "today_received" ? (
-                  <span style={{ color: '#28a745' }}>Today Received: <strong>₹{formatAmount(stats.todayReceived)}</strong></span>
+                {(filterDropdown === "today_received" || isPaymentMode(filterDropdown)) ? (
+                  <span style={{ color: '#28a745' }}>{filterLabel(filterDropdown)} Total: <strong>₹{formatAmount(stats.todayReceived || stats.received)}</strong></span>
+                ) : filterDropdown === "15d_dues" ? (
+                  <span style={{ color: '#dc3545' }}>{filterLabel(filterDropdown)} Total: <strong>₹{formatAmount(stats.pending)}</strong></span>
                 ) : (
                   <>
                     <span style={{ color: '#6c757d' }}>Total: <strong style={{ color: '#000' }}>₹{formatAmount(stats.total)}</strong></span>
@@ -460,7 +476,7 @@ const Projectview = () => {
                             <td className="table-sno-cell">{(page - 1) * limit + index + 1}</td>
                             {showProjectColumn && <td className={row.project_font == 1 ? "kruti-dev" : ""}>{row.project_name || "—"}</td>}
                             <td><strong>{row.plot_no || "—"}</strong></td>
-                            <td className={booking.booked_krutiDev_font == 1 ? "kruti-dev" : ""}>{booking.customer_name || "—"}</td>
+                            <td className={(booking.booked_krutiDev_font == 1 || row.booked_krutiDev_font == 1) ? "kruti-dev" : ""}>{booking.customer_name || row.customer_name || "—"}</td>
                             <td>
                               <div style={{ fontSize: "13px", whiteSpace: "nowrap" }}>
                                 <div>{formatDecimal(row.plot_height)} x {formatDecimal(row.plot_width)}</div>
@@ -469,20 +485,21 @@ const Projectview = () => {
                             </td>
                             <td>
                               <div style={{ fontSize: "13px", whiteSpace: "nowrap", display: "grid", gridTemplateColumns: "30px 1fr", rowGap: "2px", columnGap: "4px" }}>
-                                <div className="text-muted">Ag:</div>
-                                <div>{booking.agreement_date ? formatDateTime(booking.agreement_date) : "—"}</div>
+                                <div className="text-muted">{isPaymentMode(filterDropdown) ? "Rec:" : "Ag:"}</div>
+                                <div>{isPaymentMode(filterDropdown) ? (row.receive_date ? formatDateTime(row.receive_date) : "—") : (booking.agreement_date ? formatDateTime(booking.agreement_date) : "—")}</div>
                                 <div className="text-muted">Due:</div>
                                 <div>{dueDate ? <span style={{ color: isPast ? "red" : "blue", fontWeight: "bold" }}>{formatDateTime(dueDate)}</span> : "—"}</div>
                               </div>
                             </td>
-                            {filterDropdown === "today_received" && <td><span className="text-success fw-bold">₹{formatAmount(row.today_received)}</span></td>}
-                            {filterDropdown === "today" && <><td><span className="text-primary fw-bold">₹{formatAmount(row.bookings?.[0]?.booking_amount)}</span></td><td><span className="text-dark fw-bold">₹{formatAmount(row.bookings?.[0]?.amount_a)}</span></td></>}
-                            {filterDropdown === "pending" && <td><span className="text-danger fw-bold">₹{formatAmount(row.pending_amount)}</span></td>}
+                            {(filterDropdown === "today_received" || isPaymentMode(filterDropdown)) && <td><span className="text-success fw-bold">₹{formatAmount(row.today_received || row.total_received)}</span>{row.payment_mode_name ? <div><small className="badge bg-light text-dark border" style={{ fontSize: '10px' }}>{row.payment_mode_name}{row.check_no ? ` #${row.check_no}` : ''}</small></div> : null}</td>}
+                            {(filterDropdown === "today" || filterDropdown === "30d_bookings") && <><td><span className="text-primary fw-bold">₹{formatAmount(row.bookings?.[0]?.booking_amount)}</span></td><td><span className="text-dark fw-bold">₹{formatAmount(row.bookings?.[0]?.amount_a)}</span></td></>}
+                            {(filterDropdown === "pending" || filterDropdown === "15d_dues") && <td><span className="text-danger fw-bold">₹{formatAmount(row.pending_amount)}</span></td>}
                             {renderActionsDropdown(row, dropdownId)}
                           </>
                         ) : (
                           <>
                             <td className="table-sno-cell">{(page - 1) * limit + index + 1}</td>
+                            {showProjectColumn && <td className={row.project_font == 1 ? "kruti-dev" : ""}>{row.project_name || "—"}</td>}
                             <td>{row.plot_no || "—"}</td>
                             <td className={booking.booked_krutiDev_font == 1 ? "kruti-dev" : ""} style={{ whiteSpace: "pre-wrap" }}>
                               {booking.customer_name ? <><strong>{booking.customer_name}</strong><br /><span>{booking.mobile_no || "—"}</span><br /><span>{booking.customer_address || "—"}</span></> : "—"}
@@ -531,7 +548,18 @@ const Projectview = () => {
                     <Card key={index} className="mb-2 shadow-sm" onClick={() => { if (booked) navigate(`/receiveamount/details/${row.plot_id}`); }} style={{ cursor: booked ? "pointer" : "default" }}>
                       <Card.Body className="p-3">
                         <div className="d-flex justify-content-between align-items-start">
-                          <div><strong>Plot:</strong> {row.plot_no || "—"}<br />{!isTodayLike(filterDropdown) && filterDropdown !== "available" && <><strong>Sector:</strong> <span className={row.plot_font == 1 ? "kruti-dev" : ""}>{row.sector_name}</span></>}</div>
+                          <div>
+                            <strong>Plot:</strong> {row.plot_no || "—"}
+                            {showProjectColumn && (
+                              <>
+                                <br /><strong>Project:</strong> <span className={row.project_font == 1 ? "kruti-dev" : ""}>{row.project_name || "—"}</span>
+                              </>
+                            )}
+                            <br />
+                            {!isTodayLike(filterDropdown) && filterDropdown !== "available" && (
+                              <><strong>Sector:</strong> <span className={row.plot_font == 1 ? "kruti-dev" : ""}>{row.sector_name}</span></>
+                            )}
+                          </div>
                           <div onClick={(e) => e.stopPropagation()} ref={(el) => (dropdownRefs.current[dropdownId] = el)}>
                             <Dropdown align="end" className="drp-user" show={openDropdown === dropdownId}>
                               <Dropdown.Toggle as="div" className="action-icon custom-action-toggle" onClick={(e) => { e.stopPropagation(); setOpenDropdown(openDropdown === dropdownId ? null : dropdownId); }} style={{ cursor: "pointer" }}>
@@ -554,7 +582,7 @@ const Projectview = () => {
                         <div className={booking.booked_krutiDev_font == 1 ? "kruti-dev" : ""}><strong>Customer:</strong> {booking.customer_name || "—"}<br /><strong>Mobile:</strong> {booking.mobile_no || "—"}</div>
                         <hr className="my-2" />
                         <div className="small">
-                          {isTodayLike(filterDropdown) ? (<><strong>Size:</strong> {row.plot_height}x{row.plot_width} ({row.square_feet} Sq/Ft)<br /><strong>Agreement Date:</strong> {formatDateTime(booking.agreement_date)}<br /><strong>Due Date: </strong>{dueDate ? <span style={{ color: isPast ? "red" : "blue", fontWeight: "bold" }}>{formatDateTime(dueDate)}</span> : "—"}{filterDropdown === "today_received" && <><br /><strong>Today Received: </strong><span className="text-success fw-bold">₹{formatAmount(row.today_received)}</span></>}{filterDropdown === "today" && <><br /><strong>Booking Amt: </strong><span className="text-primary fw-bold">₹{formatAmount(row.bookings?.[0]?.booking_amount)}</span><br /><strong>Total Amount: </strong><span className="text-dark fw-bold">₹{formatAmount(row.bookings?.[0]?.amount_a)}</span></>}{filterDropdown === "pending" && <><br /><strong>Pending Amt: </strong><span className="text-danger fw-bold">₹{formatAmount(row.pending_amount)}</span></>}</>) : (<><strong>Rate:</strong> {row.plot_rate} | <strong>Size:</strong> {row.plot_height}x{row.plot_width} ({row.square_feet} Sq/Ft)<br /><strong>Amount:</strong> {formatAmount(row.amount)}</>)}
+                          {isTodayLike(filterDropdown) ? (<><strong>Size:</strong> {row.plot_height}x{row.plot_width} ({row.square_feet} Sq/Ft)<br /><strong>Agreement Date:</strong> {formatDateTime(booking.agreement_date)}<br /><strong>Due Date: </strong>{dueDate ? <span style={{ color: isPast ? "red" : "blue", fontWeight: "bold" }}>{formatDateTime(dueDate)}</span> : "—"}{(filterDropdown === "today_received" || isPaymentMode(filterDropdown)) && <><br /><strong>Received: </strong><span className="text-success fw-bold">₹{formatAmount(row.today_received || row.total_received)}</span></>}{(filterDropdown === "today" || filterDropdown === "30d_bookings") && <><br /><strong>Booking Amt: </strong><span className="text-primary fw-bold">₹{formatAmount(row.bookings?.[0]?.booking_amount)}</span><br /><strong>Total Amount: </strong><span className="text-dark fw-bold">₹{formatAmount(row.bookings?.[0]?.amount_a)}</span></>}{(filterDropdown === "pending" || filterDropdown === "15d_dues") && <><br /><strong>Pending Amt: </strong><span className="text-danger fw-bold">₹{formatAmount(row.pending_amount)}</span></>}</>) : (<><strong>Rate:</strong> {row.plot_rate} | <strong>Size:</strong> {row.plot_height}x{row.plot_width} ({row.square_feet} Sq/Ft)<br /><strong>Amount:</strong> {formatAmount(row.amount)}</>)}
                         </div>
                       </Card.Body>
                     </Card>

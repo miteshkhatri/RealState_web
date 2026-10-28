@@ -25,7 +25,7 @@ function ColonyMockMap() {
           `project_id=${project_id}`,
           `filter=all`,
           `page=1`,
-          `limit=100`,
+          `limit=1000`,
         ].join("&");
 
         const url = `${API_BASE_URL}/dashboard/ProjectDetails?${queryParts}`;
@@ -57,6 +57,12 @@ function ColonyMockMap() {
         
         setApiPlots(formattedPlots);
         
+        // 📊 Calculate stats for header legend
+        const bookedCount = formattedPlots.filter(p => p.is_booked === 1).length;
+        const availableCount = formattedPlots.filter(p => p.is_booked === 0).length;
+        window.mapPlotStats = { booked: bookedCount, available: availableCount };
+        window.dispatchEvent(new CustomEvent('mapPlotStatsUpdated', { detail: { booked: bookedCount, available: availableCount } }));
+
         // 🌍 Set global variable for HTML scripts (with formatted data)
         window.projectPlots = formattedPlots;
         
@@ -72,14 +78,36 @@ function ColonyMockMap() {
 
     const loadHTML = async () => {
       try {
-        const htmlPath = Number(project_id) === 49
-          ? "/html/index.html"
-          : "/html/rameshwarm-market-map.html";
+        const base = (import.meta.env.BASE_URL || '/').replace(/\/$/, '');
+        const fileName = Number(project_id) === 49
+          ? 'html/index.html'
+          : 'html/rameshwarm-market-map.html';
 
-        const response = await fetch(htmlPath);
+        const candidates = [
+          `${base}/${fileName}`,
+          `/${fileName}`,
+          `./${fileName}`,
+        ];
 
-        if (!response.ok) {
-          throw new Error(`Failed to load HTML: ${response.status}`);
+        let response = null;
+        let lastStatus = 404;
+
+        for (const candidate of candidates) {
+          try {
+            const res = await fetch(candidate);
+            if (res.ok) {
+              response = res;
+              break;
+            } else {
+              lastStatus = res.status;
+            }
+          } catch (e) {
+            console.warn(`Failed fetching candidate ${candidate}:`, e);
+          }
+        }
+
+        if (!response || !response.ok) {
+          throw new Error(`Failed to load HTML: ${lastStatus}`);
         }
 
         let html = await response.text();
@@ -119,12 +147,14 @@ function ColonyMockMap() {
           }
         }
         
-        // ✅ Force apply colors after scripts run
+        // ✅ Force apply colors & Google Maps interaction after scripts run
         setTimeout(() => {
+          if (typeof window.initGoogleMapInteractions === 'function') {
+            window.initGoogleMapInteractions();
+          }
           if (typeof applyPlotColors === 'function') {
             applyPlotColors();
           }
-          console.log("✅ Map loaded with", formattedPlots.length, "plots");
         }, 200);
         
       } catch (err) {
@@ -146,7 +176,7 @@ function ColonyMockMap() {
       ref={containerRef}
       style={{
         width: "100%",
-        height: "100%",
+        height: "calc(100vh - 110px)",
         overflow: "hidden",
         position: "relative",
         backgroundColor: "#f5f5f5",

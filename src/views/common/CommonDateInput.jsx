@@ -9,20 +9,20 @@ function CommonDateInput({
   required = false,
   min,
   max,
-  size
+  size = "sm"
 }) {
   return (
     <Col md={md}>
       {label && <Form.Label>{label}</Form.Label>}
       <Form.Control
         type="date"
-        size={size || 'sm'}
+        size={size}
         value={value || ""}
         onChange={(e) => onChange(e.target.value)}
         required={required}
         min={min}
         max={max}
-        className="form-control-md hindi-input-custom"
+        className="form-control-sm hindi-input-custom common-date-input w-100"
       />
     </Col>
   );

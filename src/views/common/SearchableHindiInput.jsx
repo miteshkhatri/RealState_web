@@ -28,11 +28,12 @@ function SearchableHindiInput({
       />
 
       {showDropdown && suggestions.length > 0 && (
-        <div style={dropdownStyle}>
+        <div style={dropdownStyle} className="searchable-suggestions-dropdown">
           {suggestions.map((item) => (
             <div
               key={item.id}
               style={dropdownItemStyle}
+              className="searchable-suggestion-item"
               onMouseDown={() => onSelect(item)}
             >
               {item.mutation_jamabandi_girdawari}
