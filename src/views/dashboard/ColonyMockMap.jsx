@@ -1,5 +1,6 @@
 import React, {
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
 } from "react";
@@ -20,6 +21,42 @@ function ColonyMockMap() {
   const [apiPlots, setApiPlots] = useState([]);
   const projectDetailsRef = useRef({ name: '', krutiDev_font: 0 });
   const fullProjectDataRef = useRef(null);
+  const [wrapperHeight, setWrapperHeight] = useState(null);
+  const [wrapperOffset, setWrapperOffset] = useState(0);
+
+  // 📐 Fit the map exactly into the space below the header (no empty area under the bottom scrollbar)
+  useLayoutEffect(() => {
+    const updateHeight = () => {
+      const el = containerRef.current;
+      if (!el) return;
+      // Top of the map without any previously applied header offset
+      const currentOffset = parseFloat(el.style.marginTop) || 0;
+      const naturalTop = el.getBoundingClientRect().top + window.scrollY - currentOffset;
+      // On mobile the header is fixed and can be taller than the space reserved for it
+      const header = document.querySelector("header.pcoded-header");
+      const headerBottom = header ? header.getBoundingClientRect().bottom + window.scrollY : 0;
+      const offset = Math.max(0, Math.ceil(headerBottom - naturalTop));
+      setWrapperOffset(offset);
+      setWrapperHeight(Math.max(300, Math.floor(window.innerHeight - naturalTop - offset)));
+    };
+
+    updateHeight();
+    window.addEventListener("resize", updateHeight);
+    const timer = setTimeout(updateHeight, 300);
+
+    let observer = null;
+    const header = document.querySelector("header.pcoded-header");
+    if (header && typeof ResizeObserver !== "undefined") {
+      observer = new ResizeObserver(updateHeight);
+      observer.observe(header);
+    }
+
+    return () => {
+      window.removeEventListener("resize", updateHeight);
+      clearTimeout(timer);
+      if (observer) observer.disconnect();
+    };
+  }, []);
 
   // 🎯 Listen for booking requests from the interactive map modal
   useEffect(() => {
@@ -531,8 +568,24 @@ function ColonyMockMap() {
             height: calc(100dvh - 98px);
           }
         }
+        /* Map scroll area fills the wrapper completely */
+        .colony-map-wrapper .parent-dev {
+          height: 100% !important;
+        }
+        /* Remove bottom page padding on the map page so the page itself does not scroll */
+        .pcoded-content:has(.colony-map-wrapper) {
+          padding-bottom: 0 !important;
+        }
+        /* Main container is min 100vh below the header, which made the page 80px taller than the screen */
+        .pcoded-main-container:has(.colony-map-wrapper) {
+          min-height: 0 !important;
+        }
       `}</style>
-      <div ref={containerRef} className="colony-map-wrapper" />
+      <div
+        ref={containerRef}
+        className="colony-map-wrapper"
+        style={wrapperHeight ? { height: `${wrapperHeight}px`, marginTop: `${wrapperOffset}px` } : undefined}
+      />
     </>
   );
 }
