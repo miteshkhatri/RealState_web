@@ -109,52 +109,133 @@ function Addproject({ setshowAddProject }) {
   };
 
   useEffect(() => {
-    setProjectName(updateData ? updateData.name : '');
-    setPlotNo(updateData ? updateData.plot_number : '');
-    setProjectImage(updateData ? updateData.image : null);
-    setLocationName(updateData ? updateData.address : '');
-    setSquarePrice(updateData ? updateData.square_rate : '');
-    setDLCPrice(updateData ? updateData.dlc_rate : '');
-    setsectore(updateData ? updateData.sector_name : '');
-    setCompanyName(updateData ? updateData.company_name : '');
-    setCompanyAddress(updateData ? updateData.company_address : '');
-    setPhoneNumber(updateData ? updateData.phone_number : '');
-    setCinNumber(updateData ? updateData.cin_number : '');
-    setIdType(updateData?.gst_pan_type || "GST");
-    setGstOrPan(updateData ? updateData.gst_pan_number : '');
-    setBrokerName(updateData ? updateData?.brokers?.[0]?.broker_name : '');
-    setBroker_id(updateData ? updateData?.brokers?.[0]?.broker_id : null);
-    setBrokerFont(updateData ? updateData?.brokers?.[0]?.broker_font : 1);
-    setCommissionType(updateData?.commission_type || "percentage");
-    setCommissionValue(updateData ? updateData?.commission_value : "");
-    setFontValue(updateData?.krutiDev_font != null ? String(updateData.krutiDev_font) : "2");
+    const populateFields = (data) => {
+      if (!data) return;
+      if (data.name || data.project_name) setProjectName(data.name || data.project_name);
+      if (data.plot_number != null) setPlotNo(data.plot_number);
+      if (data.image) setProjectImage(data.image);
+      if (data.address != null) setLocationName(data.address);
+      if (data.square_rate != null) setSquarePrice(data.square_rate);
+      if (data.dlc_rate != null) setDLCPrice(data.dlc_rate);
+      if (data.sector_name != null) setsectore(data.sector_name);
+      if (data.company_name != null) setCompanyName(data.company_name);
+      if (data.company_address != null) setCompanyAddress(data.company_address);
+      if (data.phone_number != null) setPhoneNumber(data.phone_number);
+      if (data.cin_number != null) setCinNumber(data.cin_number);
+      if (data.gst_pan_type) setIdType(data.gst_pan_type);
+      if (data.gst_pan_number != null) setGstOrPan(data.gst_pan_number);
+      const bName = data?.brokers?.[0]?.broker_name || data?.broker_name || '';
+      const bId = data?.brokers?.[0]?.broker_id || data?.broker_id || null;
+      const bFont = data?.brokers?.[0]?.broker_font || data?.broker_font || 1;
+      if (bName) setBrokerName(bName);
+      if (bId) setBroker_id(bId);
+      if (bFont) setBrokerFont(bFont);
+      if (data.commission_type) setCommissionType(data.commission_type);
+      if (data.commission_value != null) setCommissionValue(data.commission_value);
+      if (data.krutiDev_font != null) setFontValue(String(data.krutiDev_font));
+      if (data.rera_reg_no != null) setReraRegNo(data.rera_reg_no);
+      if (data.rera_reg_date) setReraRegDate(data.rera_reg_date.split("T")[0]);
+      if (data.khasra_no != null) setKhasraNo(data.khasra_no);
+      if (data.company_logo) {
+        setCompanyLogoPreview(`${API_BASE_URL}/uploads/${data.company_logo}`);
+      }
+    };
 
-    setReraRegNo(updateData ? (updateData.rera_reg_no || '') : '');
-    setReraRegDate(
-      updateData && updateData.rera_reg_date
-        ? updateData.rera_reg_date.split("T")[0]
-        : ""
-    );
-    setKhasraNo(updateData ? (updateData.khasra_no || '') : '');
-    if (updateData && updateData.company_logo) {
-      setCompanyLogoPreview(`${API_BASE_URL}/uploads/${updateData.company_logo}`);
+    if (updateData) {
+      populateFields(updateData);
+
+      // If key fields are missing from updateData, fetch full details from /project/all
+      if (updateData.project_id && (!updateData.company_name || !updateData.gst_pan_number || !updateData.address)) {
+        api.get(`/project/all`, {
+          params: { project_id: updateData.project_id },
+          headers: { Authorization: userData?.user_token }
+        }).then((res) => {
+          if (res.data.success && Array.isArray(res.data.data)) {
+            const found = res.data.data.find(p => Number(p.project_id) === Number(updateData.project_id));
+            if (found) {
+              populateFields(found);
+            }
+          }
+        }).catch((err) => {
+          console.error("Error loading project full details in AddProject:", err);
+        });
+      }
     }
   }, [updateData]);
 
   useEffect(() => {
-    if (updateData && Array.isArray(updateData.sector) && updateData.sector.length > 0) {
-      setFields(
-        updateData.sector.map((sector) => ({
-          sectore: sector.name || '',
+    const fetchSectors = async () => {
+      let loadedFields = [];
+      const newSec = location.state?.newSectorName;
+
+      if (updateData && updateData.project_id) {
+        try {
+          const res = await api.get(`/sectors/list`, {
+            params: { project_id: updateData.project_id },
+            headers: { Authorization: userData.user_token }
+          });
+          if (res.data.success && Array.isArray(res.data.data) && res.data.data.length > 0) {
+            loadedFields = res.data.data.map((sector) => ({
+              sector_id: sector.sector_id,
+              sectore: sector.sector_name || sector.name || '',
+              plotNo: sector.plot_number || '',
+              project_id: sector.project_id,
+              SectoreError: '',
+              PlotNoError: ''
+            }));
+          }
+        } catch (e) {
+          console.error("Error fetching sectors for project:", e);
+        }
+      }
+
+      if (!loadedFields.length && updateData && Array.isArray(updateData.sector) && updateData.sector.length > 0) {
+        loadedFields = updateData.sector.map((sector) => ({
+          sector_id: sector.sector_id || null,
+          sectore: sector.name || sector.sector_name || '',
           plotNo: sector.plot_number || '',
+          project_id: sector.project_id || updateData?.project_id,
           SectoreError: '',
           PlotNoError: ''
-        }))
-      );
-    } else {
-      setFields([{ sectore: '', plotNo: '', SectoreError: '', PlotNoError: '' }]);
+        }));
+      }
+
+      if (newSec) {
+        const sUpper = String(newSec).trim().toUpperCase();
+        const alreadyPresent = loadedFields.some((f) => {
+          const name = String(f.sectore || '').trim().toUpperCase();
+          return name === sUpper || name.replace(/SECTOR\s*[-_]?/i, '').trim() === sUpper;
+        });
+        if (!alreadyPresent) {
+          loadedFields.push({
+            sector_id: null,
+            sectore: newSec,
+            plotNo: '',
+            project_id: updateData?.project_id || null,
+            SectoreError: '',
+            PlotNoError: ''
+          });
+        }
+      }
+
+      if (!loadedFields.length) {
+        loadedFields = [{ sectore: newSec || '', plotNo: '', sector_id: null, SectoreError: '', PlotNoError: '' }];
+      }
+
+      setFields(loadedFields);
+    };
+
+    fetchSectors();
+  }, [updateData, location.state?.newSectorName]);
+
+  useEffect(() => {
+    if (location.state?.newSectorName) {
+      setTimeout(() => {
+        const el = document.querySelector('.sector-field-row:last-child');
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 400);
     }
-  }, [updateData]);
+  }, [location.state?.newSectorName]);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -245,15 +326,14 @@ function Addproject({ setshowAddProject }) {
     if (!isValid) return;
 
     try {
-      const sectorData = fields.map((field, index) => {
-        const existingSector = updateData?.sector?.[index] || {};
-        return {
-          name: field.sectore || existingSector.name,
-          project_id: existingSector.project_id || null,
-          plot_number: field.plotNo || existingSector.plot_number,
-          sector_id: existingSector.sector_id || null,
-        };
-      });
+      const sectorData = fields.map((field) => ({
+        name: field.sectore,
+        sector_name: field.sectore,
+        plot_number: field.plotNo,
+        plot_no: field.plotNo,
+        sector_id: field.sector_id || null,
+        project_id: updateData?.project_id || null,
+      }));
 
       const formData = new FormData();
       formData.append('ProjectId', updateData?.project_id || null);
@@ -267,6 +347,7 @@ function Addproject({ setshowAddProject }) {
       formData.append("cin_number", cinNumber);
       formData.append("phone_number", phoneNumber);
       formData.append("gst_pan_type", idType);
+      formData.append("gst_pan_number", gstOrPan || "");
       formData.append("broker_name", broker_id ? brokerName : "");
       formData.append("commission_type", commissionType);
       formData.append("commission_value", commissionValue || 0);
@@ -275,10 +356,12 @@ function Addproject({ setshowAddProject }) {
       formData.append("rera_reg_no", reraRegNo);
       formData.append("rera_reg_date", reraRegDate ? reraRegDate : null);
       formData.append("khasra_no", khasraNo);
-      if (companyLogo) {
+      if (companyLogo && typeof companyLogo !== 'string') {
         formData.append("company_logo", companyLogo);
       }
-      if (ProjectImage) formData.append('ProjectImage', ProjectImage);
+      if (ProjectImage && typeof ProjectImage !== 'string') {
+        formData.append('ProjectImage', ProjectImage);
+      }
 
       const res = await api.post(`/project/update`, formData, {
         headers: {
@@ -292,7 +375,7 @@ function Addproject({ setshowAddProject }) {
         setProjectImage('');
         setPlotNo('');
         setProjectName('');
-        navigate('/projects');
+        navigate(location.state?.returnUrl || '/projects');
       }
     } catch (error) {
       if (error.response) {
@@ -397,6 +480,7 @@ function Addproject({ setshowAddProject }) {
       formData.append("cin_number", cinNumber);
       formData.append("phone_number", phoneNumber);
       formData.append("gst_pan_type", idType);
+      formData.append("gst_pan_number", gstOrPan || "");
       formData.append("broker_name", broker_id ? brokerName : "");
       formData.append("commission_type", commissionType);
       formData.append("commission_value", commissionValue || "");
@@ -438,14 +522,25 @@ function Addproject({ setshowAddProject }) {
       updated[fields.length - 1].PlotNoError = !lastField.plotNo ? (FontValue === "0" ? 'Number of Plot is required' : 'प्लॉट नंबर आवश्यक है') : '';
       setFields(updated);
     } else {
-      setFields([...fields, { sectore: '', plotNo: '', SectoreError: '', PlotNoError: '' }]);
+      setFields([...fields, { sectore: '', plotNo: '', sector_id: null, project_id: updateData?.project_id || null, SectoreError: '', PlotNoError: '' }]);
     }
   };
 
-  const handleDeleteField = (index) => {
+  const handleDeleteField = async (index) => {
     if (fields.length === 1) {
       alert(FontValue === "0" ? "You cannot delete the last remaining field." : "आप अंतिम फ़ील्ड को हटा नहीं सकते।");
       return;
+    }
+    const toDelete = fields[index];
+    if (toDelete && toDelete.sector_id) {
+      try {
+        await api.delete('/sectors', {
+          params: { sector_id: toDelete.sector_id },
+          headers: { Authorization: userData.user_token }
+        });
+      } catch (err) {
+        console.error("Error deleting sector:", err);
+      }
     }
     const updated = fields.filter((_, i) => i !== index);
     setFields(updated);
@@ -881,7 +976,7 @@ function Addproject({ setshowAddProject }) {
                               window.blurTimeout = setTimeout(() => {
                                 const matched = BrokerList.find(
                                   (b) =>
-                                    b.broker_name.toLowerCase() ===
+                                    (b?.broker_name || "").toLowerCase() ===
                                     (brokerName || "").trim().toLowerCase()
                                 );
                                 if (matched) {
@@ -924,7 +1019,7 @@ function Addproject({ setshowAddProject }) {
                               window.blurTimeout = setTimeout(() => {
                                 const matched = BrokerList.find(
                                   (b) =>
-                                    b.broker_name.toLowerCase() ===
+                                    (b?.broker_name || "").toLowerCase() ===
                                     (brokerName || "").trim().toLowerCase()
                                 );
                                 if (matched) {
@@ -946,9 +1041,11 @@ function Addproject({ setshowAddProject }) {
 
                         {brokerDropdownOpen && BrokerList.length > 0 && (
                           <ul className="broker-dropdown show" style={{ maxHeight: '220px', overflowY: 'auto' }}>
-                            {BrokerList.filter((b) =>
-                              !brokerName.trim() || b.broker_name.toLowerCase().includes(brokerName.trim().toLowerCase())
-                            ).map((data, index) => (
+                            {BrokerList.filter((b) => {
+                              const searchVal = (brokerName || '').trim().toLowerCase();
+                              const name = (b?.broker_name || '').toLowerCase();
+                              return !searchVal || name.includes(searchVal);
+                            }).map((data, index) => (
                               <li
                                 key={index}
                                 className={`dropdown-item ${data.kruti_brokers_font === 1 ? "kruti-dev" : ""}`}
@@ -1033,12 +1130,12 @@ function Addproject({ setshowAddProject }) {
                 </div>
 
                 {/* Row 7 - Sectors Section */}
-                <div className="row">
-                  <div className="col-md-6 mt-2">
+                <div className="row" style={{ overflow: 'visible' }}>
+                  <div className="col-md-6 mt-2" style={{ overflow: 'visible', paddingBottom: '40px' }}>
                     {fields.map((field, index) => (
-                      <div key={index} className="sector-field-row">
-                        <div className="col-md-5 col-sm-5">
-                          <div className="form-group">
+                      <div key={index} className="sector-field-row" style={{ overflow: 'visible', position: 'relative' }}>
+                        <div className="col-md-5 col-sm-5" style={{ overflow: 'visible', position: 'relative' }}>
+                          <div className="form-group" style={{ overflow: 'visible', position: 'relative' }}>
                             <label className="form-label">
                               {FontValue === "0" ? "Sector *" : "सेक्टर *"}
                             </label>
@@ -1111,6 +1208,13 @@ function Addproject({ setshowAddProject }) {
 
                 {/* Submit Button */}
                 <div className="row">
+                  {errors && (
+                    <div className="col-12 text-start">
+                      <div className="alert alert-danger py-2 px-3 mb-3" role="alert" style={{ fontSize: '13px', fontWeight: 500 }}>
+                        {errors}
+                      </div>
+                    </div>
+                  )}
                   <div className="col-12" style={{ textAlign: 'right' }}>
                     {mode === 'edit' ? (
                       <button className="submit-btn" onClick={handleUpdateProject}>

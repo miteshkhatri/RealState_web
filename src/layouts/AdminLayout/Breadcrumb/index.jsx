@@ -56,17 +56,47 @@ const Breadcrumb = () => {
     "projects/createproject": "Projects / Create Project",
   };
 
+  const isMapRoute = pathname.includes('/project/map');
+  const mapProjectId = isMapRoute ? pathname.split('/').filter(Boolean).pop() : null;
+
+  const [projectName, setProjectName] = useState(() => {
+    if (window.currentProjectName) return window.currentProjectName;
+    try {
+      const stored = JSON.parse(localStorage.getItem('ProjectData') || '{}');
+      if (stored?.project_id == mapProjectId && stored?.name && stored.name !== 'Rameshwarm Market') {
+        return stored.name;
+      }
+    } catch (e) {}
+    return '';
+  });
+
+  useEffect(() => {
+    const handleProjectName = (e) => {
+      if (e.detail) setProjectName(e.detail);
+    };
+    window.addEventListener('projectNameUpdated', handleProjectName);
+    return () => window.removeEventListener('projectNameUpdated', handleProjectName);
+  }, []);
+
   const cleanedSegments = modifiedPathname
     .split("/")
     .filter((seg) => seg !== "" && !/^\d+$/.test(seg));
 
   // Build crumbs array — each segment becomes a crumb
-  const crumbs = cleanedSegments.map((seg, i) => ({
+  let crumbs = cleanedSegments.map((seg, i) => ({
     label: seg.charAt(0).toUpperCase() + seg.slice(1).replace(/-/g, ' '),
     path: '/' + cleanedSegments.slice(0, i + 1).join('/'),
   }));
 
+  if (isMapRoute) {
+    crumbs = [
+      { label: 'Projects', path: '/projects' },
+      { label: 'Map', path: pathname },
+    ];
+  }
+
   const pageTitle =
+    (isMapRoute ? (projectName || 'Project Map') : null) ||
     specialBreadcrumbs[modifiedPathname] ||
     (crumbs.length > 0 ? crumbs[crumbs.length - 1].label : "Dashboard");
 
@@ -77,7 +107,7 @@ const Breadcrumb = () => {
   if (pathname === "/login") return null;
 
   return (
-    <div className="bc-wrapper">
+    <div className="bc-wrapper" style={{ padding: 0, display: 'flex', alignItems: 'center' }}>
       {/* Mobile hamburger */}
       <button
         type="button"
@@ -88,13 +118,58 @@ const Breadcrumb = () => {
         <i className={`feather ${collapseMenu ? 'icon-x' : 'icon-menu'}`} />
       </button>
 
+      {/* Mobile Project Title on Map Page */}
+      {isMapRoute && (
+        <div
+          className="bc-page-title d-flex d-lg-none"
+          style={{
+            marginLeft: '8px',
+            maxWidth: '160px',
+            overflow: 'hidden',
+            display: 'inline-flex',
+            alignItems: 'center'
+          }}
+          title={pageTitle}
+        >
+          <span className="bc-page-dot" style={{ flexShrink: 0 }} />
+          <span
+            className="bc-page-label"
+            style={{
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              fontSize: '12px'
+            }}
+          >
+            {pageTitle}
+          </span>
+        </div>
+      )}
+
       {/* Desktop breadcrumb */}
-      <div className="bc-content d-none d-lg-flex">
+      <div className="bc-content d-none d-lg-flex" style={{ gap: '10px' }}>
 
         {/* Page title pill */}
-        <div className="bc-page-title">
-          <span className="bc-page-dot" />
-          <span className="bc-page-label">{pageTitle}</span>
+        <div
+          className="bc-page-title"
+          style={{
+            marginLeft: 0,
+            maxWidth: isMapRoute ? '135px' : '240px',
+            overflow: 'hidden'
+          }}
+          title={pageTitle}
+        >
+          <span className="bc-page-dot" style={{ flexShrink: 0 }} />
+          <span
+            className="bc-page-label"
+            style={{
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap'
+            }}
+          >
+            {pageTitle}
+          </span>
         </div>
 
         {/* Divider */}

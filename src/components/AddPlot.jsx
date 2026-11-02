@@ -67,7 +67,8 @@ function AddPlot({
   const navRow = location.state?.oneRow;
   const data = location.state?.data || null;
   const mode = location.state?.mode || null;
-  const isUpdateMode = Boolean(plotData || navRow);
+  const newPlot = location.state?.newPlot || null;
+  const isUpdateMode = Boolean(plotData || (navRow && navRow.plot_id));
 
   useEffect(() => {
     if (!plotData && !navRow && ProjectData?.square_rate) {
@@ -76,7 +77,7 @@ function AddPlot({
   }, [ProjectData, plotData, navRow]);
 
   useEffect(() => {
-    const source = plotData || navRow;
+    const source = plotData || (navRow && navRow.plot_id ? navRow : null);
     if (source) {
       setPlotNumber(String(source.plot_no ?? ''));
       setAmount(String(source.amount ?? ''));
@@ -96,6 +97,44 @@ function AddPlot({
     setIsUserEditing(false);
     setIsManualAmount(false);
   }, [plotData, navRow]);
+
+  // Pre-fill when creating a new plot from interactive map
+  useEffect(() => {
+    if (newPlot) {
+      if (newPlot.plot_no) {
+        let cleanPlotNo = String(newPlot.plot_no).trim();
+        const secName = String(newPlot.sector_name || '').trim();
+        if (secName && cleanPlotNo.toUpperCase().startsWith(secName.toUpperCase())) {
+          cleanPlotNo = cleanPlotNo.replace(new RegExp(`^${secName}[-_\\s]*`, 'i'), '');
+        } else if (cleanPlotNo.includes('-')) {
+          cleanPlotNo = cleanPlotNo.split('-').slice(1).join('-');
+        }
+        setPlotNumber(cleanPlotNo);
+      }
+      if (newPlot.plot_width) setPlotWidth(String(newPlot.plot_width));
+      if (newPlot.plot_height) setPlotHight(String(newPlot.plot_height));
+      if (newPlot.krutiDev_font !== undefined) {
+        setFontValue(String(newPlot.krutiDev_font));
+      } else if (ProjectData?.krutiDev_font !== undefined) {
+        setFontValue(String(ProjectData.krutiDev_font));
+      }
+      if (newPlot.sector_id) {
+        setSector(String(newPlot.sector_id));
+      } else if (newPlot.sector_name && SectorData && SectorData.length > 0) {
+        const secUpper = String(newPlot.sector_name).trim().toUpperCase();
+        const matchingSector = SectorData.find((s) => {
+          const name = String(s.sector_name || '').trim().toUpperCase();
+          return name === secUpper || name === `SECTOR ${secUpper}` || name === `SECTOR-${secUpper}` || name.replace(/SECTOR\s*[-_]?/i, '').trim() === secUpper;
+        });
+        if (matchingSector) {
+          setSector(String(matchingSector.sector_id));
+          setPlotNumberCount(matchingSector.plot_number ?? '');
+          setkrutidev(matchingSector.krutiDev_font ?? 0);
+          if (typeof handleFilterData === 'function') handleFilterData(matchingSector.sector_id);
+        }
+      }
+    }
+  }, [newPlot, SectorData]);
 
   const calculateSquareFeet = () => {
     const h = Number(PlotHight) || 0;
@@ -289,7 +328,15 @@ function AddPlot({
   const projectName =
     (updatePlot || navRow)
       ? (navRow?.project_name || navRow?.name || '')
-      : (ProjectData?.name || data?.project_name || data?.name || '');
+      : (location.state?.newPlot?.project_name ||
+         location.state?.data?.project_name ||
+         location.state?.data?.name ||
+         (ProjectData?.name && ProjectData.name !== 'Rameshwarm Market' ? ProjectData.name : '') ||
+         (ProjectData?.project_name && ProjectData.project_name !== 'Rameshwarm Market' ? ProjectData.project_name : '') ||
+         data?.project_name ||
+         data?.name ||
+         ProjectData?.name ||
+         '');
 
   return (
     <React.Fragment>
@@ -727,6 +774,11 @@ function AddPlot({
                 {/* BUTTONS ROW */}
                 <Row className="mt-3">
                   <Col md={12}>
+                    {errors && (
+                      <div className="alert alert-danger py-2 px-3 mb-2" role="alert" style={{ fontSize: '13px', fontWeight: 500 }}>
+                        {errors}
+                      </div>
+                    )}
                     <Form.Text className="form-text text-muted">
                       <p className="error-text" style={{ width: '300px' }}>{errors}</p>
                     </Form.Text>
@@ -734,7 +786,7 @@ function AddPlot({
                     <div className="d-flex justify-content-between align-items-center">
                      <div></div>
 
-                      {updatePlot || navRow ? (
+                      {updatePlot || (navRow && navRow.plot_id) ? (
                         <Button className="submit-btn" onClick={UpdatePlotFun}>
                           {isEnglish ? "Update" : "अपडेट"}
                         </Button>

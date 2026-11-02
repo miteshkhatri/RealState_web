@@ -80,6 +80,84 @@
             background-color: rgba(255, 255, 0, 0.25);
             cursor: pointer;
         }
+
+        /* ─── Map Enhancement Styles ─── */
+        @keyframes plotPulseGlow {
+            0% { filter: brightness(1); outline: 2px solid rgba(245, 158, 11, 0.9); box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.9); }
+            50% { filter: brightness(1.3); outline: 4px solid rgba(245, 158, 11, 1); box-shadow: 0 0 16px 8px rgba(245, 158, 11, 0.95); z-index: 999; }
+            100% { filter: brightness(1); outline: 2px solid rgba(245, 158, 11, 0.9); box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
+        }
+        .plot-glow-highlight {
+            animation: plotPulseGlow 1.2s ease-in-out 3;
+            z-index: 999 !important;
+        }
+        .map-toolbar {
+            position: absolute;
+            top: 14px;
+            left: 14px;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(226, 232, 240, 0.95);
+            border-radius: 10px;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.1);
+            padding: 6px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: inherit;
+            flex-wrap: wrap;
+            max-width: calc(100% - 90px);
+        }
+        .filter-chip {
+            padding: 5px 11px;
+            border-radius: 20px;
+            font-size: 12px;
+            border: 1px solid #cbd5e1;
+            background: #ffffff;
+            color: #334155;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .filter-chip:hover {
+            background: #f1f5f9;
+        }
+        .filter-chip.active {
+            background: #eff6ff;
+            border-color: #2563eb;
+            color: #1d4ed8;
+            font-weight: 700;
+        }
+        .customer-btn {
+            padding: 5px 11px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+        #plot-toast {
+            position: absolute;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1e293b;
+            color: white;
+            padding: 9px 18px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+            z-index: 100000;
+            display: none;
+            pointer-events: none;
+        }
     </style>
     <style class="shared-css" type="text/css" >
 .t {
@@ -887,12 +965,17 @@ left:1262px;bottom:1075.7px;letter-spacing:0.06px;">E-3 </span>
     });
 </script>
 
+<!-- Map Toolbar controls moved to top header NavBar -->
+
+<!-- Toast Feedback -->
+<div id="plot-toast"></div>
+
 <!-- Zoom Buttons -->
 <div id="zoom-controls" style="
-    position: fixed;
-    top: 85px;
-    right: 25px;
-    z-index: 9999;
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    z-index: 100;
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -929,40 +1012,96 @@ left:1262px;bottom:1075.7px;letter-spacing:0.06px;">E-3 </span>
     z-index: 99999;
     justify-content: center;
     align-items: center;
+    padding: 12px;
+    box-sizing: border-box;
 ">
     <div style="
         background: white;
         border-radius: 16px;
-        padding: 32px;
-        min-width: 300px;
-        max-width: 400px;
+        padding: 22px 16px;
+        width: 100%;
+        max-width: 420px;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-sizing: border-box;
         box-shadow: 0 20px 60px rgba(0,0,0,0.4);
         text-align: center;
         position: relative;
     ">
         <div style="
-            width: 60px; height: 60px;
+            width: 54px; height: 54px;
             background: #2563eb;
             border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
-            margin: 0 auto 16px;
-            font-size: 28px;
+            margin: 0 auto 14px;
+            font-size: 26px;
         ">🏪</div>
-        <h2 id="modal-title" style="margin: 0 0 16px; color: #1e3a8a; font-size: 22px;"></h2>
-        <div style="background: #f0f4ff; border-radius: 10px; padding: 16px; text-align: left;">
-            <p id="modal-body" style="margin: 0; color: #374151; font-size: 15px; line-height: 1.8;"></p>
+        <h2 id="modal-title" style="margin: 0 0 14px; color: #1e3a8a; font-size: 20px;"></h2>
+        <div style="background: #f0f4ff; border-radius: 10px; padding: 14px; text-align: left;">
+            <p id="modal-body" style="margin: 0; color: #374151; font-size: 14px; line-height: 1.75;"></p>
         </div>
-        <button onclick="closeModal()" style="
-            margin-top: 20px;
-            padding: 10px 32px;
-            background: #2563eb;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 15px;
-            cursor: pointer;
-            font-weight: bold;
-        ">OK</button>
+        <div style="margin-top: 18px; display: flex; gap: 8px; justify-content: center; align-items: center; flex-wrap: wrap;">
+            <button id="modal-book-btn" onclick="bookCurrentPlot()" style="
+                display: none;
+                padding: 9px 18px;
+                background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+                color: white;
+                border: none;
+                border-radius: 8px;
+                font-size: 14px;
+                cursor: pointer;
+                font-weight: 700;
+                box-shadow: 0 4px 12px rgba(22, 163, 74, 0.35);
+            ">Book Plot</button>
+            <button id="modal-create-plot-btn" onclick="createCurrentPlot()" style="
+                display: none;
+                padding: 9px 18px;
+                background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+                color: white;
+                border: none;
+                border-radius: 8px;
+                font-size: 14px;
+                cursor: pointer;
+                font-weight: 700;
+                box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+            ">Create Plot</button>
+            <button id="modal-whatsapp-btn" onclick="sharePlotOnWhatsApp()" style="
+                padding: 9px 16px;
+                background: #16a34a;
+                color: white;
+                border: none;
+                border-radius: 8px;
+                font-size: 13px;
+                cursor: pointer;
+                font-weight: 700;
+                display: flex;
+                align-items: center;
+                gap: 5px;
+            ">💬 WhatsApp</button>
+            <button id="modal-copy-btn" onclick="copyPlotQuotation()" style="
+                padding: 9px 16px;
+                background: #0284c7;
+                color: white;
+                border: none;
+                border-radius: 8px;
+                font-size: 13px;
+                cursor: pointer;
+                font-weight: 700;
+                display: flex;
+                align-items: center;
+                gap: 5px;
+            ">📋 Copy Quote</button>
+            <button onclick="closeModal()" style="
+                padding: 9px 20px;
+                background: #64748b;
+                color: white;
+                border: none;
+                border-radius: 8px;
+                font-size: 13px;
+                cursor: pointer;
+                font-weight: bold;
+            ">Close</button>
+        </div>
     </div>
 </div>
 
@@ -1075,7 +1214,7 @@ function initGoogleMapInteractions() {
     // 2. Mouse Drag (Click & Drag like Google Maps)
     parentDev.addEventListener('mousedown', function(e) {
         if (e.button !== 0) return;
-        if (e.target.closest('#zoom-controls') || e.target.closest('#plot-modal')) return;
+        if (e.target.closest('#zoom-controls') || e.target.closest('#plot-modal') || e.target.closest('#map-toolbar')) return;
 
         isDragging = true;
         dragMoved = false;
@@ -1108,7 +1247,7 @@ function initGoogleMapInteractions() {
 
     // 3. Double Click to Zoom In towards cursor
     parentDev.addEventListener('dblclick', function(e) {
-        if (e.target.closest('#zoom-controls') || e.target.closest('#plot-modal') || e.target.closest('span[onclick^="showPlotInfo"]')) return;
+        if (e.target.closest('#zoom-controls') || e.target.closest('#plot-modal') || e.target.closest('#map-toolbar') || e.target.closest('span[onclick^="showPlotInfo"]')) return;
         e.preventDefault();
         var rect = mapViewport.getBoundingClientRect();
         performZoom(1.35, e.clientX - rect.left, e.clientY - rect.top);
@@ -1195,7 +1334,8 @@ function getApiPlot(label) {
 
         // 3. Match sector + plot_no (e.g. sector='E', plot_no='2' or '02')
         var pNoInt = parseInt(pNo.replace(/\D/g, ''), 10);
-        if (pSector === sectionLetter) {
+        var cleanPSector = pSector.replace(/SECTOR\s*[-_]?/i, '').trim();
+        if (pSector === sectionLetter || cleanPSector === sectionLetter) {
             if (pNo === plotNum || (!isNaN(pNoInt) && pNoInt === plotNumInt)) {
                 return p;
             }
@@ -1204,7 +1344,179 @@ function getApiPlot(label) {
     return null;
 }
 
-// ─── Layout par Status Box (🔴 Booked / 🟢 Available) Pura Box Dikhana ──
+// ─── Status Theme Definition for All Statuses ───────────────────────
+function getStatusTheme(statusKey) {
+    var k = String(statusKey || 'available').toLowerCase().trim();
+    if (k === 'booked' || k.includes('book')) {
+        return {
+            key: 'booked',
+            label: 'Booked',
+            badge: '🔴 Booked',
+            bg: 'rgba(220, 38, 38, 0.90)',
+            border: '1px solid #991b1b',
+            boxShadow: '0 0 2px rgba(220, 38, 38, 0.5)',
+            badgeBg: '#fef2f2',
+            badgeColor: '#dc2626',
+            badgeBorder: '#fecaca'
+        };
+    }
+    if (k === 'hold' || k.includes('hold')) {
+        return {
+            key: 'hold',
+            label: 'Hold',
+            badge: '🟡 Hold',
+            bg: 'rgba(217, 119, 6, 0.92)',
+            border: '1.5px solid #92400e',
+            boxShadow: '0 0 3px rgba(217, 119, 6, 0.6)',
+            badgeBg: '#fef3c7',
+            badgeColor: '#b45309',
+            badgeBorder: '#fde68a'
+        };
+    }
+    if (k === 'completed' || k.includes('complete') || k.includes('regist')) {
+        return {
+            key: 'completed',
+            label: 'Registry',
+            badge: '🔵 Registry',
+            bg: 'rgba(37, 99, 235, 0.90)',
+            border: '1px solid #1e40af',
+            boxShadow: '0 0 2px rgba(37, 99, 235, 0.5)',
+            badgeBg: '#eff6ff',
+            badgeColor: '#1d4ed8',
+            badgeBorder: '#bfdbfe'
+        };
+    }
+    if (k === 'sold' || k.includes('sold')) {
+        return {
+            key: 'sold',
+            label: 'Sold',
+            badge: '🟣 Sold',
+            bg: 'rgba(139, 92, 246, 0.90)',
+            border: '1px solid #6d28d9',
+            boxShadow: '0 0 2px rgba(139, 92, 246, 0.5)',
+            badgeBg: '#f5f3ff',
+            badgeColor: '#6d28d9',
+            badgeBorder: '#ddd6fe'
+        };
+    }
+    if (k === 'blocked' || k.includes('block')) {
+        return {
+            key: 'blocked',
+            label: 'Blocked',
+            badge: '⬛ Blocked',
+            bg: 'rgba(71, 85, 105, 0.92)',
+            border: '1px solid #334155',
+            boxShadow: '0 0 2px rgba(71, 85, 105, 0.5)',
+            badgeBg: '#f1f5f9',
+            badgeColor: '#334155',
+            badgeBorder: '#cbd5e1'
+        };
+    }
+    if (k.includes('uit')) {
+        return {
+            key: 'uit_reserve',
+            label: 'UIT Reserve',
+            badge: '🔷 UIT Reserve',
+            bg: 'rgba(8, 145, 178, 0.90)',
+            border: '1px solid #0e7490',
+            boxShadow: '0 0 2px rgba(8, 145, 178, 0.5)',
+            badgeBg: '#ecfeff',
+            badgeColor: '#0e7490',
+            badgeBorder: '#a5f3fc'
+        };
+    }
+    if (k === 'npc' || k.includes('npc')) {
+        return {
+            key: 'npc',
+            label: 'NPC',
+            badge: '🔶 NPC',
+            bg: 'rgba(225, 29, 72, 0.90)',
+            border: '1px solid #9f1239',
+            boxShadow: '0 0 2px rgba(225, 29, 72, 0.5)',
+            badgeBg: '#fff1f2',
+            badgeColor: '#be123c',
+            badgeBorder: '#fecdd3'
+        };
+    }
+    if (k === 'np') {
+        return {
+            key: 'np',
+            label: 'NP',
+            badge: '🔸 NP',
+            bg: 'rgba(234, 88, 12, 0.90)',
+            border: '1px solid #9a3412',
+            boxShadow: '0 0 2px rgba(234, 88, 12, 0.5)',
+            badgeBg: '#fff7ed',
+            badgeColor: '#c2410c',
+            badgeBorder: '#fed7aa'
+        };
+    }
+    if (k === 'reserved' || k.includes('reserv')) {
+        return {
+            key: 'reserved',
+            label: 'Reserved',
+            badge: '🟤 Reserved',
+            bg: 'rgba(180, 83, 9, 0.90)',
+            border: '1px solid #78350f',
+            boxShadow: '0 0 2px rgba(180, 83, 9, 0.5)',
+            badgeBg: '#fefce8',
+            badgeColor: '#854d0e',
+            badgeBorder: '#fef08a'
+        };
+    }
+    if (k === 'pending' || k.includes('pend')) {
+        return {
+            key: 'pending',
+            label: 'Pending',
+            badge: '⏳ Pending',
+            bg: 'rgba(245, 158, 11, 0.90)',
+            border: '1px solid #b45309',
+            boxShadow: '0 0 2px rgba(245, 158, 11, 0.5)',
+            badgeBg: '#fef3c7',
+            badgeColor: '#b45309',
+            badgeBorder: '#fde68a'
+        };
+    }
+    if (k === 'available' || k.includes('avail')) {
+        return {
+            key: 'available',
+            label: 'Available',
+            badge: '🟢 Available',
+            bg: 'rgba(22, 163, 74, 0.88)',
+            border: '1px solid #166534',
+            boxShadow: '0 0 2px rgba(22, 163, 74, 0.5)',
+            badgeBg: '#f0fdf4',
+            badgeColor: '#166534',
+            badgeBorder: '#bbf7d0'
+        };
+    }
+    
+    // Dynamic Fallback Palette for Custom Statuses
+    var palette = [
+        { bg: 'rgba(13, 148, 136, 0.90)', border: '1px solid #0f766e', badgeColor: '#0f766e', badgeBg: '#f0fdfa', badgeBorder: '#99f6e4' },
+        { bg: 'rgba(219, 39, 119, 0.90)', border: '1px solid #9d174d', badgeColor: '#be185d', badgeBg: '#fdf2f8', badgeBorder: '#fbcfe8' },
+        { bg: 'rgba(79, 70, 229, 0.90)', border: '1px solid #3730a3', badgeColor: '#4338ca', badgeBg: '#eef2ff', badgeBorder: '#c7d2fe' },
+        { bg: 'rgba(5, 150, 105, 0.90)', border: '1px solid #065f46', badgeColor: '#047857', badgeBg: '#ecfdf5', badgeBorder: '#a7f3d0' }
+    ];
+    var hash = 0;
+    for (var i = 0; i < k.length; i++) hash = (hash << 5) - hash + k.charCodeAt(i);
+    var pItem = palette[Math.abs(hash) % palette.length];
+    var title = k.charAt(0).toUpperCase() + k.slice(1).replace(/_/g, ' ');
+
+    return {
+        key: k,
+        label: title,
+        badge: '🏷️ ' + title,
+        bg: pItem.bg,
+        border: pItem.border,
+        boxShadow: '0 0 2px rgba(0,0,0,0.3)',
+        badgeBg: pItem.badgeBg,
+        badgeColor: pItem.badgeColor,
+        badgeBorder: pItem.badgeBorder
+    };
+}
+
+// ─── Layout par Status Box Pura Box Dikhana ──────────────────────────
 function applyPlotColors() {
     var spans = document.querySelectorAll('span[onclick^="showPlotInfo"]');
     
@@ -1215,10 +1527,7 @@ function applyPlotColors() {
         var label = match[1];
         var apiPlot = getApiPlot(label);
         
-        if (span.getAttribute('data-processed') === 'true') return;
-
         if (apiPlot) {
-            var isBooked = apiPlot.is_booked === 1 || apiPlot.status === 'Booked';
             var parts = label.split('-');
             var section = parts[0].trim().toUpperCase();
             var plotNum = parseInt(parts[1], 10) || 0;
@@ -1232,78 +1541,99 @@ function applyPlotColors() {
             else if (section === 'F' && plotNum >= 34) isRight = true;
 
             // Exact CAD plot cell dimensions in pixels:
-            // Standard shops (10ft frontage × 25ft depth): ~17.5px × 44px
-            var boxWidth = 44;
+            var boxWidth = 49.5;
             var boxHeight = 17.5;
-            var shiftX = -4;     // Left row extends forward from text to center line
-            var shiftY = 8.8;    // Centers box vertically around text baseline
+            var shiftX = 0.5;    // Left row: flush with outer road line to center dividing line
+            var shiftY = 0.2;   // Centered vertically to completely fill between top & bottom plot lines
 
             if (isRight) {
-                // Right row extends backwards from text towards center dividing line
-                shiftX = -26;
+                // Right row: extends backwards from text towards center dividing line
+                shiftX = -49.5;
+            } else if (section === 'E') {
+                // Sector E left row road line splays outward from plot 2 down to 35
+                var extra = Math.min(28, Math.max(0, (plotNum - 2) * 2.1));
+                boxWidth = 49.5 + extra;
+                shiftX = 0.5 - extra;
             }
 
             if (section === 'F') {
-                // Section F: 8ft × 12ft shops
-                boxWidth = 22;
+                boxWidth = 24;
                 boxHeight = 14;
-                shiftY = 7;
-                shiftX = isRight ? -14 : -3;
+                shiftY = -0.2;
+                shiftX = isRight ? -24.5 : 0.5;
             } else if (section === 'A') {
-                // Section A: 12ft × 30ft shops
-                boxWidth = 53;
-                boxHeight = 21;
-                shiftY = 10.5;
-                shiftX = -4;
+                boxWidth = 59;
+                boxHeight = 20.5;
+                shiftY = -0.2;
+                shiftX = isRight ? -59.5 : 0.5;
             }
 
-            // Get base rotation matrix once
+            // Clean rotation matrix: ensure pure 2x2 rotation without accumulated translation
             var baseTransform = span.getAttribute('data-base-transform');
-            if (!baseTransform) {
-                baseTransform = window.getComputedStyle(span).transform;
-                if (!baseTransform || baseTransform === 'none') {
+            if (!baseTransform || baseTransform.indexOf('matrix') === -1) {
+                var comp = window.getComputedStyle(span).transform;
+                if (comp && comp !== 'none') {
+                    var matMatch = comp.match(/matrix\(\s*([^,\s]+)\s*,\s*([^,\s]+)\s*,\s*([^,\s]+)\s*,\s*([^,\s]+)/);
+                    if (matMatch) {
+                        baseTransform = 'matrix(' + matMatch[1] + ',' + matMatch[2] + ',' + matMatch[3] + ',' + matMatch[4] + ',0,0)';
+                    } else {
+                        baseTransform = '';
+                    }
+                } else {
                     baseTransform = '';
                 }
                 span.setAttribute('data-base-transform', baseTransform);
+            } else {
+                var matMatch = baseTransform.match(/matrix\(\s*([^,\s]+)\s*,\s*([^,\s]+)\s*,\s*([^,\s]+)\s*,\s*([^,\s]+)/);
+                if (matMatch) {
+                    baseTransform = 'matrix(' + matMatch[1] + ',' + matMatch[2] + ',' + matMatch[3] + ',' + matMatch[4] + ',0,0)';
+                    span.setAttribute('data-base-transform', baseTransform);
+                }
             }
 
             // Apply translation in the element's local coordinate system (aligned with CAD box slope)
-            span.style.transform = baseTransform + ' translate(' + shiftX + 'px, ' + shiftY + 'px)';
-            span.style.display = 'inline-flex';
+            span.style.transform = baseTransform;
+            span.style.display = 'inline';
             span.style.alignItems = 'center';
             span.style.justifyContent = 'center';
-            span.style.width = boxWidth + 'px';
-            span.style.height = boxHeight + 'px';
+            span.style.width = 'auto';
+            span.style.height = 'auto';
             span.style.marginLeft = '0px';
             span.style.marginBottom = '0px';
             span.style.boxSizing = 'border-box';
-            span.style.borderRadius = '2px';
+            span.style.borderRadius = '0px';
             span.style.textAlign = 'center';
             span.style.lineHeight = '1';
             span.style.fontWeight = 'bold';
-            span.style.fontSize = '9px';
-            span.style.letterSpacing = '0px';
+            span.style.fontSize = '8.5px';
+            span.style.letterSpacing = '-0.2px';
             span.style.zIndex = '10';
             span.style.cursor = 'pointer';
             span.style.transition = 'filter 0.15s ease, box-shadow 0.15s ease';
 
-            if (isBooked) {
-                // 🔴 Booked — Red Plot Box
-                span.style.backgroundColor = 'rgba(220, 38, 38, 0.88)';
-                span.style.border = '1px solid #991b1b';
-                span.style.color = '#ffffff';
-                span.style.boxShadow = '0 0 2px rgba(220, 38, 38, 0.5)';
-            } else {
-                // 🟢 Available — Green Plot Box
-                span.style.backgroundColor = 'rgba(22, 163, 74, 0.88)';
-                span.style.border = '1px solid #166534';
-                span.style.color = '#ffffff';
-                span.style.boxShadow = '0 0 2px rgba(22, 163, 74, 0.5)';
+            // 🎯 Determine plot status and apply appropriate theme color
+            var rawKey = (apiPlot.status_key || apiPlot.status || 'available').toLowerCase();
+            if (apiPlot.is_booked === 1 && !rawKey.includes('complete') && !rawKey.includes('sold')) {
+                rawKey = 'booked';
             }
+            var theme = getStatusTheme(rawKey);
+            var statusKey = theme.key;
+
+            span.style.backgroundColor = 'transparent';
+            span.style.border = 'none';
+            var textColor = '#16a34a'; // Available: Green
+            if (statusKey === 'booked' || rawKey.includes('book')) textColor = '#dc2626'; // Booked: Red
+            else if (statusKey === 'hold' || rawKey.includes('hold')) textColor = '#d97706'; // Hold: Orange
+            else if (statusKey === 'completed' || rawKey.includes('complete') || rawKey.includes('regist')) textColor = '#2563eb'; // Blue
+            else if (statusKey === 'sold' || rawKey.includes('sold')) textColor = '#7c3aed'; // Purple
+            else if (statusKey === 'blocked' || rawKey.includes('block')) textColor = '#475569';
+            else if (theme && theme.badgeColor) textColor = theme.badgeColor;
+            span.style.color = textColor;
+            span.style.boxShadow = 'none';
 
             span.onmouseenter = function() {
-                span.style.filter = 'brightness(1.15)';
-                span.style.zIndex = '15';
+                span.style.filter = 'brightness(1.18)';
+                span.style.textDecoration = 'underline';
             };
             span.onmouseleave = function() {
                 span.style.filter = 'none';
@@ -1312,32 +1642,133 @@ function applyPlotColors() {
 
             span.innerHTML = label;
             span.setAttribute('data-processed', 'true');
+            span.setAttribute('data-plot-label', label);
+            span.setAttribute('data-status', statusKey);
+        } else {
+            span.setAttribute('data-plot-label', label);
+            span.setAttribute('data-status', 'uncreated');
         }
     });
+
+    updateFilterCounts();
+    initPlotSearch();
 }
 // ─── Modal ───────────────────────────────────────────────────────
+var currentSelectedPlot = null;
+var currentUncreatedPlotInfo = null;
+
 function showPlotInfo(label) {
     if (dragMoved) return;
-    var section = label.split('-')[0];
+    var section = label.split('-')[0].trim();
+    var purePlot = label.includes('-') ? label.split('-').slice(1).join('-').trim() : label.trim();
     var apiPlot = getApiPlot(label);
+    currentSelectedPlot = apiPlot;
     var bodyHtml = '';
 
-    var isBooked = false;
+    var shopSize, shopType;
+    if (section === 'A') { shopSize = "12'00\" × 30'00\""; shopType = "Commercial"; }
+    else if (section === 'F') { shopSize = "8'00\" × 12'00\""; shopType = "Informal"; }
+    else { shopSize = "10'00\" × 25'00\""; shopType = "Commercial"; }
+
+    currentUncreatedPlotInfo = {
+        plot_no: purePlot,
+        full_label: label,
+        pure_plot_no: purePlot,
+        section: section,
+        shopSize: shopSize,
+        shopType: shopType
+    };
+
+    var isSectorExisting = function(sec) {
+        if (!window.projectSectors || !window.projectSectors.length) return false;
+        var sUpper = String(sec || '').trim().toUpperCase();
+        return window.projectSectors.some(function(s) {
+            var name = String(s.sector_name || s.name || '').trim().toUpperCase();
+            var cleanName = name.replace(/SECTOR\s*[-_]?/i, '').replace(/सेक्टर\s*[-_]?/i, '').trim();
+            return name === sUpper || cleanName === sUpper;
+        });
+    };
+
+    var sectorExists = isSectorExisting(section);
+
+    var plotStatusKey = 'uncreated';
     if (apiPlot) {
-        isBooked = apiPlot.is_booked === 1 || apiPlot.status === 'Booked';
+        plotStatusKey = (apiPlot.status_key || apiPlot.status || 'available').toLowerCase();
+        if (apiPlot.is_booked === 1 || plotStatusKey === 'booked') plotStatusKey = 'booked';
+        else if (plotStatusKey.includes('hold')) plotStatusKey = 'hold';
+        else if (plotStatusKey.includes('complete') || plotStatusKey.includes('regist')) plotStatusKey = 'completed';
+        else if (plotStatusKey.includes('block')) plotStatusKey = 'blocked';
+        else if (plotStatusKey.includes('avail')) plotStatusKey = 'available';
     }
 
-    if (isBooked) {
-        // --- CASE: BOOKED (Sirf API ka data dikhao, Static wala nahi) ---
-        document.getElementById('modal-title').innerText = 'Booking Details: ' + label;
+    var bookBtn = document.getElementById('modal-book-btn');
+    var createBtn = document.getElementById('modal-create-plot-btn');
 
-        bodyHtml += '<b>Status:</b> <span style="color:#dc2626;font-weight:bold;">🔴 Booked</span><br>';
+    if (!apiPlot) {
+        // Plot is not yet in project database
+        if (createBtn) {
+            createBtn.style.display = 'inline-block';
+            if (sectorExists) {
+                createBtn.style.background = '#2563eb';
+                createBtn.style.borderColor = '#2563eb';
+                createBtn.innerText = 'Create Plot (' + purePlot + ')';
+                createBtn.onclick = createCurrentPlot;
+            } else {
+                createBtn.style.background = '#d97706';
+                createBtn.style.borderColor = '#b45309';
+                createBtn.innerText = 'Add Sector (' + section + ') in Project';
+                createBtn.onclick = addSectorForCurrentPlot;
+            }
+        }
+        if (bookBtn) {
+            bookBtn.style.display = 'none';
+        }
+    } else {
+        if (createBtn) {
+            createBtn.style.display = 'none';
+        }
+        if (bookBtn) {
+            if (plotStatusKey === 'booked' || plotStatusKey === 'completed' || plotStatusKey === 'sold' || plotStatusKey === 'blocked') {
+                bookBtn.style.display = 'none';
+            } else if (plotStatusKey === 'hold') {
+                bookBtn.style.display = 'inline-block';
+                bookBtn.innerText = 'Book ' + purePlot + ' (Hold)';
+                bookBtn.style.background = '#d97706';
+                bookBtn.style.borderColor = '#b45309';
+            } else {
+                bookBtn.style.display = 'inline-block';
+                bookBtn.innerText = 'Book ' + purePlot;
+                bookBtn.style.background = '#16a34a';
+                bookBtn.style.borderColor = '#15803d';
+            }
+        }
+    }
+
+    var theme = apiPlot ? getStatusTheme(plotStatusKey) : null;
+
+    if (plotStatusKey === 'booked' || plotStatusKey === 'completed' || plotStatusKey === 'sold') {
+        // --- CASE: BOOKED / COMPLETED / SOLD ---
+        document.getElementById('modal-title').innerText = (theme ? theme.label : 'Booking') + ' Details: ' + purePlot;
+
+        var statusBadge = theme ? (
+            '<span style="color:' + theme.badgeColor + ';background:' + theme.badgeBg + ';border:1px solid ' + theme.badgeBorder + ';padding:2px 8px;border-radius:4px;font-weight:bold;">' +
+            theme.badge + '</span>'
+        ) : '<span style="color:#dc2626;background:#fef2f2;border:1px solid #fecaca;padding:2px 8px;border-radius:4px;font-weight:bold;">🔴 Booked</span>';
+
+        bodyHtml += '<b>Status:</b> ' + statusBadge + '<br>';
         
         if (apiPlot.booking) {
-            bodyHtml += '<hr style="margin:10px 0;border-color:#e5e7eb;">';
-            bodyHtml += '<b>Customer:</b> ' + (apiPlot.booking.customer_name || 'N/A') + '<br>';
-            bodyHtml += '<b>Mobile:</b> ' + (apiPlot.booking.mobile_no || 'N/A') + '<br>';
-            bodyHtml += '<b>Booking ID:</b> #' + (apiPlot.booking.booking_id || 'N/A') + '<br>';
+            if (isCustomerMode) {
+                bodyHtml += '<hr style="margin:10px 0;border-color:#e5e7eb;">';
+                bodyHtml += '<div style="background:#e0f2fe;color:#0369a1;padding:6px 10px;border-radius:6px;font-size:12px;font-weight:600;text-align:center;">' +
+                            '🔒 ग्राहक विवरण प्राइवेसी मोड में छिपाया गया है' +
+                            '</div>';
+            } else {
+                bodyHtml += '<hr style="margin:10px 0;border-color:#e5e7eb;">';
+                bodyHtml += '<b>Customer:</b> ' + (apiPlot.booking.customer_name || 'N/A') + '<br>';
+                bodyHtml += '<b>Mobile:</b> ' + (apiPlot.booking.mobile_no || 'N/A') + '<br>';
+                bodyHtml += '<b>Booking ID:</b> #' + (apiPlot.booking.booking_id || 'N/A') + '<br>';
+            }
         }
 
         bodyHtml += '<hr style="margin:10px 0;border-color:#e5e7eb;">';
@@ -1346,31 +1777,68 @@ function showPlotInfo(label) {
         bodyHtml += '<b>Rate:</b> ₹' + Number(apiPlot.plot_rate).toLocaleString('en-IN') + '/sq.ft<br>';
         bodyHtml += '<b>Total Amount:</b> ₹' + Number(apiPlot.amount).toLocaleString('en-IN');
 
-    } else {
-        // --- CASE: AVAILABLE (Static + API Data dono dikhao) ---
-        var shopSize, shopType;
-        if (section === 'A') { shopSize = "12'00\" × 30'00\""; shopType = "Commercial"; }
-        else if (section === 'F') { shopSize = "8'00\" × 12'00\""; shopType = "Informal"; }
-        else { shopSize = "10'00\" × 25'00\""; shopType = "Commercial"; }
+    } else if (plotStatusKey === 'hold') {
+        // --- CASE: HOLD ---
+        document.getElementById('modal-title').innerText = 'Plot Details (Hold): ' + purePlot;
 
-        document.getElementById('modal-title').innerText = 'Plot No: ' + label;
+        bodyHtml += '<b>Status:</b> <span style="color:#b45309;background:#fef3c7;border:1.5px solid #fde68a;padding:2px 8px;border-radius:4px;font-weight:bold;">🟡 Hold (होल्ड)</span><br>';
+        bodyHtml += '<div style="margin:8px 0;padding:7px 10px;background:#fffbeb;border:1px solid #fde68a;border-radius:6px;color:#92400e;font-size:12px;font-weight:600;">' +
+                    '⚠️ यह प्लॉट वर्तमान में होल्ड (Hold) पर रखा गया है।' +
+                    '</div>';
+
+        bodyHtml += '<hr style="margin:10px 0;border-color:#e5e7eb;">';
+        bodyHtml += '<b>Size:</b> ' + apiPlot.plot_width + "' × " + apiPlot.plot_height + "'<br>";
+        bodyHtml += '<b>Area:</b> ' + apiPlot.square_feet + ' sq.ft<br>';
+        bodyHtml += '<b>Rate:</b> ₹' + Number(apiPlot.plot_rate).toLocaleString('en-IN') + '/sq.ft<br>';
+        bodyHtml += '<b>Total Amount:</b> ₹' + Number(apiPlot.amount).toLocaleString('en-IN');
+        if (apiPlot.plot_note) {
+            bodyHtml += '<br><b>Note:</b> ' + apiPlot.plot_note;
+        }
+
+    } else {
+        // --- CASE: AVAILABLE, UIT RESERVE, NPC, NP, BLOCKED, RESERVED or UNCREATED ---
+        document.getElementById('modal-title').innerText = 'Plot No: ' + purePlot;
 
         // Static Info
+        var displayProjName = window.currentProjectName || 'Rameshwarm Market';
         bodyHtml =
-            '<b>Plot Number:</b> ' + label + '<br>' +
+            '<b>Plot Number:</b> ' + purePlot + '<br>' +
             '<b>Section:</b> ' + section + '<br>' +
             '<b>Type:</b> ' + shopType + '<br>' +
             '<b>Shop Size:</b> ' + shopSize + '<br>' +
-            '<b>Project:</b> Rameshwarm Market<br>' +
+            '<b>Project:</b> ' + displayProjName + '<br>' +
             '<b>Location:</b> Village Naal-Badi, Bikaner';
 
         if (apiPlot) {
             bodyHtml += '<br><hr style="margin:10px 0;border-color:#e5e7eb;">';
-            bodyHtml += '<b>Status:</b> <span style="color:#16a34a;font-weight:bold;">🟢 Available</span><br>';
+            var stBadge = theme ? (
+                '<span style="color:' + theme.badgeColor + ';background:' + theme.badgeBg + ';border:1px solid ' + theme.badgeBorder + ';padding:2px 8px;border-radius:4px;font-weight:bold;">' +
+                theme.badge + '</span>'
+            ) : '<span style="color:#16a34a;background:#f0fdf4;border:1px solid #bbf7d0;padding:2px 8px;border-radius:4px;font-weight:bold;">🟢 Available (उपलब्ध)</span>';
+
+            bodyHtml += '<b>Status:</b> ' + stBadge + '<br>';
+
+            if (plotStatusKey === 'blocked') {
+                bodyHtml += '<div style="margin:8px 0;padding:7px 10px;background:#f1f5f9;border:1px solid #cbd5e1;border-radius:6px;color:#334155;font-size:12px;font-weight:600;">🚫 यह प्लॉट ब्लॉक (Blocked) किया गया है।</div>';
+            } else if (plotStatusKey === 'uit_reserve') {
+                bodyHtml += '<div style="margin:8px 0;padding:7px 10px;background:#ecfeff;border:1px solid #a5f3fc;border-radius:6px;color:#0e7490;font-size:12px;font-weight:600;">ℹ️ यह प्लॉट UIT Reserve श्रेणी में है।</div>';
+            } else if (plotStatusKey === 'npc' || plotStatusKey === 'np') {
+                bodyHtml += '<div style="margin:8px 0;padding:7px 10px;background:#fff1f2;border:1px solid #fecdd3;border-radius:6px;color:#be123c;font-size:12px;font-weight:600;">ℹ️ यह प्लॉट ' + (theme ? theme.label : 'NPC') + ' श्रेणी में है।</div>';
+            } else if (plotStatusKey === 'reserved') {
+                bodyHtml += '<div style="margin:8px 0;padding:7px 10px;background:#fefce8;border:1px solid #fef08a;border-radius:6px;color:#854d0e;font-size:12px;font-weight:600;">ℹ️ यह प्लॉट Reserved श्रेणी में है।</div>';
+            }
+
             bodyHtml += '<b>Size:</b> ' + apiPlot.plot_width + "' × " + apiPlot.plot_height + "'<br>";
             bodyHtml += '<b>Area:</b> ' + apiPlot.square_feet + ' sq.ft<br>';
             bodyHtml += '<b>Rate:</b> ₹' + Number(apiPlot.plot_rate).toLocaleString('en-IN') + '/sq.ft<br>';
             bodyHtml += '<b>Total Amount:</b> ₹' + Number(apiPlot.amount).toLocaleString('en-IN');
+            if (apiPlot.plot_note) {
+                bodyHtml += '<br><b>Note:</b> ' + apiPlot.plot_note;
+            }
+        } else if (!sectorExists) {
+            bodyHtml += '<div style="margin-top:10px;padding:8px 10px;background:#fffbeb;border:1px solid #fcd34d;border-radius:6px;color:#92400e;font-size:12px;font-weight:600;line-height:1.4;">' +
+                '⚠️ सेक्टर <b>' + section + '</b> इस प्रोजेक्ट में अभी नहीं बना है। पहले सेक्टर जोड़ें।' +
+                '</div>';
         }
     }
 
@@ -1378,15 +1846,455 @@ function showPlotInfo(label) {
     document.getElementById('plot-modal').style.display = 'flex';
 }
 
+function bookCurrentPlot() {
+    closeModal();
+    if (!currentSelectedPlot) return;
+    if (typeof window.handleBookPlotFromMap === 'function') {
+        window.handleBookPlotFromMap(currentSelectedPlot);
+    } else {
+        window.dispatchEvent(new CustomEvent('mapBookPlot', { detail: currentSelectedPlot }));
+    }
+}
+
+function createCurrentPlot() {
+    closeModal();
+    var info = currentUncreatedPlotInfo || { plot_no: document.getElementById('modal-title').innerText.replace('Plot No: ', '').trim() };
+    if (typeof window.handleCreatePlotFromMap === 'function') {
+        window.handleCreatePlotFromMap(info);
+    } else {
+        window.dispatchEvent(new CustomEvent('mapCreatePlot', { detail: info }));
+    }
+}
+
+function addSectorForCurrentPlot() {
+    closeModal();
+    var info = currentUncreatedPlotInfo || { section: '' };
+    if (typeof window.handleAddSectorFromMap === 'function') {
+        window.handleAddSectorFromMap(info);
+    } else {
+        window.dispatchEvent(new CustomEvent('mapAddSector', { detail: info }));
+    }
+}
+
 function closeModal() {
     document.getElementById('plot-modal').style.display = 'none';
+}
+
+// ─── Enhancement Functions: Customer Mode, Search, Filter & Share ───
+var isCustomerMode = false;
+function toggleCustomerMode(flag) {
+    if (typeof flag === 'boolean') {
+        isCustomerMode = flag;
+    } else {
+        isCustomerMode = !isCustomerMode;
+    }
+    var btn = document.getElementById('customer-mode-btn');
+    if (btn) {
+        if (isCustomerMode) {
+            btn.style.background = '#10b981';
+            btn.innerText = '👤 Customer View: ON';
+        } else {
+            btn.style.background = '#475569';
+            btn.innerText = '👤 Customer View: OFF';
+        }
+    }
+    if (isCustomerMode) {
+        showPlotToast('🔒 Customer View सक्रिय (ग्राहक विवरण छिपे रहेंगे)');
+    } else {
+        showPlotToast('👤 Normal Mode सक्रिय (सभी विवरण दिखाई देंगे)');
+    }
+
+    // Agar modal open hai to dobara render karo privacy toggle ke hisaab se
+    if (currentSelectedPlot && document.getElementById('plot-modal').style.display === 'flex') {
+        var lbl = (currentSelectedPlot.sector_name ? currentSelectedPlot.sector_name + '-' : '') + currentSelectedPlot.plot_no;
+        showPlotInfo(lbl);
+    }
+}
+
+var currentFilter = 'all';
+function setPlotFilter(status) {
+    currentFilter = status;
+    document.querySelectorAll('.filter-chip').forEach(function(chip) {
+        if (chip.getAttribute('data-filter') === status) {
+            chip.classList.add('active');
+        } else {
+            chip.classList.remove('active');
+        }
+    });
+
+    var spans = document.querySelectorAll('span[onclick^="showPlotInfo"]');
+    spans.forEach(function(span) {
+        var st = (span.getAttribute('data-status') || '').toLowerCase();
+        if (status === 'all') {
+            span.style.opacity = '1';
+        } else if (status === 'available') {
+            span.style.opacity = (st === 'available') ? '1' : '0.15';
+        } else if (status === 'booked') {
+            span.style.opacity = (st === 'booked') ? '1' : '0.15';
+        } else if (status === 'hold') {
+            span.style.opacity = (st === 'hold') ? '1' : '0.15';
+        } else if (status === 'completed') {
+            span.style.opacity = (st === 'completed') ? '1' : '0.15';
+        } else {
+            span.style.opacity = (st === status) ? '1' : '0.15';
+        }
+    });
+}
+
+function updateFilterCounts() {
+    var counts = {};
+    if (window.projectPlots && Array.isArray(window.projectPlots)) {
+        window.projectPlots.forEach(function(p) {
+            var rawKey = (p.status_key || p.status || 'available').toLowerCase();
+            if (p.is_booked === 1 && !rawKey.includes('complete') && !rawKey.includes('sold')) {
+                rawKey = 'booked';
+            }
+            var th = getStatusTheme(rawKey);
+            counts[th.key] = (counts[th.key] || 0) + 1;
+        });
+    }
+
+    var booked = counts['booked'] || 0;
+    var avail = counts['available'] || 0;
+    var hold = counts['hold'] || 0;
+    var completed = counts['completed'] || 0;
+
+    var bEl = document.getElementById('count-booked');
+    var aEl = document.getElementById('count-available');
+    var hEl = document.getElementById('count-hold');
+    if (bEl) bEl.innerText = booked;
+    if (aEl) aEl.innerText = avail;
+    if (hEl) hEl.innerText = hold;
+
+    // Send update to Header NavBar with full status breakdown
+    var stats = {
+        booked: booked,
+        available: avail,
+        hold: hold,
+        completed: completed,
+        sold: counts['sold'] || 0,
+        blocked: counts['blocked'] || 0,
+        reserved: counts['reserved'] || 0,
+        uit_reserve: counts['uit_reserve'] || 0,
+        npc: counts['npc'] || 0,
+        np: counts['np'] || 0,
+        pending: counts['pending'] || 0,
+        allStatuses: counts,
+        total: (window.projectPlots ? window.projectPlots.length : 0)
+    };
+    window.mapPlotStats = stats;
+    window.dispatchEvent(new CustomEvent('mapPlotStatsUpdated', { detail: stats }));
+}
+
+// ─── Header NavBar Integration APIs ─────────────────────────────────
+window.getMapPlotSuggestions = function(query) {
+    if (!query) return [];
+    var q = query.trim().toUpperCase();
+    var spans = document.querySelectorAll('span[onclick^="showPlotInfo"]');
+    var matches = [];
+    var seen = {};
+
+    spans.forEach(function(span) {
+        var m = span.getAttribute('onclick').match(/showPlotInfo\('([^']+)'\)/);
+        if (!m) return;
+        var label = m[1];
+        var pure = label.includes('-') ? label.split('-').slice(1).join('-') : label;
+
+        if (label.toUpperCase().includes(q) || pure.toUpperCase() === q || pure.toUpperCase().startsWith(q)) {
+            if (!seen[label]) {
+                seen[label] = true;
+                var apiP = getApiPlot(label);
+                var statusText = '⚪ Uncreated';
+                var statusColor = '#64748b';
+
+                if (apiP) {
+                    var rawKey = (apiP.status_key || apiP.status || 'available').toLowerCase();
+                    if (apiP.is_booked === 1 && !rawKey.includes('complete') && !rawKey.includes('sold')) {
+                        rawKey = 'booked';
+                    }
+                    var th = getStatusTheme(rawKey);
+                    statusText = th.badge;
+                    statusColor = th.badgeColor;
+                }
+
+                matches.push({
+                    label: label,
+                    pure: pure,
+                    status: statusText,
+                    statusColor: statusColor
+                });
+            }
+        }
+    });
+    return matches.slice(0, 15);
+};
+
+window.selectMapPlot = function(label) {
+    selectSearchedPlot(label);
+};
+
+window.setMapFilter = function(status) {
+    setPlotFilter(status);
+};
+
+window.toggleMapCustomerMode = function(flag) {
+    toggleCustomerMode(flag);
+};
+
+// Event Listeners from React components
+window.addEventListener('mapSelectPlot', function(e) {
+    if (e && e.detail) selectSearchedPlot(e.detail);
+});
+window.addEventListener('mapSetFilter', function(e) {
+    if (e && e.detail) setPlotFilter(e.detail);
+});
+window.addEventListener('mapToggleCustomerMode', function(e) {
+    toggleCustomerMode(e && e.detail);
+});
+
+function centerOnPlot(span) {
+    if (!span) return;
+    if (!parentDev) parentDev = document.querySelector('.parent-dev');
+    if (!pageContainer) pageContainer = document.querySelector('.page-container');
+    if (!parentDev || !pageContainer) return;
+
+    if (currentZoom < 0.65) {
+        currentZoom = 0.75;
+        applyZoom();
+    }
+
+    var spanRect = span.getBoundingClientRect();
+    var pRect = parentDev.getBoundingClientRect();
+
+    var currentCenterX = spanRect.left + spanRect.width / 2;
+    var currentCenterY = spanRect.top + spanRect.height / 2;
+
+    var viewCenterX = pRect.left + pRect.width / 2;
+    var viewCenterY = pRect.top + pRect.height / 2;
+
+    var diffX = currentCenterX - viewCenterX;
+    var diffY = currentCenterY - viewCenterY;
+
+    parentDev.scrollBy({
+        left: diffX,
+        top: diffY,
+        behavior: 'smooth'
+    });
+}
+
+function selectSearchedPlot(label) {
+    var resultsBox = document.getElementById('plot-search-results');
+    if (resultsBox) resultsBox.style.display = 'none';
+
+    var spans = document.querySelectorAll('span[onclick^="showPlotInfo"]');
+    for (var i = 0; i < spans.length; i++) {
+        var m = spans[i].getAttribute('onclick').match(/showPlotInfo\('([^']+)'\)/);
+        if (m && m[1] === label) {
+            centerOnPlot(spans[i]);
+            spans[i].classList.add('plot-glow-highlight');
+            setTimeout((function(targetSpan) {
+                return function() { targetSpan.classList.remove('plot-glow-highlight'); };
+            })(spans[i]), 3600);
+            showPlotInfo(label);
+            break;
+        }
+    }
+}
+
+var searchInitialized = false;
+function initPlotSearch() {
+    if (searchInitialized) return;
+    var input = document.getElementById('plot-search-input');
+    var resultsBox = document.getElementById('plot-search-results');
+    if (!input || !resultsBox) return;
+
+    searchInitialized = true;
+
+    input.addEventListener('input', function() {
+        var query = input.value.trim().toUpperCase();
+        if (!query) {
+            resultsBox.style.display = 'none';
+            resultsBox.innerHTML = '';
+            return;
+        }
+
+        var spans = document.querySelectorAll('span[onclick^="showPlotInfo"]');
+        var matches = [];
+        var seen = {};
+
+        spans.forEach(function(span) {
+            var m = span.getAttribute('onclick').match(/showPlotInfo\('([^']+)'\)/);
+            if (!m) return;
+            var label = m[1];
+            var pure = label.includes('-') ? label.split('-').slice(1).join('-') : label;
+
+            if (label.toUpperCase().includes(query) || pure.toUpperCase() === query || pure.toUpperCase().startsWith(query)) {
+                if (!seen[label]) {
+                    seen[label] = true;
+                    var apiP = getApiPlot(label);
+                    var st = apiP ? (apiP.status_key || apiP.status || 'available').toLowerCase() : 'uncreated';
+                    var statusText = '⚪ Uncreated';
+                    var statusColor = '#64748b';
+                    if (apiP) {
+                        if (apiP.is_booked === 1 || st === 'booked') {
+                            statusText = '🔴 Booked';
+                            statusColor = '#dc2626';
+                        } else if (st.includes('hold')) {
+                            statusText = '🟡 Hold';
+                            statusColor = '#d97706';
+                        } else if (st.includes('complete') || st.includes('regist')) {
+                            statusText = '🔵 Registry';
+                            statusColor = '#2563eb';
+                        } else if (st.includes('block')) {
+                            statusText = '🟣 Blocked';
+                            statusColor = '#7c3aed';
+                        } else {
+                            statusText = '🟢 Available';
+                            statusColor = '#16a34a';
+                        }
+                    }
+                    matches.push({
+                        label: label,
+                        pure: pure,
+                        status: statusText,
+                        statusColor: statusColor
+                    });
+                }
+            }
+        });
+
+        if (!matches.length) {
+            resultsBox.innerHTML = '<div style="padding: 10px; color: #94a3b8; font-size: 13px; text-align: center;">कोई प्लॉट नहीं मिला (No plot found)</div>';
+            resultsBox.style.display = 'block';
+            return;
+        }
+
+        var html = '';
+        matches.slice(0, 15).forEach(function(item) {
+            html += '<div class="search-result-item" onclick="selectSearchedPlot(\'' + item.label + '\')" style="' +
+                'padding: 8px 12px; cursor: pointer; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; font-size: 13px;' +
+                '" onmouseenter="this.style.background=\'#f8fafc\'" onmouseleave="this.style.background=\'transparent\'">' +
+                '<span style="font-weight: 700; color: #1e293b;">Plot ' + item.pure + ' <small style="color: #64748b; font-weight: 400;">(' + item.label + ')</small></span>' +
+                '<span style="font-size: 11px; font-weight: 700; color: ' + item.statusColor + ';">' + item.status + '</span>' +
+                '</div>';
+        });
+
+        resultsBox.innerHTML = html;
+        resultsBox.style.display = 'block';
+    });
+
+    input.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            var firstItem = resultsBox.querySelector('.search-result-item');
+            if (firstItem) {
+                firstItem.click();
+            }
+        }
+    });
+
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('#map-search-container')) {
+            resultsBox.style.display = 'none';
+        }
+    });
+}
+
+function sharePlotOnWhatsApp() {
+    var plotNo = document.getElementById('modal-title').innerText.replace('Plot No: ', '').replace('Booking Details: ', '').trim();
+    var info = currentUncreatedPlotInfo || {};
+    var apiPlot = currentSelectedPlot;
+    var projName = window.currentProjectName || 'बृन्दावन एन्क्लेव एक्सटेंशन';
+
+    var size = apiPlot ? (apiPlot.plot_width + "' × " + apiPlot.plot_height + "'") : (info.shopSize || '');
+    var area = apiPlot ? (apiPlot.square_feet + " Sq.Ft") : '';
+    var rate = apiPlot ? ("₹" + Number(apiPlot.plot_rate).toLocaleString('en-IN') + "/sq.ft") : '';
+    var amount = apiPlot ? ("₹" + Number(apiPlot.amount).toLocaleString('en-IN')) : '';
+    var getShareStatusText = function(p) {
+        if (!p) return '⚪ उपलब्ध नहीं (Uncreated)';
+        var s = (p.status_key || p.status || '').toLowerCase();
+        if (p.is_booked === 1 || s === 'booked') return '🔴 बुक (Booked)';
+        if (s.includes('hold')) return '🟡 होल्ड (Hold)';
+        if (s.includes('complete') || s.includes('regist')) return '🔵 रजिस्ट्री (Registry)';
+        return '🟢 उपलब्ध (Available)';
+    };
+    var status = getShareStatusText(apiPlot);
+
+    var text = "🏢 *" + projName + "*\n" +
+               "📍 *प्लॉट नंबर:* " + plotNo + (info.section ? (" (सेक्टर " + info.section + ")") : "") + "\n" +
+               "📌 *स्थिति:* " + status + "\n";
+
+    if (size) text += "📐 *साइज़:* " + size + "\n";
+    if (area) text += "📏 *एरिया:* " + area + "\n";
+    if (rate) text += "💰 *दर:* " + rate + "\n";
+    if (amount) text += "💵 *कुल मूल्य:* " + amount + "\n";
+    text += "📍 *लोकेशन:* Village Naal-Badi, Bikaner\n\n" +
+            "अधिक जानकारी व साइट विजिट के लिए संपर्क करें।";
+
+    var url = "https://api.whatsapp.com/send?text=" + encodeURIComponent(text);
+    window.open(url, '_blank');
+}
+
+function copyPlotQuotation() {
+    var plotNo = document.getElementById('modal-title').innerText.replace('Plot No: ', '').replace('Booking Details: ', '').trim();
+    var info = currentUncreatedPlotInfo || {};
+    var apiPlot = currentSelectedPlot;
+    var projName = window.currentProjectName || 'बृन्दावन एन्क्लेव एक्सटेंशन';
+
+    var size = apiPlot ? (apiPlot.plot_width + "' × " + apiPlot.plot_height + "'") : (info.shopSize || '');
+    var area = apiPlot ? (apiPlot.square_feet + " Sq.Ft") : '';
+    var rate = apiPlot ? ("₹" + Number(apiPlot.plot_rate).toLocaleString('en-IN') + "/sq.ft") : '';
+    var amount = apiPlot ? ("₹" + Number(apiPlot.amount).toLocaleString('en-IN')) : '';
+    var getShareStatusText = function(p) {
+        if (!p) return '⚪ उपलब्ध नहीं (Uncreated)';
+        var s = (p.status_key || p.status || '').toLowerCase();
+        if (p.is_booked === 1 || s === 'booked') return '🔴 बुक (Booked)';
+        if (s.includes('hold')) return '🟡 होल्ड (Hold)';
+        if (s.includes('complete') || s.includes('regist')) return '🔵 रजिस्ट्री (Registry)';
+        return '🟢 उपलब्ध (Available)';
+    };
+    var status = getShareStatusText(apiPlot);
+
+    var text = "🏢 *" + projName + "*\n" +
+               "📍 प्लॉट नंबर: " + plotNo + (info.section ? (" (सेक्टर " + info.section + ")") : "") + "\n" +
+               "📌 स्थिति: " + status + "\n";
+
+    if (size) text += "📐 साइज़: " + size + "\n";
+    if (area) text += "📏 एरिया: " + area + "\n";
+    if (rate) text += "💰 दर: " + rate + "\n";
+    if (amount) text += "💵 कुल मूल्य: " + amount + "\n";
+    text += "📍 लोकेशन: Village Naal-Badi, Bikaner";
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function() {
+            showPlotToast('✅ प्लॉट कोटेशन क्लिपबोर्ड पर कॉपी हो गया!');
+        }).catch(function() {
+            showPlotToast('कोटेशन कॉपी नहीं हो पाया।');
+        });
+    } else {
+        showPlotToast('✅ प्लॉट विवरण: ' + plotNo);
+    }
+}
+
+function showPlotToast(msg) {
+    var toast = document.getElementById('plot-toast');
+    if (!toast) return;
+    toast.innerText = msg;
+    toast.style.display = 'block';
+    if (window.toastTimeout) clearTimeout(window.toastTimeout);
+    window.toastTimeout = setTimeout(function() {
+        toast.style.display = 'none';
+    }, 2800);
 }
 
 // Apply zoom + colors — React injection ke liye turant bhi call karo
 function initMap() {
     applyZoom();
     initGoogleMapInteractions();
-    setTimeout(applyPlotColors, 200);
+    setTimeout(function() {
+        applyPlotColors();
+        updateFilterCounts();
+        initPlotSearch();
+    }, 200);
 }
 
 // Normal browser load ke liye

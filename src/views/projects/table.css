@@ -512,12 +512,16 @@ div[class*="ReactTransliterate"],
   background-color: #ffffff !important;
   border: 1px solid #cbd5e1 !important;
   border-radius: 8px !important;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25) !important;
   padding: 4px 0 !important;
-  z-index: 99999 !important;
+  z-index: 9999999 !important;
+  max-height: 240px !important;
+  overflow-y: auto !important;
 }
 
-body.dark-theme [class*="_ReactTransliterate"] {
+body.dark-theme [class*="_ReactTransliterate"],
+body.dark-theme ul[class*="ReactTransliterate"],
+body.dark-theme div[class*="ReactTransliterate"] {
   background: #162338 !important;
   background-color: #162338 !important;
   border: 1px solid rgba(201, 168, 76, 0.35) !important;
